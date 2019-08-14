@@ -1,8 +1,9 @@
 pragma solidity ^0.5.0;
 
-import "./IERC20.sol";
-import "./SafeMath.sol";
-import "./ProtectionPeriod.sol";
+import "../IERC20.sol";
+import "../SafeMath.sol";
+import "../ProtectionPeriod.sol";
+//import "./ERC20Mintable.sol";
 
 /**
  * @dev Implementation of the `IERC20` interface.
@@ -29,9 +30,9 @@ import "./ProtectionPeriod.sol";
  */
 
 
-
-
-contract ERC20 is ProtectionPeriod, IERC20   {
+ 
+ 
+contract mintable_ERC20 is ProtectionPeriod, IERC20 {
     using SafeMath for uint256;
 
     mapping (address => uint256) private _balances;
@@ -39,10 +40,10 @@ contract ERC20 is ProtectionPeriod, IERC20   {
     mapping (address => mapping (address => uint256)) private _allowances;
 
     uint256 private _totalSupply;
-
-    constructor(uint256 _protectionPeriod) ProtectionPeriod(_protectionPeriod) public  {
+    
+    constructor(uint256 _protectionPeriod) ProtectionPeriod(_protectionPeriod) public {
     }
-
+    
     /**
      * @dev See `IERC20.totalSupply`.
      */
@@ -51,7 +52,7 @@ contract ERC20 is ProtectionPeriod, IERC20   {
     }
 
     /**
-     * @dev See `IERC20.balanceOf`./
+     * @dev See `IERC20.balanceOf`.
      */
     function balanceOf(address account) public view returns (uint256) {
         return _balances[account];
@@ -157,12 +158,10 @@ contract ERC20 is ProtectionPeriod, IERC20   {
      * - `recipient` cannot be the zero address.
      * - `sender` must have a balance of at least `amount`.
      */
-    function _transfer(address sender, address recipient, uint256 amount) internal checkProtectedTokens (amount) {
+    function _transfer(address sender, address recipient, uint256 amount) internal {
         require(sender != address(0), "ERC20: transfer from the zero address");
         require(recipient != address(0), "ERC20: transfer to the zero address");
-	if (amountProtected(sender) > 0) {
-	require(amount < amountProtected(sender), "send amount > protected tokens"); 
-	}
+
         _balances[sender] = _balances[sender].sub(amount);
         _balances[recipient] = _balances[recipient].add(amount);
         emit Transfer(sender, recipient, amount);
@@ -236,3 +235,4 @@ contract ERC20 is ProtectionPeriod, IERC20   {
         _approve(account, msg.sender, _allowances[account][msg.sender].sub(amount));
     }
 }
+

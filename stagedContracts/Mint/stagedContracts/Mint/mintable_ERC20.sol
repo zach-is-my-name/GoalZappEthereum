@@ -3,6 +3,7 @@ pragma solidity ^0.5.0;
 import "./IERC20.sol";
 import "./SafeMath.sol";
 import "./ProtectionPeriod.sol";
+import "./ERC20Mintable.sol";
 
 /**
  * @dev Implementation of the `IERC20` interface.
@@ -31,7 +32,7 @@ import "./ProtectionPeriod.sol";
 
  
  
-contract ERC20 is ProtectionPeriod, IERC20 {
+contract mintable_ERC20 is ProtectionPeriod, IERC20, ERC20Mintable {
     using SafeMath for uint256;
 
     mapping (address => uint256) private _balances;

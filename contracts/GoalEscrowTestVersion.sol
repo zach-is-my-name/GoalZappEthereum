@@ -1,6 +1,8 @@
 pragma solidity ^0.5.0; 
 
 
+/*This version is not to be deployed.  It implements various time-controlled functions to be called manually instead - removing the dependancy upon the Aion system - allowing tests to run sucessfuly on networks other than Ropsten and Mainnet  */
+
 import "./SafeMath.sol";
 import "./ERC20.sol";
 //import "./SafeERC20.sol";
@@ -8,6 +10,7 @@ import "./Ownable.sol";
 import "./Address.sol";
 
 // interface Aion
+
 
 contract Aion {
  //using SafeERC20 for ERC20;
@@ -19,7 +22,7 @@ contract Aion {
       payable returns (uint, address);
 }
 
-contract GoalEscrow is Ownable  {
+contract GoalEscrowTestVersion is Ownable  {
   using SafeMath for uint256;
  // using SafeERC20 for ERC20;
  
@@ -28,9 +31,10 @@ contract GoalEscrow is Ownable  {
   event StartProtection(uint256 protectionEnds, uint timeNow);
   event TimeNow(uint256 blocktime);
   event SuggestionExpires(uint256 expires);
+  event SuggestedStepsSuggesterBond(uint Suggester_suggesterBond);
   mapping ( bytes32 => Suggester) public suggestedSteps;
 
-  struct Suggester {
+  struct  Suggester {
    address suggester;
    uint256 suggesterBond;
    uint256 ownerBond;
@@ -77,20 +81,6 @@ contract GoalEscrow is Ownable  {
 	         //** SUGGEST **//
                   /*only suggester*/
   function depositOnSuggestTestVersion(bytes32 _id, uint _amount, address _payee) public  {
-    require(_id.length == 25);
-    //set suggester bond
-    suggestedSteps[_id].suggesterBond = suggestedSteps[_id].suggesterBond.add(_amount);
-    token.transferFrom(msg.sender, address(this), _amount); 
-    emit Deposited(_payee, _amount); 
-    //apply owner bond
-    require(bondFunds >= ownerBondAmount, "Owner has insufficient bond funds");
-    bondFunds = bondFunds.sub(ownerBondAmount);  
-    suggestedSteps[_id].ownerBond = suggestedSteps[_id].ownerBond.add(ownerBondAmount);
-    suggestedSteps[_id].suggester = msg.sender;
-    setSuggestionTimeOutTestVersion(_id);
-  }
-
-  function depositOnSuggest(bytes32 _id, uint _amount, address _payee) public  {
     //set suggester address
     suggestedSteps[_id].suggester = msg.sender;
     //set suggester bond
@@ -101,7 +91,19 @@ contract GoalEscrow is Ownable  {
     require(bondFunds >= ownerBondAmount, "Owner has insufficient bond funds");
     bondFunds = bondFunds.sub(ownerBondAmount);  
     suggestedSteps[_id].ownerBond = suggestedSteps[_id].ownerBond.add(ownerBondAmount);
-    suggestedSteps[_id].suggester = msg.sender;
+    emit SuggestedStepsSuggesterBond(suggestedSteps[_id].suggesterBond); 
+    setSuggestionTimeOutTestVersion(_id);
+  }
+
+  function depositOnSuggest(bytes32 _id, uint _amount, address _payee) public  {
+    //set suggester bond
+    suggestedSteps[_id].suggesterBond = suggestedSteps[_id].suggesterBond.add(_amount);
+    token.transferFrom(msg.sender, address(this), _amount); 
+    emit Deposited(_payee, _amount); 
+    //apply owner bond
+    require(bondFunds >= ownerBondAmount, "Owner has insufficient bond funds");
+    bondFunds = bondFunds.sub(ownerBondAmount);  
+    suggestedSteps[_id].ownerBond = suggestedSteps[_id].ownerBond.add(ownerBondAmount);
     setSuggestionTimeOut(_id);
   }
 
@@ -120,7 +122,7 @@ contract GoalEscrow is Ownable  {
     emit TimeNow(timeNow);
     suggestedSteps[_id].suggestionExpires = timeNow.add(suggestionDuration);
     emit SuggestionExpires(suggestedSteps[_id].suggestionExpires);
-    //schedule_returnBondsOnTimeOut(_id, timeNow.add(suggestionDuration));
+  //  schedule_returnBondsOnTimeOut(_id, timeNow.add(suggestionDuration));
 }
 
   function checkForTimedOutSuggestions (bytes32 _id) public {
@@ -137,6 +139,8 @@ contract GoalEscrow is Ownable  {
 
 	//** TIME OUT -- Contract disburses reward and bonds **//
   function returnBondsOnTimeOut(bytes32 _id) public {
+    emit TimeNow (block.timestamp);
+    emit SuggestionExpires(suggestedSteps[_id].suggestionExpires);
     require(block.timestamp >= suggestedSteps[_id].suggestionExpires, "Escrow: current time is before release time");
     uint256 suggesterBondRefundAmount = suggestedSteps[_id].suggesterBond;
     require(token.balanceOf(address(this)) >= suggesterBondRefundAmount,"Requested Suggester Bond Refund is MORE than token balance of the contract");
@@ -150,7 +154,7 @@ contract GoalEscrow is Ownable  {
     //protect tokens
     token.timeProtectTokens(payee, suggesterProtectAmount);
     // schedule end protection 
-    //schedule_removeTokenTimeProtection(payee, suggesterProtectAmount);    
+//  schedule_removeTokenTimeProtection(payee, suggesterProtectAmount);    
     //owner 
     uint256 ownerBondRefundAmount = suggestedSteps[_id].ownerBond;
     require(token.balanceOf(address(this)) >= ownerBondRefundAmount, "Broken: Contract can't afford to refund owner bond!"); 
@@ -177,14 +181,14 @@ contract GoalEscrow is Ownable  {
     return suggestedSteps[_id].suggesterBond;
   }  
 
-  function schedule_removeTokenTimeProtection (uint256 value, address _address, uint256 _amount, uint256 gasprice, uint256 gaslimit, uint256 time_or_block)
+  function schedule_removeTokenTimeProtection (uint256 value, address _address, uint256 _amount, uint256 gaslimit, uint256 gasprice, uint256 time_or_block)
    public {
    aion = Aion(0xFcFB45679539667f7ed55FA59A15c8Cad73d9a4E);
   // uint protectionPeriod = token.protectionPeriod;
    bytes memory data =
      abi.encodeWithSelector(bytes4(keccak256('removeTokenTimeProtection(address,uint256)')),_address, _amount);
    uint256 callCost = 200000*1e9 + aion.serviceFee();
-   //aion.ScheduleCall.value(callCost)( block.number+15, address(this), value, gaslimit, gasprice, hex"00", time_or_block);
+ //    aion.ScheduleCall.value(callCost)( block.number+15, address(this), value, gaslimit, gasprice, hex"00", time_or_block);
   }
 
   function disburseOnAccept(bytes32 _id) public onlyOwner returns (bool) {
@@ -204,7 +208,7 @@ contract GoalEscrow is Ownable  {
     uint256 suggesterProtectAmount = suggesterBondRefundAmount.add(rewardAmount); 
     token.timeProtectTokens(payee, suggesterProtectAmount); 
    //start protection clock    
-    //schedule_removeTokenTimeProtection(payee, suggesterProtectAmount);    
+//    schedule_removeTokenTimeProtection(payee, suggesterProtectAmount);    
     // return owner bond 
     uint256 ownerBondRefundAmount = suggestedSteps[_id].ownerBond;
     require(token.balanceOf(address(this)) >= ownerBondRefundAmount, "Broken: Contract can't afford to refund owner bond!"); 
@@ -213,9 +217,9 @@ contract GoalEscrow is Ownable  {
     token.transfer(goalOwner, ownerBondRefundAmount);
     emit Withdrawn(goalOwner, ownerBondRefundAmount);
     //protect owner tokens 
-    token.timeProtectTokens(msg.sender, ownerProtectAmount);
+    token.timeProtectTokens(goalOwner, ownerProtectAmount);
     //start protection clock    
-   // schedule_removeTokenTimeProtection(msg.sender, ownerProtectAmount);
+ //   schedule_removeTokenTimeProtection(msg.sender, ownerProtectAmount);
   }
 
 	//** REJECT STEP || Contract returns bonds **// 
@@ -231,11 +235,11 @@ contract GoalEscrow is Ownable  {
     //protect suggester return bond
     token.timeProtectTokens(payee, suggesterProtectAmount);
     //start protection clock
-    //schedule_removeTokenTimeProtection(payee, suggesterProtectAmount);    
+  //  schedule_removeTokenTimeProtection(payee, suggesterProtectAmount);    
    //return owner bond
     uint256 ownerBondRefundAmount = suggestedSteps[_id].ownerBond;
     require(token.balanceOf(address(this)) >= ownerBondRefundAmount,"Broken: contract can't afford to refund owner bond!"); 
-    uint256 ownerProtectAmount = ownerBondRefundAmount; 
+// no protect *  uint256 ownerProtectAmount = ownerBondRefundAmount; 
     suggestedSteps[_id].ownerBond = 0;
     bondFunds = bondFunds.add(ownerBondRefundAmount); 
 // no transfer * token.transfer(, ownerBondRefundAmount);
