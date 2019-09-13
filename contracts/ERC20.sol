@@ -2,7 +2,8 @@ pragma solidity ^0.5.0;
 
 import "./IERC20.sol";
 import "./SafeMath.sol";
-import "./ProtectionPeriod.sol";
+import "./Protected.sol";
+import "./Restricted.sol";
 
 /**
  * @dev Implementation of the `IERC20` interface.
@@ -31,17 +32,17 @@ import "./ProtectionPeriod.sol";
 
 
 
-contract ERC20 is ProtectionPeriod, IERC20   {
+contract ERC20 is Protected(30), Restricted, IERC20   {
     using SafeMath for uint256;
 
-    mapping (address => uint256) private _balances;
+    mapping (address => uint256) internal _balances;
 
-    mapping (address => mapping (address => uint256)) private _allowances;
+    mapping (address => mapping (address => uint256)) internal _allowances;
 
-    uint256 private _totalSupply;
+    uint256 internal  _totalSupply;
 
-    constructor(uint256 _protectionPeriod) ProtectionPeriod(_protectionPeriod) public  {
-    }
+    /*constructor(uint256 _protectionPeriod) ProtectionPeriod(_protectionPeriod) public  {
+    }*/
 
     /**
      * @dev See `IERC20.totalSupply`.
@@ -65,7 +66,7 @@ contract ERC20 is ProtectionPeriod, IERC20   {
      * - `recipient` cannot be the zero address.
      * - the caller must have a balance of at least `amount`.
      */
-    function transfer(address recipient, uint256 amount) public checkProtectedTokens (amount)  returns (bool) {
+    function transfer(address recipient, uint256 amount) public checkProtectedTokens (amount) checkRestrictedTokens(amount, recipient)  returns (bool) {
         _transfer(msg.sender, recipient, amount);
         return true;
     }
@@ -84,7 +85,7 @@ contract ERC20 is ProtectionPeriod, IERC20   {
      *
      * - `spender` cannot be the zero address.
      */
-    function approve(address spender, uint256 value) public returns (bool) {
+    function approve(address spender, uint256 value) checkProtectedTokens (value) checkRestrictedTokens(value, spender) public returns (bool) {
         _approve(msg.sender, spender, value);
         return true;
     }
@@ -101,7 +102,7 @@ contract ERC20 is ProtectionPeriod, IERC20   {
      * - the caller must have allowance for `sender`'s tokens of at least
      * `amount`.
      */
-    function transferFrom(address sender, address recipient, uint256 amount) public checkProtectedTokens (amount) returns (bool) {
+    function transferFrom(address sender, address recipient, uint256 amount) public checkProtectedTokens (amount) checkRestrictedTokens(amount, recipient)  returns (bool) {
         _transfer(sender, recipient, amount);
         _approve(sender, msg.sender, _allowances[sender][msg.sender].sub(amount));
         return true;
@@ -157,7 +158,7 @@ contract ERC20 is ProtectionPeriod, IERC20   {
      * - `recipient` cannot be the zero address.
      * - `sender` must have a balance of at least `amount`.
      */
-    function _transfer(address sender, address recipient, uint256 amount) internal checkProtectedTokens (amount) {
+    function _transfer(address sender, address recipient, uint256 amount) internal checkProtectedTokens (amount) checkRestrictedTokens(amount, recipient) {
         require(sender != address(0), "ERC20: transfer from the zero address");
         require(recipient != address(0), "ERC20: transfer to the zero address");
 	if (amountProtected(sender) > 0) {
@@ -182,6 +183,7 @@ contract ERC20 is ProtectionPeriod, IERC20   {
 
         _totalSupply = _totalSupply.add(amount);
         _balances[account] = _balances[account].add(amount);
+        this.setRestrictedTokens(account, amount);	
         emit Transfer(address(0), account, amount);
     }
 
@@ -217,7 +219,7 @@ contract ERC20 is ProtectionPeriod, IERC20   {
      * - `owner` cannot be the zero address.
      * - `spender` cannot be the zero address.
      */
-    function _approve(address owner, address spender, uint256 value) internal {
+    function _approve(address owner, address spender, uint256 value) checkProtectedTokens(value) checkRestrictedTokens (value, spender) internal {
         require(owner != address(0), "ERC20: approve from the zero address");
         require(spender != address(0), "ERC20: approve to the zero address");
 

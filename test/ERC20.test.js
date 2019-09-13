@@ -15,7 +15,8 @@ const {
 const ERC20Mock = artifacts.require('ERC20Mock');
 
 contract('ERC20', function ([_, initialHolder, recipient, anotherAccount]) {
-  const initialSupply = new BN(100);
+  //const initialSupply = new BN(100);
+   const initialSupply = 100;
 
   beforeEach(async function () {
     this.token = await ERC20Mock.new(initialHolder, initialSupply, 0);

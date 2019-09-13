@@ -1,14 +1,14 @@
 pragma solidity ^0.5.0; 
 
-
 import "./SafeMath.sol";
 import "./ERC20.sol";
-//import "./SafeERC20.sol";
 import "./Ownable.sol";
 import "./Address.sol";
+import "./GoalOwnerRole.sol";
+import "./AionRole.sol";
+import "./EscrowRole.sol";
 
 // interface Aion
-
 contract Aion {
  //using SafeERC20 for ERC20;
  
@@ -19,7 +19,7 @@ contract Aion {
       payable returns (uint, address);
 }
 
-contract GoalEscrow is Ownable  {
+contract GoalEscrow is GoalOwnerRole, AionRole, EscrowRole  {
   using SafeMath for uint256;
  // using SafeERC20 for ERC20;
  
@@ -44,7 +44,6 @@ contract GoalEscrow is Ownable  {
   uint256 public rewardAmount;
   uint256 public ownerBondAmount; 
   uint256 public suggestionDuration;
-    
   
   ERC20 public token;
   Aion aion;
@@ -57,6 +56,7 @@ contract GoalEscrow is Ownable  {
     rewardAmount = 1;
     ownerBondAmount = 1;
     suggestionDuration = _suggestionDuration;
+    _token._addEscrowRole(address(this));
  } 
  
   // -- can't do a transfer and update without the the escrow contract recieving the call and checking that it got the tokens
@@ -65,32 +65,21 @@ contract GoalEscrow is Ownable  {
    token.approve(address(this), totalToApprove);
  }*/  
 
-  function fundEscrow(uint _amountBond, uint _amountReward) public {
+  function fundEscrow(uint _amountBond, uint _amountReward) public onlyGoalOwner {
    bondFunds = bondFunds.add(_amountBond); 
    token.transferFrom(msg.sender, address(this), _amountBond);
    rewardFunds = rewardFunds.add(_amountReward);
    token.transferFrom(msg.sender, address(this), _amountReward);
+   token.unsetRestrictedTokens(msg.sender, _amountBond.add(_amountReward));
+ //  token._addEscrowRole(address(this));
   } 
 
 /*   ERC20Mock.approve(address(this), _amount); */
  
 	         //** SUGGEST **//
                   /*only suggester*/
-  function depositOnSuggestTestVersion(bytes32 _id, uint _amount, address _payee) public  {
-    require(_id.length == 25);
-    //set suggester bond
-    suggestedSteps[_id].suggesterBond = suggestedSteps[_id].suggesterBond.add(_amount);
-    token.transferFrom(msg.sender, address(this), _amount); 
-    emit Deposited(_payee, _amount); 
-    //apply owner bond
-    require(bondFunds >= ownerBondAmount, "Owner has insufficient bond funds");
-    bondFunds = bondFunds.sub(ownerBondAmount);  
-    suggestedSteps[_id].ownerBond = suggestedSteps[_id].ownerBond.add(ownerBondAmount);
-    suggestedSteps[_id].suggester = msg.sender;
-    setSuggestionTimeOutTestVersion(_id);
-  }
 
-  function depositOnSuggest(bytes32 _id, uint _amount, address _payee) public  {
+  function depositOnSuggest(bytes32 _id, uint _amount, address _payee) public notGoalOwner {
     //set suggester address
     suggestedSteps[_id].suggester = msg.sender;
     //set suggester bond
@@ -103,6 +92,7 @@ contract GoalEscrow is Ownable  {
     suggestedSteps[_id].ownerBond = suggestedSteps[_id].ownerBond.add(ownerBondAmount);
     suggestedSteps[_id].suggester = msg.sender;
     setSuggestionTimeOut(_id);
+    token.unsetRestrictedTokens(msg.sender, _amount);
   }
 
   function setSuggestionTimeOutTestVersion(bytes32 _id) public {
@@ -114,7 +104,7 @@ contract GoalEscrow is Ownable  {
    // schedule_returnBondsOnTimeOut(_id, timeNow.add(timeOUt));
   }
 
-  function setSuggestionTimeOut(bytes32 _id) public {
+  function setSuggestionTimeOut(bytes32 _id) private {
     uint256 timeNow = block.timestamp;
     suggestedSteps[_id].timeSuggested = timeNow;
     emit TimeNow(timeNow);
@@ -123,11 +113,11 @@ contract GoalEscrow is Ownable  {
     //schedule_returnBondsOnTimeOut(_id, timeNow.add(suggestionDuration));
 }
 
-  function checkForTimedOutSuggestions (bytes32 _id) public {
+  function checkForTimedOutSuggestions (bytes32 _id) internal {
       returnBondsOnTimeOut(_id);
       
   }
-  function schedule_returnBondsOnTimeOut(uint256 value, bytes32 _id, uint256 callTime, uint256 gasprice, uint256 gaslimit, uint256 time_or_block) public {
+  function schedule_returnBondsOnTimeOut(uint256 value, bytes32 _id, uint256 callTime, uint256 gasprice, uint256 gaslimit, uint256 time_or_block) internal {
    aion = Aion(0xFcFB45679539667f7ed55FA59A15c8Cad73d9a4E);
    bytes memory data = abi.encodeWithSelector(bytes4(keccak256('returnBondsOnTimeOut(bytes32 )')),_id);
    uint callCost = 200000*1e9 + aion.serviceFee();
@@ -136,7 +126,7 @@ contract GoalEscrow is Ownable  {
   }
 
 	//** TIME OUT -- Contract disburses reward and bonds **//
-  function returnBondsOnTimeOut(bytes32 _id) public {
+  function returnBondsOnTimeOut(bytes32 _id) public onlyAionRole {
     require(block.timestamp >= suggestedSteps[_id].suggestionExpires, "Escrow: current time is before release time");
     uint256 suggesterBondRefundAmount = suggestedSteps[_id].suggesterBond;
     require(token.balanceOf(address(this)) >= suggesterBondRefundAmount,"Requested Suggester Bond Refund is MORE than token balance of the contract");
@@ -178,7 +168,7 @@ contract GoalEscrow is Ownable  {
   }  
 
   function schedule_removeTokenTimeProtection (uint256 value, address _address, uint256 _amount, uint256 gasprice, uint256 gaslimit, uint256 time_or_block)
-   public {
+   private {
    aion = Aion(0xFcFB45679539667f7ed55FA59A15c8Cad73d9a4E);
   // uint protectionPeriod = token.protectionPeriod;
    bytes memory data =
@@ -187,7 +177,7 @@ contract GoalEscrow is Ownable  {
    //aion.ScheduleCall.value(callCost)( block.number+15, address(this), value, gaslimit, gasprice, hex"00", time_or_block);
   }
 
-  function disburseOnAccept(bytes32 _id) public onlyOwner returns (bool) {
+  function disburseOnAccept(bytes32 _id) public onlyGoalOwner returns (bool)  {
     uint256 suggesterBondRefundAmount = suggestedSteps[_id].suggesterBond;
     require(token.balanceOf(address(this)) >= suggesterBondRefundAmount, "Broken: Contract can't afford to refund suggester bond!");
     //return suggester bond
@@ -219,7 +209,7 @@ contract GoalEscrow is Ownable  {
   }
 
 	//** REJECT STEP || Contract returns bonds **// 
-  function returnBondsOnReject(bytes32 _id) public onlyOwner returns (bool) {
+  function returnBondsOnReject(bytes32 _id) public onlyGoalOwner returns (bool) {
     //return suggester bond
     uint256 suggesterBondRefundAmount = suggestedSteps[_id].suggesterBond;
     require(token.balanceOf(address(this)) >= suggesterBondRefundAmount,"Broken: contract can't afford to refund suggester bond!");
