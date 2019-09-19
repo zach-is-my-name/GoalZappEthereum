@@ -11,7 +11,7 @@ contract GoalOwnerRole is Context {
     Roles.Role private _goalOwners;
 
     constructor () internal {
-        _addGoalOwner(_msgSender());
+     //   _addGoalOwner(_msgSender());
     }
 
     modifier onlyGoalOwner() {

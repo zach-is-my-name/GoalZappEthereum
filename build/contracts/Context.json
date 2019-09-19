@@ -96,7 +96,7 @@
                       "name": "msg",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 6519,
+                      "referencedDeclaration": 5766,
                       "src": "867:3:5",
                       "typeDescriptions": {
                         "typeIdentifier": "t_magic_message",
@@ -190,7 +190,7 @@
                     "name": "this",
                     "nodeType": "Identifier",
                     "overloadedDeclarations": [],
-                    "referencedDeclaration": 6535,
+                    "referencedDeclaration": 5782,
                     "src": "957:4:5",
                     "typeDescriptions": {
                       "typeIdentifier": "t_contract$_Context_$588",
@@ -210,7 +210,7 @@
                       "name": "msg",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 6519,
+                      "referencedDeclaration": 5766,
                       "src": "1097:3:5",
                       "typeDescriptions": {
                         "typeIdentifier": "t_magic_message",
@@ -378,7 +378,7 @@
                       "name": "msg",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 6519,
+                      "referencedDeclaration": 5766,
                       "src": "867:3:5",
                       "typeDescriptions": {
                         "typeIdentifier": "t_magic_message",
@@ -472,7 +472,7 @@
                     "name": "this",
                     "nodeType": "Identifier",
                     "overloadedDeclarations": [],
-                    "referencedDeclaration": 6535,
+                    "referencedDeclaration": 5782,
                     "src": "957:4:5",
                     "typeDescriptions": {
                       "typeIdentifier": "t_contract$_Context_$588",
@@ -492,7 +492,7 @@
                       "name": "msg",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 6519,
+                      "referencedDeclaration": 5766,
                       "src": "1097:3:5",
                       "typeDescriptions": {
                         "typeIdentifier": "t_magic_message",
@@ -584,8 +584,8 @@
     "version": "0.5.8+commit.23d335f2.Emscripten.clang"
   },
   "networks": {},
-  "schemaVersion": "3.0.15",
-  "updatedAt": "2019-09-12T01:28:43.739Z",
+  "schemaVersion": "3.0.16",
+  "updatedAt": "2019-09-18T20:04:07.188Z",
   "devdoc": {
     "methods": {}
   },

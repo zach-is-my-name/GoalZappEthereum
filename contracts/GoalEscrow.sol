@@ -48,16 +48,39 @@ contract GoalEscrow is GoalOwnerRole, AionRole, EscrowRole  {
   ERC20 public token;
   Aion aion;
 
-  constructor (ERC20 _token, uint256 _suggestionDuration) public {
+  /*constructor (ERC20 _token, uint256 _suggestionDuration) public {
     require(address(_token) != address(0));
     require(_suggestionDuration > 0, "_suggestionDuration must be greater than 0"); 
     token = _token;
-    goalOwner = msg.sender;
     rewardAmount = 1;
     ownerBondAmount = 1;
     suggestionDuration = _suggestionDuration;
     _token._addEscrowRole(address(this));
- } 
+ } */
+  
+  bool private _initializedMaster;
+  bool private _initializedNewGoal;
+
+  function initMaster (ERC20 _token, uint256 _suggestionDuration) public {
+    require(!_initializedMaster, "initMaster_ already called on the Escrow implementation contract");
+    require(address(_token) != address(0));
+    require(_suggestionDuration > 0, "_suggestionDuration must be greater than 0"); 
+    token = _token;
+    rewardAmount = 1;
+    ownerBondAmount = 1;
+    suggestionDuration = _suggestionDuration;
+    _token._addEscrowRole(address(this));
+    _addAionAddress();
+    _initializedMaster = true;
+  }
+ 
+  function newGoalInit(uint _amountBond, uint _amountReward) public {
+    require(!_initializedNewGoal, "newGoalInit has already been called on this instance"); 
+    _addGoalOwner(_msgSender());
+    goalOwner = msg.sender;
+    fundEscrow(_amountBond, _amountReward); 
+   _initializedNewGoal = true;
+  }
  
   // -- can't do a transfer and update without the the escrow contract recieving the call and checking that it got the tokens
  /* function deployAndApprove(uint _amountBond, uint _amountReward) public onlyOwner { 
