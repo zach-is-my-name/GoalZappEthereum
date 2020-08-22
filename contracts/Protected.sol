@@ -17,7 +17,7 @@ contract Protected is EscrowRole, AionRole {
         protectionPeriod = _protectionPeriod;
     }
 
-    modifier checkProtectedTokens (uint256 amount) {
+    modifier checkProtectedTokens(uint256 amount) {
       if (protectedTokens[msg.sender] > 0) {
         require (amount < protectedTokens[msg.sender], "your tokens are under protection period, check timeToLiftProtection() for time until you have tokens available, and/or check amountProtected to see how many of your tokens are currently under the protection period" );
       }

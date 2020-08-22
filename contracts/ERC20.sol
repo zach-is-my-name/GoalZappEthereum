@@ -66,7 +66,7 @@ contract ERC20 is Protected(30), Restricted, IERC20   {
      * - `recipient` cannot be the zero address.
      * - the caller must have a balance of at least `amount`.
      */
-    function transfer(address recipient, uint256 amount) public checkProtectedTokens (amount) checkRestrictedTokens(amount, recipient)  returns (bool) {
+    function transfer(address recipient, uint256 amount) checkProtectedTokens(amount) checkRestrictedTokens(amount, recipient) public returns (bool) {
         _transfer(msg.sender, recipient, amount);
         return true;
     }
@@ -85,7 +85,7 @@ contract ERC20 is Protected(30), Restricted, IERC20   {
      *
      * - `spender` cannot be the zero address.
      */
-    function approve(address spender, uint256 value) checkProtectedTokens (value) checkRestrictedTokens(value, spender) public returns (bool) {
+    function approve(address spender, uint256 value) checkProtectedTokens(value) checkRestrictedTokens(value, spender) public returns (bool) {
         _approve(msg.sender, spender, value);
         return true;
     }
@@ -102,7 +102,7 @@ contract ERC20 is Protected(30), Restricted, IERC20   {
      * - the caller must have allowance for `sender`'s tokens of at least
      * `amount`.
      */
-    function transferFrom(address sender, address recipient, uint256 amount) public checkProtectedTokens (amount) checkRestrictedTokens(amount, recipient)  returns (bool) {
+    function transferFrom(address sender, address recipient, uint256 amount) checkProtectedTokens (amount) checkRestrictedTokens(amount, recipient) public returns (bool) {
         _transfer(sender, recipient, amount);
         _approve(sender, msg.sender, _allowances[sender][msg.sender].sub(amount));
         return true;
@@ -158,7 +158,7 @@ contract ERC20 is Protected(30), Restricted, IERC20   {
      * - `recipient` cannot be the zero address.
      * - `sender` must have a balance of at least `amount`.
      */
-    function _transfer(address sender, address recipient, uint256 amount) internal checkProtectedTokens (amount) checkRestrictedTokens(amount, recipient) {
+    function _transfer(address sender, address recipient, uint256 amount) checkProtectedTokens(amount) checkRestrictedTokens(amount, recipient) internal {
         require(sender != address(0), "ERC20: transfer from the zero address");
         require(recipient != address(0), "ERC20: transfer to the zero address");
 	if (amountProtected(sender) > 0) {

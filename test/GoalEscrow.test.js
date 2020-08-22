@@ -15,10 +15,10 @@ const startPoolBalance = new BN(web3.utils.toWei(".03359789"))
 const suggestionDuration = new BN(10);
 const protectionPeriod = new BN(30); 
 
-const ownerBondDepositAmount = new BN(10);
-const suggesterBondAmount = new BN(5);
-const rewardDepositAmount = new BN(10); 
-const totalAmountOwnerDeposit = new BN(20); 
+const ownerBondDepositAmount = new BN(web3.utils.toWei("10"));
+const suggesterBondAmount = new BN(web3.utils.toWei("5"));
+const rewardDepositAmount = new BN(web3.utils.toWei("10")); 
+const totalAmountOwnerDeposit = new BN(web3.utils.toWei("20")); 
 
 const id = web3.utils.utf8ToHex('cjorlslvv0fcz01119bgpvvmr')
 
@@ -32,8 +32,8 @@ contract('Escrow', function([master, owner, suggester]) {
   beforeEach(async function() {
     this.tokenSystem = await GoalZappTokenSystem.new();
     await this.tokenSystem.initialize({value: startPoolBalance, from: master});
-    await this.tokenSystem.buy({value: 1, from: owner})
-    await this.tokenSystem.buy({value: 1, from: suggester})
+    await this.tokenSystem.buy({value: web3.utils.toWei("1"), from: owner})
+    await this.tokenSystem.buy({value: web3.utils.toWei("1"), from: suggester})
     this.implementation = await GoalEscrowTestVersion.new();
     this.factory = await ProxyFactory.new(this.implementation.address, this.tokenSystem.address)    
 
@@ -194,12 +194,15 @@ function shouldBehaveLikeGoalEscrow (errorPrefix, master, owner, suggester) {
               let rewardAmount = await this.proxiedEscrow.rewardAmount();
 	      //console.log('reward amount ', rewardAmount.toString());
 	      let amountProtected = await this.tokenSystem.amountProtected(suggester)  
-             // console.log('amount protected', amountProtected.toString()); 
-	      //console.log('suggester bond amount', suggesterBondAmount.toString());
+              //console.log('amount protected', amountProtected.toString()); 
+	     // console.log('suggester bond amount', suggesterBondAmount.toString());
               expect(amountProtected).to.be.bignumber.equal(suggesterBondAmount.add(rewardAmount)); 
 	    })
             it('reverts when suggester attempts to transfer tokens under protection', async function() {
-	      await expectRevert.unspecified(this.tokenSystem.transfer(owner, 60, {from: suggester}));
+	      let amountProtected = await this.tokenSystem.amountProtected(suggester)  
+	      console.log('amount protected', web3.utils.fromWei(amountProtected.toString())); 
+	      console.log('amount to transfer', 60) 
+	      await expectRevert.unspecified(this.tokenSystem.transfer(owner, amountProtected, {from: suggester}));
             }) 
 	    it('protects owner tokens', async function() {
 	      expect(await this.tokenSystem.amountProtected(owner)).to.be.bignumber.equal(await this.proxiedEscrow.ownerBondAmount())
