@@ -5,7 +5,7 @@ const ProxyFactory = artifacts.require("ProxyFactory");
 
 module.exports = function(deployer) {
   deployer.deploy(GoalZappTokenSystem); 
-  deployer.deploy(GoalEscrowTestVersion).then(function () {
+  deployer.deploy(GoalEscrow).then(function () {
     return deployer.deploy(ProxyFactory, GoalEscrow.address, GoalZappTokenSystem.address)
   });
   };
