@@ -16,11 +16,12 @@ const ERC20Mock = artifacts.require('ERC20Mock');
 
 contract('ERC20', function ([_, initialHolder, recipient, anotherAccount]) {
   //const initialSupply = new BN(100);
-   const initialSupply = 1000;
+   const initialSupply = web3.utils.toWei("1000");
 
   beforeEach(async function () {
     this.token = await ERC20Mock.new(initialHolder, initialSupply);
   });
+
 
   shouldBehaveLikeERC20('ERC20', initialSupply, initialHolder, recipient, anotherAccount);
 
@@ -29,7 +30,7 @@ contract('ERC20', function ([_, initialHolder, recipient, anotherAccount]) {
   describe('decrease allowance', function () {
     describe('when the spender is not the zero address', function () {
       const spender = recipient;
-      const amount = 2
+      const amount = new BN(web3.utils.toWei("2"))
       function shouldDecreaseApproval (amount) {
         describe('when there was no approved amount before', function () {
           it('reverts', async function () {
@@ -40,8 +41,7 @@ contract('ERC20', function ([_, initialHolder, recipient, anotherAccount]) {
         });
 
         describe('when the spender had an approved amount', function () {
-          const approvedAmount = amount;
-
+          const approvedAmount = new BN(web3.utils.toWei("2"));
           beforeEach(async function () {
             ({ logs: this.logs } = await this.token.approve(spender, approvedAmount, { from: initialHolder }));
           });
@@ -57,11 +57,11 @@ contract('ERC20', function ([_, initialHolder, recipient, anotherAccount]) {
           });
 
           it('decreases the spender allowance subtracting the requested amount', async function () {
-            await this.token.decreaseAllowance(spender, (new BN(approvedAmount)).subn(1), { from: initialHolder });
-
-            expect(await this.token.allowance(initialHolder, spender)).to.be.bignumber.equal('1');
+             
+            await this.token.decreaseAllowance(spender, web3.utils.toWei("1"), { from: initialHolder });
+            expect((await this.token.allowance(initialHolder, spender))).to.be.bignumber.equal(web3.utils.toWei("1"));
           });
-
+ 
           it('sets the allowance to zero when all allowance is removed', async function () {
             await this.token.decreaseAllowance(spender, approvedAmount, { from: initialHolder });
             expect(await this.token.allowance(initialHolder, spender)).to.be.bignumber.equal('0');
@@ -83,7 +83,7 @@ contract('ERC20', function ([_, initialHolder, recipient, anotherAccount]) {
       });
 
       describe('when the sender does not have enough balance', function () {
-        const amount = initialSupply + 1;
+        const amount = initialSupply + web3.utils.toWei("1");
 
         shouldDecreaseApproval(amount);
       });
@@ -128,19 +128,18 @@ contract('ERC20', function ([_, initialHolder, recipient, anotherAccount]) {
 
         describe('when the spender had an approved amount', function () {
           beforeEach(async function () {
-            await this.token.approve(spender, new BN(1), { from: initialHolder });
+            await this.token.approve(spender, amount, { from: initialHolder });
           });
 
           it('increases the spender allowance adding the requested amount', async function () {
-            await this.token.increaseAllowance(spender, amount, { from: initialHolder });
-
-            expect(await this.token.allowance(initialHolder, spender)).to.be.bignumber.equal((new BN(amount)).addn(1));
+            await this.token.increaseAllowance(spender, web3.utils.toWei("1"), { from: initialHolder });
+            expect(await this.token.allowance(initialHolder, spender)).to.be.bignumber.equal(new BN(amount).add(new BN(web3.utils.toWei("1"))));
           });
         });
       });
 
       describe('when the sender does not have enough balance', function () {
-        const amount = initialSupply + 1;
+        const amount = initialSupply + web3.utils.toWei("1");
 
         it('emits an approval event', async function () {
           const { logs } = await this.token.increaseAllowance(spender, amount, { from: initialHolder });
@@ -162,13 +161,13 @@ contract('ERC20', function ([_, initialHolder, recipient, anotherAccount]) {
 
         describe('when the spender had an approved amount', function () {
           beforeEach(async function () {
-            await this.token.approve(spender, new BN(1), { from: initialHolder });
+            await this.token.approve(spender, new BN(web3.utils.toWei("1")), { from: initialHolder });
           });
 
           it('increases the spender allowance adding the requested amount', async function () {
             await this.token.increaseAllowance(spender, amount, { from: initialHolder });
 
-            expect(await this.token.allowance(initialHolder, spender)).to.be.bignumber.equal((new BN(amount)).addn(1));
+            expect(await this.token.allowance(initialHolder, spender)).to.be.bignumber.equal((new BN(amount)).add(new BN(web3.utils.toWei("1"))));
           });
         });
       });
@@ -221,14 +220,14 @@ contract('ERC20', function ([_, initialHolder, recipient, anotherAccount]) {
 
   describe('_burn', function () {
     it('rejects a null account', async function () {
-      await expectRevert(this.token.burn(ZERO_ADDRESS, new BN(1)),
+      await expectRevert(this.token.burn(ZERO_ADDRESS, new BN(web3.utils.toWei("1"))),
         'ERC20: burn from the zero address');
     });
 
     describe('for a non zero account', function () {
       it('rejects burning more than balance', async function () {
         await expectRevert(this.token.burn(
-          initialHolder, (new BN(initialSupply)).addn(1)), 'SafeMath: subtraction overflow'
+          initialHolder, (new BN(initialSupply)).add(new BN(web3.utils.toWei("1")))), 'SafeMath: subtraction overflow'
         );
       });
 
@@ -240,8 +239,8 @@ contract('ERC20', function ([_, initialHolder, recipient, anotherAccount]) {
           });
 
           it('decrements totalSupply', async function () {
-            const expectedSupply = initialSupply - amount;
-            expect(await this.token.totalSupply()).to.be.bignumber.equal(new BN(expectedSupply));
+            const expectedSupply = new BN(initialSupply).sub(new BN(amount));
+            expect(await this.token.totalSupply()).to.be.bignumber.equal(expectedSupply);
           });
 
           it('decrements initialHolder balance', async function () {
@@ -261,12 +260,13 @@ contract('ERC20', function ([_, initialHolder, recipient, anotherAccount]) {
       };
 
       describeBurn('for entire balance', initialSupply);
-      describeBurn('for less amount than balance', initialSupply - 1);
+      console.log("dinitialSupply",initialSupply) 
+      describeBurn('for less amount than balance',( new BN(initialSupply).sub(new BN(1))));
     });
   });
 
   describe('_burnFrom', function () {
-    const allowance = new BN(70);
+    const allowance = new BN(web3.utils.toWei("70"));
 
     const spender = anotherAccount;
 
@@ -275,20 +275,20 @@ contract('ERC20', function ([_, initialHolder, recipient, anotherAccount]) {
     });
 
     it('rejects a null account', async function () {
-      await expectRevert(this.token.burnFrom(ZERO_ADDRESS, new BN(1)),
+      await expectRevert(this.token.burnFrom(ZERO_ADDRESS, new BN(web3.utils.toWei("1"))),
         'ERC20: burn from the zero address'
       );
     });
 
     describe('for a non zero account', function () {
       it('rejects burning more than allowance', async function () {
-        await expectRevert(this.token.burnFrom(initialHolder, allowance.addn(1)),
+        await expectRevert(this.token.burnFrom(initialHolder, allowance.add(new BN(web3.utils.toWei("1")))),
           'SafeMath: subtraction overflow'
         );
       });
 
       it('rejects burning more than balance', async function () {
-        await expectRevert(this.token.burnFrom(initialHolder, (new BN(initialSupply)).addn(1)),
+        await expectRevert(this.token.burnFrom(initialHolder, (new BN(initialSupply)).add(new BN(web3.utils.toWei("1")))),
           'SafeMath: subtraction overflow'
         );
       });
@@ -368,3 +368,5 @@ contract('ERC20', function ([_, initialHolder, recipient, anotherAccount]) {
     }); 
   });
 });
+
+

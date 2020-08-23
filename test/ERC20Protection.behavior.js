@@ -30,15 +30,15 @@ function shouldBehaveLikeERC20Protection(errorPrefix, initialSupply, initialHold
 	this.id = web3.utils.utf8ToHex('cjorlslvv0fcz01119bgpvvmt')
 	this.escrow = await GoalEscrowTestVersion.new(); 
 	await this.escrow.initMaster(this.token.address, 30);
-	await this.token.mint(anotherAccount, 50);
+	await this.token.mint(anotherAccount, web3.utils.toWei("50"));
 	//let restrictedTokensGoalOwner = await this.token.restrictedTokens(initialHolder);
 	//let restrictedTokensSuggester = await this.token.restrictedTokens(anotherAccount);
 	//console.log('Restricted Tokens Goal Owner: ', restrictedTokensGoalOwner.toString())
 	//console.log('Restricted Tokens Suggester: ', restrictedTokensSuggester.toString())
-	await this.token.approve(this.escrow.address, 50, {from: initialHolder});
-	await this.token.approve(this.escrow.address, 50, {from: anotherAccount});
-	await this.escrow.newGoalInitAndFund(this.token.address, 30, 25, 25, {from: initialHolder});
-	await this.escrow.depositOnSuggest(this.id, 5, {from:anotherAccount});
+	await this.token.approve(this.escrow.address, web3.utils.toWei("50"), {from: initialHolder});
+	await this.token.approve(this.escrow.address, web3.utils.toWei("50"), {from: anotherAccount});
+	await this.escrow.newGoalInitAndFund(this.token.address, 30, web3.utils.toWei("25"), web3.utils.toWei("25"), {from: initialHolder});
+	await this.escrow.depositOnSuggest(this.id, web3.utils.toWei("5"), {from:anotherAccount});
 	this.suggesterBond = (await this.escrow.suggestedSteps(this.id)).suggesterBond
 	await this.escrow.disburseOnAccept(this.id, {from:initialHolder});
       })
@@ -55,17 +55,17 @@ function shouldBehaveLikeERC20Protection(errorPrefix, initialSupply, initialHold
       })
     })  
   })
-
+ 
   describe('while account has tokens under protection', function() {
     beforeEach(async function () {
       this.id = web3.utils.utf8ToHex('cjorlslvv0fcz01119bgpvvmm')
       this.escrow = await GoalEscrowTestVersion.new(); 
       await this.escrow.initMaster(this.token.address, 30);
-      await this.token.mint(anotherAccount, 50);
-      await this.token.approve(this.escrow.address, 50, {from: initialHolder});
-      await this.escrow.newGoalInitAndFund(this.token.address, 30, 25, 25, {from:initialHolder});
-      await this.token.approve(this.escrow.address, 50, {from: anotherAccount});
-      await this.escrow.depositOnSuggest(this.id, 25,  {from: anotherAccount});
+      await this.token.mint(anotherAccount, web3.utils.toWei("50"));
+      await this.token.approve(this.escrow.address, web3.utils.toWei("50"), {from: initialHolder});
+      await this.escrow.newGoalInitAndFund(this.token.address, 30, web3.utils.toWei("25"), web3.utils.toWei("25"), {from:initialHolder});
+      await this.token.approve(this.escrow.address, web3.utils.toWei("50"), {from: anotherAccount});
+      await this.escrow.depositOnSuggest(this.id, web3.utils.toWei("25"),  {from: anotherAccount});
       await this.escrow.disburseOnAccept(this.id, {from:initialHolder});
       //await advanceTimeAndBlock(await this.escrow.returnBondsOnTimeOut(id));
     })
@@ -129,7 +129,6 @@ function shouldBehaveLikeERC20Protection(errorPrefix, initialSupply, initialHold
       })
       })
     });
-
   };
 
 

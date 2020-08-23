@@ -28,7 +28,7 @@ contract GoalEscrowTestVersion is GoalOwnerRole {
   event SuggestionExpires(uint256 expires);
   event SuggestedStepsSuggesterBond(uint Suggester_suggesterBond);
   event ReturnedToBondFunds(uint suggestedStepOwnerBond);
-
+  event debugWrapperIsAionAddress (bool callerAddress);
   mapping ( bytes32 => Suggester) public suggestedSteps;
 
   struct  Suggester {
@@ -189,7 +189,7 @@ contract GoalEscrowTestVersion is GoalOwnerRole {
   }
   
   function testVersionRemoveTokenProtectionWrapper(address user, uint256 amount) public {
-    //emit debugWrapperIsAionAddress(token.isAionAddress(msg.sender));
+    emit debugWrapperIsAionAddress(token.isAionAddress(msg.sender));
     token.removeTokenProtection(user, amount);
   }
 
