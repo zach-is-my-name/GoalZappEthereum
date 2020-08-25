@@ -32,7 +32,7 @@ import "./Restricted.sol";
 
 
 
-contract ERC20 is Protected(30), Restricted, IERC20   {
+contract ERC20 is Protected, Restricted, IERC20   {
     using SafeMath for uint256;
 
     mapping (address => uint256) internal _balances;

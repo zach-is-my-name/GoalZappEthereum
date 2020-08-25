@@ -1,7 +1,8 @@
-{[
+{"abi" : [
     {
       "inputs": [
         {
+          "internalType": "address",
           "name": "_implementation",
           "type": "address"
         }
@@ -11,15 +12,11 @@
       "type": "constructor"
     },
     {
-      "payable": true,
-      "stateMutability": "payable",
-      "type": "fallback"
-    },
-    {
       "anonymous": false,
       "inputs": [
         {
           "indexed": true,
+          "internalType": "address",
           "name": "implementation",
           "type": "address"
         }
@@ -28,11 +25,17 @@
       "type": "event"
     },
     {
+      "payable": true,
+      "stateMutability": "payable",
+      "type": "fallback"
+    },
+    {
       "constant": true,
       "inputs": [],
       "name": "implementation",
       "outputs": [
         {
+          "internalType": "address",
           "name": "impl",
           "type": "address"
         }

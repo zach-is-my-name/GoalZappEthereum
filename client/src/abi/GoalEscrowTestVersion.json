@@ -124,6 +124,19 @@
       "type": "event"
     },
     {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "bool",
+          "name": "callerAddress",
+          "type": "bool"
+        }
+      ],
+      "name": "debugWrapperIsAionAddress",
+      "type": "event"
+    },
+    {
       "constant": true,
       "inputs": [],
       "name": "bondFunds",

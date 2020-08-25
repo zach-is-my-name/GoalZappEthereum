@@ -1,65 +1,16 @@
 {
-"abi":[
+"abi":
+[
     {
-      "constant": true,
       "inputs": [
         {
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "name": "isProxy",
-      "outputs": [
-        {
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [],
-      "name": "implementation",
-      "outputs": [
-        {
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [
-        {
-          "name": "",
+          "internalType": "address",
+          "name": "_implementation",
           "type": "address"
         },
         {
-          "name": "",
-          "type": "bytes32"
-        }
-      ],
-      "name": "proxyAddresses",
-      "outputs": [
-        {
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "name": "_implementation",
+          "internalType": "contract ERC20",
+          "name": "_token",
           "type": "address"
         }
       ],
@@ -72,11 +23,13 @@
       "inputs": [
         {
           "indexed": true,
+          "internalType": "address",
           "name": "sender",
           "type": "address"
         },
         {
           "indexed": false,
+          "internalType": "address",
           "name": "proxy",
           "type": "address"
         }
@@ -85,9 +38,87 @@
       "type": "event"
     },
     {
+      "constant": true,
+      "inputs": [],
+      "name": "implementation",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "isProxy",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "name": "proxyAddresses",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "token",
+      "outputs": [
+        {
+          "internalType": "contract ERC20",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
       "constant": false,
       "inputs": [
         {
+          "internalType": "string",
           "name": "_goalName",
           "type": "string"
         }
@@ -95,6 +126,7 @@
       "name": "build",
       "outputs": [
         {
+          "internalType": "address payable",
           "name": "proxy",
           "type": "address"
         }
@@ -107,6 +139,7 @@
       "constant": true,
       "inputs": [
         {
+          "internalType": "string",
           "name": "_goalName",
           "type": "string"
         }
@@ -114,6 +147,7 @@
       "name": "hashedGoalName",
       "outputs": [
         {
+          "internalType": "bytes32",
           "name": "",
           "type": "bytes32"
         }
@@ -126,10 +160,12 @@
       "constant": true,
       "inputs": [
         {
+          "internalType": "string",
           "name": "_goalName",
           "type": "string"
         },
         {
+          "internalType": "address",
           "name": "_creator",
           "type": "address"
         }
@@ -137,6 +173,7 @@
       "name": "getProxyAddress",
       "outputs": [
         {
+          "internalType": "address",
           "name": "",
           "type": "address"
         }

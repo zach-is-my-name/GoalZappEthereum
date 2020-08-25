@@ -112,6 +112,31 @@ mutation updateStep(
   }
 }
 `
+const goalDocByIdQuery = gql `query GoalDocByIdQuery ($goalDocId: ID) {
+  goalDoc(id: $goalDocId) {
+   goal
+   id
+   steps(orderBy:positionIndex_ASC) {
+     items {
+     step
+     positionIndex
+     suggestedStep
+     id
+    }}
+   clonedSteps(orderBy:positionIndex_ASC) {
+     items {
+     positionIndex
+     id
+     suggestedStep
+     stepsId
+     suggester {
+       id
+       userName
+     }
+    }
+   }
+  }
+}`
 
 class AcceptNonPaybaleStep extends Component {
   constructor(props) {
@@ -161,14 +186,14 @@ class AcceptNonPaybaleStep extends Component {
 
         const _reorderSteps = (queryResult, stepType) => {
           if (stepType === "clonedStep") {
-            console.log("CLONEDSTEP queryResult: ", queryResult)
-            console.log("CLONEDSTEP queryResult LONG: ", queryResult.data.clonedStepsLi)
-
-            console.log("CLONEDSTEP  queryResult.data.clonedStepslist.items.map((stepObj, index) => ({...stepObj, positionIndex: index }))")
+            // console.log("CLONEDSTEP queryResult: ", queryResult)
+            // console.log("CLONEDSTEP queryResult LONG: ", queryResult.data.clonedStepsLi)
+            //
+            // console.log("CLONEDSTEP  queryResult.data.clonedStepslist.items.map((stepObj, index) => ({...stepObj, positionIndex: index }))")
           return queryResult.data.clonedStepsList.items.map((stepObj, index) => ({...stepObj, positionIndex: index }))
         } else {
-          console.log("STEP queryResult ", queryResult)
-          console.log("STEP  queryResult.data.stepslist.items.map((stepObj, index) => ({...stepObj, positionIndex: index }))")
+          // console.log("STEP queryResult ", queryResult)
+          // console.log("STEP  queryResult.data.stepslist.items.map((stepObj, index) => ({...stepObj, positionIndex: index }))")
           return queryResult.data.stepsList.items.map((stepObj, index) => ({...stepObj, positionIndex: index }))
         }
         }

@@ -98,10 +98,7 @@ class SuggestStepSmart extends Component {
     ProxiedGoalEscrow = new web3.eth.Contract(goalescrow.abi, this.props.proxyAddress)
 
     const bondFunds = web3.utils.fromWei((await ProxiedGoalEscrow.methods.bondFunds().call()))
-
-    console.log('bondFunds', bondFunds)
     let userTokenBalance = await GoalZappTokenSystem.methods.balanceOf(this.props.currentEthereumAccount).call()
-    console.log('userTokenBalance ', userTokenBalance  )
     this.setState({userTokenBalance})
   }
 
@@ -140,8 +137,10 @@ class SuggestStepSmart extends Component {
   }
 
   async _submitSuggestedStep(event) {
+    console.log("called")
     event.preventDefault()
     let userTokenBalance = await GoalZappTokenSystem.methods.balanceOf(this.props.currentEthereumAccount).call()
+    console.log("userTokenBalance ",userTokenBalance  )
     // console.log(this._reorderSteps(this.props.clonedStepIdQuery))
     if (this.props.loggedInUserId && userTokenBalance > 0) {
       let suggesterBond = window.prompt("Enter amout of tokens you'd like to send as bond to your suggestion. Upon resolution of your suggestion, this amount will become fully sendable and tradable without restriction.")
@@ -169,7 +168,7 @@ class SuggestStepSmart extends Component {
   } else if (!this.props.loggedInUserId && this.state.step) {
     //render create user; save step state; when create user resolves send mutation
     }
-    else if (userTokenBalance === 0 ) {
+    else if (userTokenBalance <= 0 ) {
       alert("you need to have some tokens to suggest a step.  the token is sent as a bond held in escrow.  when the goal owner takes action on the step, or time expires, you get what ever tokens you sent as bond sent back to your wallet")
     }
   }

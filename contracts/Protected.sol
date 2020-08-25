@@ -6,16 +6,19 @@ import "./AionRole.sol";
 
 contract Protected is EscrowRole, AionRole {
   using SafeMath for uint256;
-
-   uint256 public protectionPeriod;
+   
    mapping (address => uint256) public protectedTokens;
    event TransferChecked(string message);
-   event MSGSenderProtected(string message0, uint256 num, string message1, uint _amount, bool amountToSendGreaterThanZero);
    event Caller(address sender);
-   
-    constructor (uint256 _protectionPeriod) public {
-        protectionPeriod = _protectionPeriod;
-    }
+   uint256 public protectionPeriod;
+   bool private initializedProtectionPeriod;
+ 
+   function init() public {
+     require(!initializedProtectionPeriod, "Protection period already initialized");
+     protectionPeriod = 259200;    
+     initializedProtectionPeriod = true; 
+   }
+     
 
     modifier checkProtectedTokens(uint256 amount) {
       if (protectedTokens[msg.sender] > 0) {
@@ -29,10 +32,7 @@ contract Protected is EscrowRole, AionRole {
      // return true;
     }
 
-  /* this function's "onlyEscrowRole" exists only in this branch for ability to test (can't run Aion system locally).  In all other versions and branches t
-he onlyAionRole should be applied to restrict access to only the Aion contract which performs timed calls */
- 
-    function removeTokenProtection(address _address, uint256 _amount) public onlyEscrowRole returns (bool) {
+    function removeTokenProtection(address _address, uint256 _amount) public onlyAionRole returns (bool) {
       emit Caller(msg.sender);
       protectedTokens[_address] = protectedTokens[_address].sub(_amount);
       //return true;
@@ -40,7 +40,7 @@ he onlyAionRole should be applied to restrict access to only the Aion contract w
 
     function amountProtected (address _address) public view returns (uint256) {
      return protectedTokens[_address];
-   }
+    }
 
 
 }

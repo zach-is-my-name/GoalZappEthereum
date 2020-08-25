@@ -157,7 +157,6 @@ class ForeignStepWithButtons extends Component {
                 unrenderSuggestStepFunctiion={this.unrenderSuggestStep}
                 proxyAddress={this.props.proxyAddress}
                 currentEthereumAccount={this.props.currentEthereumAccount}
-                currentEthereumAccount={this.props.currentEthereumAccount}
               />
             </div>
             : null }
