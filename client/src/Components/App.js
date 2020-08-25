@@ -172,6 +172,7 @@ export class App extends React.PureComponent {
           setRewardsAmount = {this.setRewardsAmount}
           rewardsAmount = {this.state.rewardsAmount}
           proxyAddress = {this.state.proxyAddress}
+          currentEthereumAccount={this.state.currentEthereumAccount}
         />
           : null}
 
@@ -180,6 +181,7 @@ export class App extends React.PureComponent {
           setBondsAmount = {this.setBondsAmount}
           bondsAmount = {this.state.bondsAmount}
           proxyAddress = {this.state.proxyAddress}
+          currentEthereumAccount={this.state.currentEthereumAccount}
         />
           : null }
 

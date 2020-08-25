@@ -7,10 +7,7 @@ var Web3 = require('web3');
 var web3 = new Web3(Web3.givenProvider || "ws://localhost:8546");
 const BN = require("bn.js")
 let accounts = web3.eth.getAccounts()
-let selectedAddress;
 let etherBalanceFromWei;
-// console.log(goalzapptokensystem)
-// console.log(window)
 const GoalZappTokenSystem = new web3.eth.Contract(goalzapptokensystem.abi, DeployedAddress.GOALZAPPTOKENSYSTEM )
 
 class BuyTokens extends React.Component  {
@@ -48,9 +45,9 @@ class BuyTokens extends React.Component  {
     //event.preventDefault()
     if (etherBalanceFromWei > etherToSend) {
       etherToSend = etherToSend.toString()
-      let result = await GoalZappTokenSystem.methods.buy().send({from: window.ethereum.selectedAddress, value: Web3.utils.toWei(etherToSend) })
+      let result = await GoalZappTokenSystem.methods.buy().send({from: this.props.currentEthereumAccount, value: Web3.utils.toWei(etherToSend) })
       console.log(result)
-      let tokenBalance = web3.utils.fromWei(await GoalZappTokenSystem.methods.balanceOf(window.ethereum.selectedAddress).call())
+      let tokenBalance = web3.utils.fromWei(await GoalZappTokenSystem.methods.balanceOf(this.props.currentEthereumAccount).call())
       this.props.setUserTokenBalance(tokenBalance)
 
     } else {
@@ -180,8 +177,6 @@ class BuyTokens extends React.Component  {
 
 
   async componentDidMount() {
-    const accounts = await window.ethereum.request({ method: 'eth_accounts' })
-    selectedAddress = window.ethereum.selectedAddress;
     try {
     etherBalanceFromWei = web3.utils.fromWei(await web3.eth.getBalance(accounts[0]))
   } catch (error) {

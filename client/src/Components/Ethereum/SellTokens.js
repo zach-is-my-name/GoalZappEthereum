@@ -7,7 +7,6 @@ var Web3 = require('web3');
 var web3 = new Web3(Web3.givenProvider || "ws://localhost:8546");
 const BN = require("bn.js")
 let accounts = web3.eth.getAccounts()
-let selectedAddress;
 let tokenBalanceInWei;
 let protectedTokens
 // console.log(goalzapptokensystem)

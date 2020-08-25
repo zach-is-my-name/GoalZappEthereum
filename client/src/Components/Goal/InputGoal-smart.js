@@ -12,7 +12,6 @@ import {minutesToSeconds} from '../../Utils/Utils.js'
 var Web3 = require('web3');
 var web3 = new Web3(Web3.givenProvider || "ws://localhost:8546");
 let accounts = web3.eth.getAccounts()
-let selectedAddress;
 let proxyAddress;
 const GoalZappTokenSystem = new web3.eth.Contract(goalzapptokensystem.abi, DeployedAddress.GOALZAPPTOKENSYSTEM)
 let ProxiedGoalEscrow
@@ -63,12 +62,11 @@ const GoalDocQuery = gql `query goalDocsListQuery ($targetUserId: ID) {
         ProxiedGoalEscrow = new web3.eth.Contract(goalescrow.abi, this.state.proxyAddress)
         if (window.confirm("You've created a goal... would you like to fund it now?")) {
           await this.initAndFundGoal()
-          //const initReciept = await ProxiedGoalEscrow.methods.newGoalInit(DeployedAddress.GOALZAPPTOKENSYSTEM, minutesToSeconds(3)).send({from:this.props.currentAccount})
-          let userTokenBalance = await GoalZappTokenSystem.methods.balanceOf(window.ethereum.selectedAddress).call()
+          let userTokenBalance = await GoalZappTokenSystem.methods.balanceOf(this.props.currentEthereumAccount).call()
           await this.postInputGoal(this.state.goal, this.state.proxyAddress)
           this.setState({proxyAddress: ""})
         } else {
-          const initReciept = await ProxiedGoalEscrow.methods.newGoalInit(DeployedAddress.GOALZAPPTOKENSYSTEM, minutesToSeconds(3)).send({from:this.props.currentAccount})
+          const initReciept = await ProxiedGoalEscrow.methods.newGoalInit(DeployedAddress.GOALZAPPTOKENSYSTEM).send({from:this.props.currentAccount})
           let userTokenBalance = web3.utils.fromWei((await GoalZappTokenSystem.methods.balanceOf(this.state.currentAccount).call()))
           this.props.setUserTokenBalance(userTokenBalance)
           await this.postInputGoal(this.state.goal, this.state.proxyAddress)
@@ -144,7 +142,7 @@ async initAndFundGoal() {
             //console.log("approvalReciept", approvalReciept)
              // console.log('minutesToSeconds', minutesToSeconds(2))
             try {
-            const initAndFundReciept = await ProxiedGoalEscrow.methods.newGoalInitAndFund(DeployedAddress.GOALZAPPTOKENSYSTEM, minutesToSeconds(2), web3.utils.toWei(bondFunds.toString()), web3.utils.toWei(rewardFunds.toString())).send({from:this.props.currentAccount})
+            const initAndFundReciept = await ProxiedGoalEscrow.methods.newGoalInitAndFund(DeployedAddress.GOALZAPPTOKENSYSTEM, web3.utils.toWei(bondFunds.toString()), web3.utils.toWei(rewardFunds.toString())).send({from:this.props.currentAccount})
              console.log("initAndFundReciept", initAndFundReciept)
            } catch (err) {console.log(err)}
       }

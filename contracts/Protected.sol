@@ -7,10 +7,8 @@ import "./AionRole.sol";
 contract Protected is EscrowRole, AionRole {
   using SafeMath for uint256;
 
-   uint256 public protectionPeriod;
    mapping (address => uint256) public protectedTokens;
    event TransferChecked(string message);
-   event MSGSenderProtected(string message0, uint256 num, string message1, uint _amount, bool amountToSendGreaterThanZero);
    event Caller(address sender);
    
     constructor (uint256 _protectionPeriod) public {

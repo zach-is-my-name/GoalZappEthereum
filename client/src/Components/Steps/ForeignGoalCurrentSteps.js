@@ -78,7 +78,7 @@ class ForeignGoalCurrentSteps extends Component {
           suggestersIndex={this.props.suggestersIndex}
           selectedSuggesterName={this.props.selectedSuggesterName}
           proxyAddress={this.props.proxyAddress}
-          currentEthereumAccount={window.ethereum.selectedAddress}
+          currentEthereumAccount={this.props.currentEthereumAccount}
           currentEthereumAccount={this.props.currentEthereumAccount}
         />
       </div>

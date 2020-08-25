@@ -145,21 +145,6 @@ class CurrentStepsSmart extends Component {
                  </div>
                 )
               }
-            /*
-                <OwnGoalCurrentSteps
-                  proxyAddress={goalDoc.proxyAddress}
-                  randomColorStep={this.props.randomColorStep}
-                  clonedSteps={clonedSteps || []}
-                  steps={steps || []}
-                  goalDocId={this.props.goalDocId}
-                  targetUserId={targetUserId}
-                  loggedInUserId={loggedInUserId}
-                  selectedSuggesterId={selectedSuggesterId}
-                  selectedSuggesterName={this.props.selectedSuggesterName}
-                  suggestersIndex={this.props.suggestersIndex}
-                  currentEthereumAccount={this.props.currentEthereumAccount}
-                  />
-                  */
               }
 
      // console.log("currentStepsSmart hit null")

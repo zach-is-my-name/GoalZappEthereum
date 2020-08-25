@@ -175,7 +175,7 @@ class UserFeedPage extends Component {
             loggedInUserId = {this.props.loggedInUserId}
             _setGoalDocIdOnCreate = {this._setGoalDocIdOnCreate}
             proxyAddress={this.state.proxyAddress}
-            currentEthereumAccount={window.ethereum.selectedAddress}
+            currentEthereumAccount={this.props.currentEthereumAccount}
             setProxyAddress={this.props.setProxyAddress}
             setUserTokenBalance={this.props.setUserTokenBalance}
             userTokenBalance={this.props.userTokenBalance}
