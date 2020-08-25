@@ -9,7 +9,6 @@ contract GoalZappBondingCurve is BondingCurve {
 uint256 public constant INITIAL_SUPPLY = 128 * (10 ** 18);
 uint32 public constant RESERVE_RATIO = 333333;
 uint256 public constant GAS_PRICE = 50 * (10 ** 10);
-uint256 public protectionPeriod;
 bool internal isInitialized;
 
   function initialize() public payable {
@@ -19,7 +18,6 @@ bool internal isInitialized;
     _mint(msg.sender, INITIAL_SUPPLY);
     isInitialized = true;
     //protectionPeriod = 3 days
-    protectionPeriod = 259200;    
   }
 }
 
