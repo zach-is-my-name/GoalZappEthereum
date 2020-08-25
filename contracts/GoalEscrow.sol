@@ -56,34 +56,33 @@ contract GoalEscrow is GoalOwnerRole, AionRole {
   bool private _initializedNewGoal;
 
   // serves as constructor; params are in flux for short term testing conveinience / long term features (reward/bond amounts, finalizized suggestion duration)
-  function initMaster(ERC20 _token, uint256 _suggestionDuration) public {
+  function initMaster(ERC20 _token) public {
     require(!_initializedMaster, "initMaster_ already called on the Escrow implementation contract");
     require(address(_token) != address(0), "token address cannot be zero");
-    require(_suggestionDuration > 0, "_suggestionDuration must be greater than 0"); 
     token = _token;
     rewardAmount = 1 ether;
     ownerBondAmount = 1 ether;
-    suggestionDuration = _suggestionDuration;
+    suggestionDuration = 259200;
     _token._addEscrowRole(address(this));
     _addAionAddress(0xFcFB45679539667f7ed55FA59A15c8Cad73d9a4E);
     self = address(this);
     _initializedMaster = true;
   }
  
-  function newGoalInit(ERC20 _token, uint256 _suggestionDuration) public {
+  function newGoalInit(ERC20 _token) public {
     require(!_initializedNewGoal, "newGoalInit has already been called on this instance"); 
     if (!_initializedMaster) {
-      initMaster(_token, _suggestionDuration);
+      initMaster(_token);
     }
     _addGoalOwner(msg.sender);
     goalOwner = msg.sender;
    _initializedNewGoal = true;
   }
   
-  function newGoalInitAndFund(ERC20 _token, uint256 _suggestionDuration, uint _amountBond, uint _amountReward) public {
+  function newGoalInitAndFund(ERC20 _token, uint _amountBond, uint _amountReward) public {
     require(!_initializedNewGoal, "newGoalInit has already been called on this instance"); 
     if (!_initializedMaster) {
-      initMaster(_token, _suggestionDuration);
+      initMaster(_token);
     }
     _addGoalOwner(msg.sender);
     goalOwner = msg.sender;
