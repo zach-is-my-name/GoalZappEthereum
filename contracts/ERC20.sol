@@ -161,9 +161,6 @@ contract ERC20 is Protected, Restricted, IERC20   {
     function _transfer(address sender, address recipient, uint256 amount) checkProtectedTokens(amount) checkRestrictedTokens(amount, recipient) internal {
         require(sender != address(0), "ERC20: transfer from the zero address");
         require(recipient != address(0), "ERC20: transfer to the zero address");
-	if (amountProtected(sender) > 0) {
-	require(amount < amountProtected(sender), "send amount > protected tokens"); 
-	}
         _balances[sender] = _balances[sender].sub(amount);
         _balances[recipient] = _balances[recipient].add(amount);
         emit Transfer(sender, recipient, amount);

@@ -1,9 +1,10 @@
 pragma solidity ^0.5.0;
 
-import "./ERC20.sol";
+//import "./ERC20.sol";
+import "./GoalZappTokenSystem.sol"; 
 
 // mock class using ERC20
-contract ERC20Mock is ERC20 {
+contract ERC20Mock is GoalZappTokenSystem {
     constructor (address initialAccount, uint256 initialBalance) public {
         _mint(initialAccount, initialBalance);
     }

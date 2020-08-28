@@ -13,18 +13,21 @@ contract Restricted is EscrowRole {
   event Amount(uint256 amount);
   event RestrictedTokens(uint256 restrictedTokenAmount);
   event ExceedsRestricted(uint256 exceedsRestrictedAmount);
+  event initializedEscrow(address escrowAddress);
+  event debugCheck(address addressToCheck);
 
   modifier checkRestrictedTokens (uint amount, address recipient) {
-    if (restrictedTokens[msg.sender] > amount && recipient != initializedEscrows[recipient]) {
+    if (restrictedTokens[msg.sender] >= amount && recipient != initializedEscrows[recipient]) {
+      emit debugCheck(initializedEscrows[recipient]);
       emit Amount(amount);
       emit RestrictedTokens(restrictedTokens[msg.sender]);
 // bad: event SafeMath reverts: overflow, if 'amount <  restricted tokens      emit ExceedsRestricted(amount.sub(restrictedTokens[msg.sender]));
-      require(amount < restrictedTokens[msg.sender], "Transfer failed: restricted tokens exceeds transfer amount. Try again, using less than Amount Restricted");
+      require(amount < restrictedTokens[msg.sender] || recipient == initializedEscrows[recipient], "Transfer failed: restricted tokens exceeds transfer amount. Try again, using less than Amount Restricted");
     }
    _; 
   }
 
-  function setInitializedEscrow(address _escrowAddress) external returns (bool) {
+  function setInitializedEscrow(address _escrowAddress) external {
     initializedEscrows[_escrowAddress] = _escrowAddress;
   }
 
@@ -39,14 +42,5 @@ contract Restricted is EscrowRole {
   function amountRestricted(address _account) public view returns (uint256) {
     return restrictedTokens[_account];
   }
+
 }
-
- 
-
-
-
-
-
-
-
-
