@@ -19,7 +19,7 @@ services:
     stdin_open: true # docker run -i
     tty: true        # docker run -t
 
-  truffle-test-suite: 
+  truffle: 
     build: .
     depends_on:
       - ganache
@@ -27,6 +27,8 @@ services:
       purpose: "run the GoalZapp test suite"
       platform: "node.js"
       framework: "truffle"
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
   
   ganache: 
     image: trufflesuite/ganache-cli:latest 
