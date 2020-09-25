@@ -1,7 +1,5 @@
 pragma solidity ^0.5.0; 
 
-/* Ropsten Version --Aion Address hard coded -- */
-
 import "./SafeMath.sol";
 import "./ERC20.sol";
 import "./GoalOwnerRole.sol";
@@ -10,8 +8,8 @@ import "./AionRole.sol";
 
 // interface Aion
 contract Aion {
- //using SafeERC20 for ERC20;
- 
+  function() external payable {}
+
   uint256 public serviceFee;
   function ScheduleCall(uint256 blocknumber, address to, uint256 value, 
     uint256 gaslimit, uint256 gasprice, bytes memory data, bool schedType) public
@@ -54,6 +52,8 @@ contract GoalEscrowTestVersion is GoalOwnerRole {
 
   bool private _initializedMaster;
   bool private _initializedNewGoal;
+
+  function () external payable {} 
 
   // serves as constructor; params are in flux for short term testing conveinience / long term features (reward/bond amounts, finalizized suggestion duration)
   function initMaster(ERC20 _token, uint256 _suggestionDuration) public {
@@ -103,6 +103,8 @@ contract GoalEscrowTestVersion is GoalOwnerRole {
 	         //** SUGGEST **//
                 /*only suggester*/
   function depositOnSuggest(bytes32 _id, uint _amount) public notGoalOwner {
+    require(bondFunds >= 1, "appologies! contract bond funds are less than 1, a notice has been sent to goal owner to increase the funding... sit tight!");   
+    require(rewardFunds >= 1, "appologies! contract bond funds are less than 1, a notice has been sent to goal owner to increase the funding... sit tight!");
     //set suggester address
     suggestedSteps[_id].suggester = msg.sender;
     //set suggester bond
@@ -123,7 +125,7 @@ contract GoalEscrowTestVersion is GoalOwnerRole {
     emit TimeNow(timeNow);
     suggestedSteps[_id].suggestionExpires = timeNow.add(suggestionDuration);
     emit SuggestionExpires(suggestedSteps[_id].suggestionExpires);
-   // schedule_returnBondsOnTimeOut(_id, timeNow.add(suggestionDuration));
+    schedule_returnBondsOnTimeOut(_id, timeNow.add(suggestionDuration));
   }
 
   function checkForTimedOutSuggestions (bytes32 _id) internal {
@@ -131,10 +133,10 @@ contract GoalEscrowTestVersion is GoalOwnerRole {
   }
 
   function schedule_returnBondsOnTimeOut(bytes32 _id, uint256 callTime) internal {
-    aion = Aion(0xFcFB45679539667f7ed55FA59A15c8Cad73d9a4E);
+    aion = Aion(0x51F5d84603dafa279Ae35596EBAFcC6CEd2B5628);
     bytes memory data = abi.encodeWithSelector(bytes4(keccak256('returnBondsOnTimeOut(bytes32 )')),_id);
-    uint callCost = 200000*1e9 + aion.serviceFee();
-    aion.ScheduleCall.value(callCost)(callTime, address(this), 0, 2000000, 1e9, data, true);  
+    uint callCost = 200000 *(1e9) + (aion.serviceFee());
+    aion.ScheduleCall.value(callCost)(callTime, address(this), 0, 6000000, 1e9, data, true);  
   }
 
 	//** TIME OUT -- Contract disburses reward and bonds **//
@@ -156,14 +158,14 @@ contract GoalEscrowTestVersion is GoalOwnerRole {
     //protect tokens
     token.timeProtectTokens(suggester, suggesterProtectAmount);
     // schedule end protection 
-    //schedule_removeTokenTimeProtection(suggester, suggesterProtectAmount);    
+    schedule_removeTokenTimeProtection(suggester, suggesterProtectAmount);    
     //owner 
     uint256 ownerBondRefundAmount = suggestedSteps[_id].ownerBond;
     require(token.balanceOf(address(this)) >= ownerBondRefundAmount, "Broken: Contract can't afford to refund owner bond!"); 
     suggestedSteps[_id].ownerBond = 0;
     bondFunds = bondFunds.add(ownerBondRefundAmount);	
     emit ReturnedToBondFunds(ownerBondRefundAmount);
-// Owner bonds remain in escrow contract; they remain restricted because owner failed to   act on step
+    //Owner bonds remain in escrow contract; they remain restricted because owner failed to act on step
   }
 
   function getSuggestionDuration() public view returns(uint256) {
@@ -180,7 +182,7 @@ contract GoalEscrowTestVersion is GoalOwnerRole {
 
   function schedule_removeTokenTimeProtection (address _address, uint256 _amount)
    private {
-   aion = Aion(0xFcFB45679539667f7ed55FA59A15c8Cad73d9a4E);
+   aion = Aion(0x51F5d84603dafa279Ae35596EBAFcC6CEd2B5628);
    uint256 callTime = token.protectionPeriod().add(block.timestamp);
    bytes memory data =
      abi.encodeWithSelector(bytes4(keccak256('removeTokenTimeProtection(address,uint256)')),_address, _amount);
@@ -213,7 +215,7 @@ contract GoalEscrowTestVersion is GoalOwnerRole {
     uint256 suggesterProtectAmount = suggesterBondRefundAmount.add(rewardAmount); 
     token.timeProtectTokens(suggester, suggesterProtectAmount); 
     //start protection clock    
-    //schedule_removeTokenTimeProtection(suggester, suggesterProtectAmount);    
+    schedule_removeTokenTimeProtection(suggester, suggesterProtectAmount);    
     // return owner bond 
     uint256 ownerBondRefundAmount = suggestedSteps[_id].ownerBond;
     require(token.balanceOf(address(this)) >= ownerBondRefundAmount, "Broken: Contract can't afford to refund owner bond!"); 
@@ -226,7 +228,7 @@ contract GoalEscrowTestVersion is GoalOwnerRole {
     //protect owner tokens 
     token.timeProtectTokens(goalOwner, ownerProtectAmount);
     //start protection clock    
-    //schedule_removeTokenTimeProtection(msg.sender, ownerProtectAmount);
+    schedule_removeTokenTimeProtection(msg.sender, ownerProtectAmount);
   }
 
 	//** REJECT STEP || Contract returns bonds **// 
@@ -244,7 +246,7 @@ contract GoalEscrowTestVersion is GoalOwnerRole {
     //protect suggester return bond
     token.timeProtectTokens(suggester, suggesterProtectAmount);
     //start protection clock
-    //schedule_removeTokenTimeProtection(suggester, suggesterProtectAmount);    
+    schedule_removeTokenTimeProtection(suggester, suggesterProtectAmount);    
     //return owner bond
     uint256 ownerBondRefundAmount = suggestedSteps[_id].ownerBond;
     require(token.balanceOf(address(this)) >= ownerBondRefundAmount,"Broken: contract can't afford to refund owner bond!"); 
@@ -257,6 +259,6 @@ contract GoalEscrowTestVersion is GoalOwnerRole {
     //protect tokens
     token.timeProtectTokens(msg.sender, ownerProtectAmount);
     // start protection clock
-    //schedule_removeTokenTimeProtection(msg.sender, ownerProtectAmount);
+    schedule_removeTokenTimeProtection(msg.sender, ownerProtectAmount);
   }
 }

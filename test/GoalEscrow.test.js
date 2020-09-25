@@ -30,15 +30,21 @@ const MAX_UINT256 = (two.pow(twoFiveSix)).isub(one);
 contract('Escrow', function([master, owner, suggester]) {
 
   beforeEach(async function() {
+    //let snapshot = await timeMachine.takeSnapshot();
+    //snapshotId = snapshot['result']; 
     this.tokenSystem = await GoalZappTokenSystem.new();
     await this.tokenSystem.initialize({value: startPoolBalance, from: master});
     await this.tokenSystem.buy({value: web3.utils.toWei("1"), from: owner})
     await this.tokenSystem.buy({value: web3.utils.toWei("1"), from: suggester})
     this.implementation = await GoalEscrowTestVersion.new();
     this.factory = await ProxyFactory.new(this.implementation.address, this.tokenSystem.address)    
-
    })
-
+ 
+/*
+  afterEach(async function() {
+    await timeMachine.revertToSnapshot(snapshotId);
+   })   
+*/ 
     shouldBehaveLikeGoalEscrow('GoalEscrowTestVersion', master, owner, suggester);
 
   });
@@ -53,7 +59,6 @@ function shouldBehaveLikeGoalEscrow (errorPrefix, master, owner, suggester) {
   describe('with token, with proxy', function () {
  
     describe('Create and Fund Escrow', function() {
-
       beforeEach(async function () {
 	await this.factory.build("Goal1", {from: owner});
         this.proxyAddress = await this.factory.getProxyAddress("Goal1", owner, {from:owner}); 
@@ -91,7 +96,7 @@ function shouldBehaveLikeGoalEscrow (errorPrefix, master, owner, suggester) {
 	it('adds to contract rewardFunds', async function() {
 	  expect(await this.proxiedEscrow.rewardFunds()).to.be.bignumber.equal(rewardDepositAmount)
 	  });
-
+           
 	describe('depositOnSuggest', function () {
 	  beforeEach(async function () {
 	    await this.tokenSystem.approve(this.proxyAddress, MAX_UINT256, {from: suggester});
@@ -126,7 +131,26 @@ function shouldBehaveLikeGoalEscrow (errorPrefix, master, owner, suggester) {
 	      let _suggestionExpires = (await this.proxiedEscrow.suggestedSteps(id)).suggestionExpires
 	      expectEvent.inLogs(logs, 'SuggestionExpires', {expires: _suggestionExpires});      
 	    });
+            
+            it('schedules bond return on time out, and returns suggester bonds', async function() {
+              const prevBalanceOfSuggester = await this.token.balanceOf(suggester)
+              const suggesterBond = (await this.proxiedEscrow.suggestedSteps(id)).suggesterBond
+	      const suggestionDuration = await this.proxiedEscrow.suggestionDuration()
+              await advanceTimeAndBlock(suggestionDuration)      
+              const balanceOfSuggester = await this.token.balanceOf(suggester)
+             
+              expect(balanceOfSuggester).to.be.bignumber.equal(prevBalanceOfSuggester.add(suggesterBond))
+            })
 	  
+            it('schedules bond return on time out, and returns owner bonds', async function() {
+              const prevBalanceOfOwner = await this.token.balanceOf(owner)
+              const ownerBond = await this.proxiedEscrow.ownerBondAmount()
+	      const suggestionDuration = await this.proxiedEscrow.suggestionDuration()
+              await advanceTimeAndBlock(suggestionDuration.toNumber())      
+              const balanceOfOwner = await this.token.balanceOf(owner)
+
+              expect(balanceOfOwner).to.be.bignumber.equal(prevBalanceOfOwner.add(ownerBond))
+            })
 	})     
 
 	 context('returnBondsOnTimeOut()', function() {

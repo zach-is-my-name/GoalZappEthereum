@@ -7,7 +7,8 @@
     "test": "test"
   },
   "scripts": {
-    "test": "truffle test"
+    "test": "truffle test",
+    "docker test": "docker-compose up"
   },
   "repository": {
     "type": "git",
@@ -24,7 +25,6 @@
     "ganache-time-traveler": "^1.0.11",
     "openzeppelin-solidity": "^2.3.0-rc.3",
     "openzeppelin-test-helpers": "^0.4.3",
-    "prettier": "2.0.5",
     "solidity-coverage": "^0.7.2"
   },
   "dependencies": {}

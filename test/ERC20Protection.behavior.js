@@ -17,8 +17,9 @@ function shouldBehaveLikeERC20Protection(errorPrefix, initialSupply, initialHold
 
     describe('send tokens', function() {
       it('succeeds', async function() {
+        
         await this.token.transferInternal(initialHolder, recipient, initialSupply);
-
+       
         expect(await this.token.balanceOf(initialHolder)).to.be.bignumber.equal('0');
 
         expect(await this.token.balanceOf(recipient)).to.be.bignumber.equal(new BN(initialSupply));
@@ -81,8 +82,6 @@ function shouldBehaveLikeERC20Protection(errorPrefix, initialSupply, initialHold
  	let protected =	await this.token.amountProtected(initialHolder);
 	//console.log("INITIAL_HOLDER_AMOUNT_PROTECTED", protected.toNumber());
       await expectRevert.unspecified(this.token.transferInternal(initialHolder, recipient, initialSupply));
-	let recipientBalance = await this.token.balanceOf(recipient);
-  	//console.log("RECIPIENT_BALANCE", recipientBalance.toNumber());
       });
     });
 

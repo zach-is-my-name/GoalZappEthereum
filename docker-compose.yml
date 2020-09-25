@@ -1,0 +1,39 @@
+version: "3"
+services:
+  mongo:
+     image: mongo 
+     ports:
+       - 27017:27017
+
+  executor:  
+    build: 
+      context: https://github.com/zach-is-my-name/Aion.git#dockerDebug
+    depends_on: 
+      - mongo
+      - ganache
+    environment: 
+      - GANACHE=goalzapp_ganache_1
+    labels: 
+      purpose: "run the Aion system executor"
+      platform: "node.js"
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+
+  truffle-test-suite: 
+    build: .
+    depends_on:
+      - ganache
+    labels: 
+      purpose: "run the GoalZapp test suite"
+      platform: "node.js"
+      framework: "truffle"
+  
+  ganache: 
+    image: trufflesuite/ganache-cli:latest 
+    command: ganache-cli  -f "https://sandbox.truffleteams.com/de77b065-c9a7-4c8b-9fe9-0e507a623f9a"
+    ports:
+      - 8545:8545
+    labels: 
+      purpose: "run the virtual ethereum network for testing, hosting Aion contract"
+      platform: "node.js"
+       
