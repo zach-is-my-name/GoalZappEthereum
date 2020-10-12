@@ -1,8 +1,7 @@
-const { BN, constants, expectEvent, expectRevert } = require('openzeppelin-test-helpers');
+const { BN, constants, expectEvent, expectRevert, time } = require('@openzeppelin/test-helpers');
 const { expect } = require('chai');
 const { ZERO_ADDRESS } = constants;
 const GoalEscrowTestVersion = artifacts.require('GoalEscrowTestVersion');
-const { advanceTimeAndBlock } = require("../utils/helpers/advance_time_and_block.js");
 
 function shouldBehaveLikeERC20Protection(errorPrefix, initialSupply, initialHolder, recipient, anotherAccount) {
   // bypass scheduler and protect initialHolder's tokens
@@ -67,7 +66,6 @@ function shouldBehaveLikeERC20Protection(errorPrefix, initialSupply, initialHold
       await this.token.approve(this.escrow.address, web3.utils.toWei("50"), {from: anotherAccount});
       await this.escrow.depositOnSuggest(this.id, web3.utils.toWei("25"),  {from: anotherAccount});
       await this.escrow.disburseOnAccept(this.id, {from:initialHolder});
-      //await advanceTimeAndBlock(await this.escrow.returnBondsOnTimeOut(id));
     })
 
     describe('amount protected', function () {
@@ -91,7 +89,7 @@ function shouldBehaveLikeERC20Protection(errorPrefix, initialSupply, initialHold
       //let aionAddress = await this.escrow.isAionAddress(this.escrow.address) 
       //console.log('aionAddress', aionAddress);
       await this.escrow.testVersionRemoveTokenProtectionWrapper(initialHolder, await this.token.amountProtected(initialHolder));
-      advanceTimeAndBlock(31);
+      await time.increase(time.duration.seconds(31));
       //let protected = await this.token.amountProtected(initialHolder);
       //console.log('amount protected = ', protected.toString());
       //let expires = await this.escrow.suggestionExpires(this.id); 
@@ -103,7 +101,7 @@ function shouldBehaveLikeERC20Protection(errorPrefix, initialSupply, initialHold
         let protected = await this.token.amountProtected(initialHolder);
         let recipientAmountBeforeTransfer = await this.token.balanceOf(recipient);
         let initialHolderAmountBeforeTransfer = await this.token.balanceOf(initialHolder);
-        await advanceTimeAndBlock(30);
+        await time.increase(time.duration.seconds(30));
         await this.escrow.testVersionRemoveTokenProtectionWrapper(initialHolder, await this.token.amountProtected(initialHolder));
         await this.token.transfer(recipient, protected, {from: initialHolder}); 
         expect(await this.token.balanceOf(recipient)).to.be.bignumber.equal(recipientAmountBeforeTransfer.add(protected)); 

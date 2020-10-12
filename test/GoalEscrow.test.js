@@ -1,8 +1,8 @@
 const helper = require('ganache-time-traveler');
-const { BN, constants, expectEvent, expectRevert } = require('openzeppelin-test-helpers');
+const { BN, constants, expectEvent, expectRevert, time } = require('@openzeppelin/test-helpers');
 const { expect } = require('chai');
 const { ZERO_ADDRESS } = constants;
-const { advanceTimeAndBlock } = require("../utils/helpers/advance_time_and_block.js");
+//const { advanceTimeAndBlock } = require("../utils/helpers/advance_time_and_block.js");
 
 const GoalEscrowTestVersion = artifacts.require('GoalEscrowTestVersion');
 const GoalZappTokenSystem = artifacts.require('GoalZappTokenSystem');
@@ -134,12 +134,14 @@ function shouldBehaveLikeGoalEscrow (errorPrefix, master, owner, suggester) {
             it('transfers bond refund to suggester', async function() {
 	   let suggesterBalanceBeforeBondReturn = await this.tokenSystem.balanceOf(suggester)
       // advance blockchain here
-	    await advanceTimeAndBlock((await this.proxiedEscrow.suggestionDuration()).add(new BN (1)));
+	    await time.increase((await this.proxiedEscrow.suggestionDuration()).add(new BN (1)));
+	    //await advanceTimeAndBlock((await this.proxiedEscrow.suggestionDuration()).add(new BN (1)));
 	    await this.proxiedEscrow.returnBondsOnTimeOut(id); 
 	    expect(await this.tokenSystem.balanceOf(suggester)).to.be.bignumber.equal(suggesterBalanceBeforeBondReturn.add(suggesterBondAmount));
 	   }) 	    
 	   it('protects suggester tokens and prevents their transfer', async function() {
-	    await advanceTimeAndBlock((await this.proxiedEscrow.suggestionDuration()).add(new BN(1)));
+	    await time.increase((await this.proxiedEscrow.suggestionDuration()).add(new BN(1)));
+	    //await advanceTimeAndBlock((await this.proxiedEscrow.suggestionDuration()).add(new BN(1)));
 	    await this.proxiedEscrow.returnBondsOnTimeOut(id);
 	    expect(await this.tokenSystem.amountProtected(suggester)).to.be.bignumber.equal(suggesterBondAmount);
 
