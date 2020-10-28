@@ -132,7 +132,7 @@ contract GoalEscrow is GoalOwnerRole, AionRole {
   }
 
   function schedule_returnBondsOnTimeOut(bytes32 _id, uint256 callTime) internal {
-    aion = Aion(0xFcFB45679539667f7ed55FA59A15c8Cad73d9a4E);
+    aion = Aion(0xAB046F7cc64DCDfDAE5aF718Ff412B023C852E9E);
     bytes memory data = abi.encodeWithSelector(bytes4(keccak256('returnBondsOnTimeOut(bytes32 )')),_id);
     uint callCost = 200000*1e9 + aion.serviceFee();
     aion.ScheduleCall.value(callCost)(callTime, address(this), 0, 2000000, 1e9, data, true);  
@@ -181,7 +181,7 @@ contract GoalEscrow is GoalOwnerRole, AionRole {
 
   function schedule_removeTokenTimeProtection (address _address, uint256 _amount)
    private {
-   aion = Aion(0xFcFB45679539667f7ed55FA59A15c8Cad73d9a4E);
+   aion = Aion(0xAB046F7cc64DCDfDAE5aF718Ff412B023C852E9E);
    uint256 callTime = token.protectionPeriod().add(block.timestamp);
    bytes memory data =
      abi.encodeWithSelector(bytes4(keccak256('removeTokenProtection(address,uint256)')),_address, _amount);
