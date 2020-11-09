@@ -149,8 +149,7 @@ function shouldBehaveLikeGoalEscrow (errorPrefix, master, owner, suggester) {
                   //console.log("event", exEvent) 
                
                 setTimeout(function() {
-
-									aionContract.getPastEvents("ExecutedCallEvent", {fromBlock: "latest", toBlock:"pending"}).then(eventArr => console.log(eventArr)).then(
+									aionContract.getPastEvents("ExecutedCallEvent", {fromBlock: "latest", toBlock:"pending"})/*.then(eventArr => console.log(eventArr))*/.then(
                   eventArr =>  expectEvent(eventArr[0] /*executedCallEvents[0]*/, 'ExecutedCallEvent', {}))
 										done()
                    }, 15000 )

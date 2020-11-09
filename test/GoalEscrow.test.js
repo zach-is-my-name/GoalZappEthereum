@@ -1,12 +1,13 @@
-const { BN, constants, expectEvent, expectRevert, time } = require('@openzeppelin/test-helpers');
+const { web3, accounts, contract   } = require('@openzeppelin/test-environment');
+const { constants, expectEvent, expectRevert, time, BN } = require('@openzeppelin/test-helpers');
 const { expect } = require('chai');
 const { ZERO_ADDRESS } = constants;
 
-const GoalEscrowTestVersion = artifacts.require('GoalEscrowTestVersion');
-const GoalZappTokenSystem = artifacts.require('GoalZappTokenSystem');
-const ProxyFactory = artifacts.require('ProxyFactory');
-const GoalZappBondingCurve = artifacts.require('GoalZappBondingCurve'); 
-const Proxy = artifacts.require('Proxy');
+const GoalEscrowTestVersion = contract.fromArtifact('GoalEscrowTestVersion');
+const GoalZappTokenSystem = contract.fromArtifact('GoalZappTokenSystem');
+const ProxyFactory = contract.fromArtifact('ProxyFactory');
+const GoalZappBondingCurve = contract.fromArtifact('GoalZappBondingCurve'); 
+const Proxy = contract.fromArtifact('Proxy');
 
 const initialSupply  = new BN(web3.utils.toWei("128")); 
 const startPoolBalance = new BN(web3.utils.toWei(".03359789")) 
@@ -28,8 +29,9 @@ const aionInterface = require('./interfaces/aionInterface.json')
 const escrowInterface = require('./interfaces/GoalEscrowTestVersion.json')
 const aionContract = new web3.eth.Contract(aionInterface.abi, "0xAB046F7cc64DCDfDAE5aF718Ff412B023C852E9E")
 const Aion = require('aiongoalzapptestversion')
+const [master, owner, suggester] = accounts
 
-contract('Escrow', function([master, owner, suggester]) {
+describe('Escrow', async function() {
   beforeEach(async function() {
     this.tokenSystem = await GoalZappTokenSystem.new();
     await this.tokenSystem.initialize({value: startPoolBalance, from: master});
@@ -45,7 +47,6 @@ contract('Escrow', function([master, owner, suggester]) {
   });
 
 function shouldBehaveLikeGoalEscrow (errorPrefix, master, owner, suggester) {
-
   it('reverts when deployed with a null token address', async function() {
     this.GoalEscrow = await GoalEscrowTestVersion.new() 
     await expectRevert(this.GoalEscrow.initMaster(ZERO_ADDRESS, 30, {from:master}),"token address cannot be zero");
@@ -71,7 +72,7 @@ function shouldBehaveLikeGoalEscrow (errorPrefix, master, owner, suggester) {
 					await this.tokenSystem.approve(this.proxiedEscrow.address, MAX_UINT256, { from: owner });
 					await this.proxiedEscrow.newGoalInitAndFund(this.tokenSystem.address, 30, ownerBondDepositAmount, rewardDepositAmount, {from: owner});
 				});
-/*
+
 				it('stores the token\'s address', async function () {
 					const address = await this.proxiedEscrow.token();
 					expect(address).to.be.equal(this.tokenSystem.address);
@@ -88,13 +89,12 @@ function shouldBehaveLikeGoalEscrow (errorPrefix, master, owner, suggester) {
 				it('adds to contract rewardFunds', async function() {
 					expect(await this.proxiedEscrow.rewardFunds()).to.be.bignumber.equal(rewardDepositAmount)
 					});
-*/
-				describe('depositOnSuggest', function () {
+
+				describe('depositOnSuggest', async function () {
 					beforeEach(async function () {
 						await this.tokenSystem.approve(this.proxyAddress, MAX_UINT256, {from: suggester});
-						 this.receipt = await this.proxiedEscrow.depositOnSuggest(id, suggesterBondAmount, {from: suggester, value: web3.utils.toWei("1")}); 
-             //console.log("receipt", this.receipt)
-             this.logs = this.receipt.logs  
+            this.blockBeforeDepositOnSuggest = await web3.eth.getBlockNumber() 
+						this.receipt = await this.proxiedEscrow.depositOnSuggest(id, suggesterBondAmount, {from: suggester, value: web3.utils.toWei("1")}); 
 					});
 
 					it('deposits suggester bond amount', async function() {
@@ -113,140 +113,78 @@ function shouldBehaveLikeGoalEscrow (errorPrefix, master, owner, suggester) {
 					})
 
           it('stores the time step suggested', async function() {
-            const timeNowEvent = await this.web3ContractProxiedEscrow.getPastEvents("TimeNow", {fromBlock: 0, toBlock: "latest"})
-            console.log('returnVals',timeNowEvent[0].returnValues)
+            const timeNowEvent = await this.web3ContractProxiedEscrow.getPastEvents("TimeNow", {fromBlock: this.blockBeforeDepositOnSuggest, toBlock: "latest"})
             let _timeSuggested = (await this.proxiedEscrow.suggestedSteps(id)).timeSuggested
             expect(new BN(timeNowEvent[0].returnValues.blocktime)).to.be.bignumber.equal(_timeSuggested)
           });
           
           it('stores the expiration time', async function() {
-            const suggestionExpiresEvent =  await this.web3ContractProxiedEscrow.getPastEvents("SuggestionExpires", {fromBlock: 0, toBlock: "latest"})
+            const suggestionExpiresEvent =  await this.web3ContractProxiedEscrow.getPastEvents("SuggestionExpires", {fromBlock: this.blockBeforeDepositOnSuggest, toBlock: "latest"})
             let _suggestionExpires = (await this.proxiedEscrow.suggestedSteps(id)).suggestionExpires
             expect(new BN(suggestionExpiresEvent[0].returnValues.expires)).to.be.bignumber.equal(_suggestionExpires)
           });
 
-				 context('returnBondsOnTimeOut()', function() {
-  			 	before('advance time and block', async function() {
-				    this.suggesterBalanceBeforeBondReturn = await this.tokenSystem.balanceOf(suggester)
-            await time.increase(new BN ("31"));
-            await time.advanceBlock()  
-            this.balanceOfSuggesterAfter = await this.tokenSystem.balanceOf(suggester)
-          })
 
-						it('Aion contract calls returnBondsOnTimeOut()', function(done) {
-              setTimeout(function() {
-                aionContract.getPastEvents("ExecutedCallEvent", {fromBlock: "latest", toBlock:"pending"})/*.then(eventArr => console.log("exEvent",eventArr))*/.then(
-                  eventArr =>  expectEvent(eventArr[0] /*executedCallEvents[0]*/, 'ExecutedCallEvent', {}))
-                  done()
-                 }, 15000 )
-						})
+       context('call getSuggestionDuration()', async function() {
 
-				    /*it('schedules remove suggester token protection', function(done) {
-              setTimeout(function() {
-               
-                aionContract.getPastEvents("ScheduleCallEvent", {fromBlock: 0, toBlock:"pending"}).then(eventArr => console.log('schEventArr', eventArr)) 
-.then(
-                  eventArr =>  expectEvent(eventArr[0] executedCallEvents[0], 'ScheduleCallEvent', {}) )
-                  done()
-                 }, 5000 )
-						})*/
-
-            it('transfers bond refund to suggester', function() {
-							 expect(this.balanceOfSuggesterAfter).to.be.bignumber.equal(this.suggesterBalanceBeforeBondReturn.add(suggesterBondAmount));
-					 })				
-				}) 
-
-			 context('protect tokens', function() {			 
-         before('advance time and block', async function() {
-           this.suggesterAmountProtectedBefore = await this.tokenSystem.amountProtected(suggester)
-            this.suggesterStructBalanceBeforeBondReturn =  (await this.proxiedEscrow.suggestedSteps(id)).ownerBond				 
-						this.ownerBondFundsBeforeBondReturn = await this.proxiedEscrow.bondFunds() 
-						await time.increase((await this.proxiedEscrow.suggestionDuration()).add(new BN(1)));
-						this.ownerBondFundsAftereBondReturn = await this.proxiedEscrow.bondFunds() 
-         
-         })
-					it('protects suggester tokens and prevents their transfer', async function() {
-						expect(this.suggesterAmountProtectedBefore).to.be.bignumber.equal(suggesterBondAmount);
-
-							 //console.log('amount protected', amountProtected.toString());
-						await expectRevert.unspecified(this.tokenSystem.transfer(owner, this.suggesterAmountProtectedBefore, {from: suggester}))
-				 })
-
-					it('owner bond returns to bond funds but remains in contract', async function() {
-           expect(this.ownerBondFundsAfterBondReturn).to.be.bignumber.equal(
-           this.suggesterStructBalanceBeforeBondReturn.add(this.ownerBondFundsBeforeBondReturn))
-          })   
-			})	
-
-       context('call getSuggestionDuration()', function() {
         it('gets the suggestion duration time', async function() {
-         expect(await this.proxiedEscrow.getSuggestionDuration()).to.be.bignumber.equal(await this.proxiedEscrow.suggestionDuration())
+        const suggestionDuration = await this.proxiedEscrow.getSuggestionDuration()
+         expect(suggestionDuration).to.be.bignumber.equal(await this.proxiedEscrow.suggestionDuration())
         }) 
-       })
 
-      context('call suggestionExpires()', function() {
+       }) 
+
+      context('call suggestionExpires()', async function() {
+        beforeEach(async function() {
+          this._suggestionExpires = (await this.proxiedEscrow.suggestedSteps(id)).suggestionExpires
+          this._timeSuggested = (await this.proxiedEscrow.suggestedSteps(id)).timeSuggested
+          this._suggestionDuration = await this.proxiedEscrow.suggestionDuration() 
+        })
+
         it('gets suggestion expiration (block)time', async function() {
-          let _suggestionExpires = (await this.proxiedEscrow.suggestedSteps(id)).suggestionExpires
-          let _timeSuggested = (await this.proxiedEscrow.suggestedSteps(id)).timeSuggested;
-          expect(_suggestionExpires).to.be.bignumber.equal(_timeSuggested.add(await this.proxiedEscrow.suggestionDuration()));
+          expect(this._suggestionExpires).to.be.bignumber.equal(this._timeSuggested.add(this._suggestionDuration));
         });
+
       })
 
-      context('call suggesterBond()', function() {
+
+      context('call suggesterBond()', async function() {
         it('returns the suggester bond amount', async function() {		
-          expect(await this.proxiedEscrow.suggesterBond(id)).to.be.bignumber.equal(suggesterBondAmount);
+          const suggesterBond = await this.proxiedEscrow.suggesterBond(id)
+          expect(suggesterBond).to.be.bignumber.equal(suggesterBondAmount);
           })
       }) 
 
-     context('disburse on accept', function() {
-        beforeEach(async function(){ 
-          this.ownerBalanceBeforeReturn = await this.tokenSystem.balanceOf(owner);
-          this.ownerBalanceBeforeBondReturn = await this.tokenSystem.balanceOf(owner, {from: owner}); 
-          this.suggesterBalanceBeforeBondReturn = await this.tokenSystem.balanceOf(suggester)
-                 
-          const {logs} = await this.proxiedEscrow.disburseOnAccept(id, {from: owner});
-          this.logs = logs
-          this.suggesterBalanceAfterBondReturn = await this.tokenSystem.balanceOf(suggester)
-        })
 
-        it('transfers bond to suggester', async function() {
-                expect((this.suggesterBalanceAfterBondReturn.sub(this.suggesterBalanceBeforeBondReturn)).sub((await this.proxiedEscrow.rewardAmount()))).to.be.bignumber.equal(suggesterBondAmount)
-          })    
-        it('pays reward to suggester', async function() {
-          let suggesterBalanceAfterBondReturn = this.suggesterBalanceBeforeBondReturn.iadd(suggesterBondAmount)
-          expect(await this.tokenSystem.balanceOf(suggester)).to.be.bignumber.equal(suggesterBalanceAfterBondReturn.iadd(await this.proxiedEscrow.rewardAmount()));
-        })    
-        it('transfers bond to owner', async function() {
-          expect(await this.tokenSystem.balanceOf(owner)).to.be.bignumber.equal(this.ownerBalanceBeforeBondReturn.iadd(await this.proxiedEscrow.ownerBondAmount()));	
-        })				
-        it('protects suggester tokens', async function() {
-                let rewardAmount = await this.proxiedEscrow.rewardAmount();
-          //console.log('reward amount ', rewardAmount.toString());
-          let amountProtected = await this.tokenSystem.amountProtected(suggester)  
-                //console.log('amount protected', amountProtected.toString()); 
-         // console.log('suggester bond amount', suggesterBondAmount.toString());
-                expect(amountProtected).to.be.bignumber.equal(suggesterBondAmount.add(rewardAmount)); 
-        })
+     context('enforces token protection', function() {
+       beforeEach(async function()  {
+          this.ownerBalanceBeforeReturn = await this.tokenSystem.balanceOf(owner)
+          this.ownerBalanceBeforeBondReturn = await this.tokenSystem.balanceOf(owner, {from: owner})
+          this.suggesterBalanceBeforeBondReturn = await this.tokenSystem.balanceOf(suggester)
+          await this.proxiedEscrow.disburseOnAccept(id, {from: owner})
+          this.suggesterBalanceAfterBondReturn = await this.tokenSystem.balanceOf(suggester)
+          this.rewardAmount = await this.proxiedEscrow.rewardAmount()
+          this.amountProtectedOwner = await this.tokenSystem.amountProtected(owner)
+          this.ownerBondAmount =  await this.proxiedEscrow.ownerBondAmount()
+      }) 
+
         it('reverts when suggester attempts to transfer tokens under protection', async function() {
-          let amountProtected = await this.tokenSystem.amountProtected(suggester)  
-          console.log('amount protected', web3.utils.fromWei(amountProtected.toString())); 
-          console.log('amount to transfer', 60) 
-          await expectRevert(this.tokenSystem.transfer(owner, amountProtected, {from: suggester}), "your tokens are under protection period, check timeToLiftProtection() for time until you have tokens available, and/or check amountProtected to see how many of your tokens are currently under the protection period") ;
+          this.amountProtectedSuggester = await this.tokenSystem.amountProtected(suggester)
+          await expectRevert(this.tokenSystem.transfer(owner, this.amountProtectedSuggester, {from: suggester}), "your tokens are under protection period, check timeToLiftProtection() for time until you have tokens available, and/or check amountProtected to see how many of your tokens are currently under the protection period");
         }) 
-        it('protects owner tokens', async function() {
-          expect(await this.tokenSystem.amountProtected(owner)).to.be.bignumber.equal(await this.proxiedEscrow.ownerBondAmount())
-        })
+
         it('reverts when owner attempts to transfer tokens under protection', async function () {
-          await expectRevert.unspecified(this.tokenSystem.transfer(suggester, await this.proxiedEscrow.ownerBondAmount(), {from: owner}));
+          await expectRevert(this.tokenSystem.transfer(suggester, this.ownerBondAmount, {from: owner}),"your tokens are under protection period, check timeToLiftProtection() for time until you have tokens available, and/or check amountProtected to see how many of your tokens are currently under the protection period");
         }) 
-        it('schedules token protection removal', function(done) {
-              setTimeout(function() {
-                aionContract.getPastEvents("ScheduleCallEvent", {fromBlock: "latest", toBlock:"pending"}).then(eventArr => console.log(eventArr)).then(
-                eventArr =>  expectEvent(eventArr[0] /*executedCallEvents[0]*/, "ScheduleCallEvent", {}))
-                  done()
-                 }, 15000 )
+
+        it('schedules token protection removal', async function() {
+              setTimeout(async function() {
+                const pastEvents = await aionContract.getPastEvents("ScheduleCallEvent", {fromBlock: this.blockBeforeDisburse, toBlock:"pending"})
+                await expectEvent(pastEvents[0], "ScheduleCallEvent", {})
+                 }, 10000)
         })
-       })  
+     })
+
 
 				 context('return bonds on reject', function() {
 					beforeEach(async function(){ 
@@ -258,33 +196,25 @@ function shouldBehaveLikeGoalEscrow (errorPrefix, master, owner, suggester) {
 
 						it('refunds suggester bond', async function() {
 							await this.proxiedEscrow.returnBondsOnReject(id, {from: owner});
-							expect(await this.tokenSystem.balanceOf(suggester)).to.be.bignumber.equal(this.suggesterBalanceBeforeReturnBond.add(this.suggesterBondInEscrow))
+              const balanceOfSuggester =  await this.tokenSystem.balanceOf(suggester)
+							expect(balanceOfSuggester).to.be.bignumber.equal(this.suggesterBalanceBeforeReturnBond.add(this.suggesterBondInEscrow))
 						})
-						it('returns owner bond to owner', async function() {
-						  //  console.log('ownerBondAmount', this.ownerBondAmount.toString())
-						  // console.log('ownerTokenBalanceBeforeBondReturn', this.ownerTokenBalanceBeforeBondReturn.toString())
-							
-							await this.proxiedEscrow.returnBondsOnReject(id, {from: owner});
 
+						it('returns owner bond to owner', async function() {
+							await this.proxiedEscrow.returnBondsOnReject(id, {from: owner});
 							const ownerBalanceAfterReturn = await this.tokenSystem.balanceOf(owner)
 							const ownerBondAmountAfterReturn = await this.proxiedEscrow.ownerBondAmount()
-							
-						 // console.log('ownerBondAmountAfterReturn', ownerBondAmountAfterReturn.toString())
-							//console.log('ownerBalanceAfterReturn', ownerBalanceAfterReturn.toString()) 
-							expect(await this.tokenSystem.balanceOf(owner)).to.be.bignumber.equal(this.ownerTokenBalanceBeforeBondReturn.add(this.ownerBondAmount));
+              const balanceOfOwner = await this.tokenSystem.balanceOf(owner)
+							expect(balanceOfOwner).to.be.bignumber.equal(this.ownerTokenBalanceBeforeBondReturn.add(this.ownerBondAmount));
 						}) 
-            it('schedules token protection removal', async function() {
-              this.timeout(8000)
-							const {logs} = await this.proxiedEscrow.returnBondsOnReject(id, {from: owner});
-							expectEvent(this.logs, 'ScheduleCallEvent', {})			  
-              setTimeout(function() {
-                aionContract.getPastEvents("ScheduleCallEvent", {fromBlock: "latest", toBlock:"pending"}).then(eventArr => console.log(eventArr)).then(
-                eventArr =>  expectEvent(eventArr[0] /*executedCallEvents[0]*/, "ScheduleCallEvent", {}))
-              //    done()
-                 }, 8000 )
+
+            it('schedules token protection removal', function() {
+              setTimeout(async function() {
+                const pastEvents = await aionContract.getPastEvents("ScheduleCallEvent", {fromBlock: this.blockBeforeIncresase, toBlock:"pending"})
+                expectEvent(pastEvents[0], "ScheduleCallEvent", {})
+                }, 10000 )
 						})
 				 })
-		 })
 
 				 context('permissions', function() {
 						context('onlyGoalOwner role', function() {
@@ -298,18 +228,132 @@ function shouldBehaveLikeGoalEscrow (errorPrefix, master, owner, suggester) {
 					 context('notGoalOwner role', function() {
 							context('deposit on suggest', function() {
 								it('fails when has onlyGoalOwnerRole', async function() {
-									await expectRevert(this.proxiedEscrow.depositOnSuggest(id, suggesterBondAmount, {from: owner}),"GoalOwner Role: GoalOwner CAN NOT call this function")
+									await expectRevert(this.proxiedEscrow.depositOnSuggest(id, suggesterBondAmount, {from: owner}) ,"GoalOwner Role: GoalOwner CAN NOT call this function")
 								})
 							})
 					 })
 						
 					 context('notAion role', function() {
 						 it('fails when has onlyAionRole', async function() {
-								await expectRevert(this.proxiedEscrow.returnBondsOnTimeOut(this.id),"Aion Role: caller does not have the Aion role") 
+								await expectRevert(this.proxiedEscrow.returnBondsOnTimeOut(id), "Aion Role: caller does not have the Aion role") 
 						 })
 					 })
 				 }) 
+
+
+     context('disburse on accept', async function() {
+        beforeEach(async function(){ 
+          this.ownerBalanceBeforeBondReturn = await this.tokenSystem.balanceOf(owner, {from: owner})
+          this.suggesterBalanceBeforeBondReturn = await this.tokenSystem.balanceOf(suggester)
+          this.blockBeforeDisburse = await web3.eth.getBlockNumber()
+          await this.proxiedEscrow.disburseOnAccept(id, {from: owner})
+          this.suggesterBalanceAfterBondReturn = await this.tokenSystem.balanceOf(suggester)
+          this.amountProtectedSuggester = await this.tokenSystem.amountProtected(suggester)
+          this.rewardAmount = await this.proxiedEscrow.rewardAmount()
+          this.amountProtectedOwner = await this.tokenSystem.amountProtected(owner)
+          this.ownerBondAmount =  await this.proxiedEscrow.ownerBondAmount()
+        })
+         
+
+        it('transfers bond to suggester', async function() {
+         this.suggesterBalanceAfterBondReturn = await this.tokenSystem.balanceOf(suggester) 
+         this.rewardAmount = await this.proxiedEscrow.rewardAmount()
+         this.suggesterBondAmount = new BN(web3.utils.toWei("5"));
+         
+          expect((this.suggesterBalanceAfterBondReturn.sub(this.suggesterBalanceBeforeBondReturn)).sub((this.rewardAmount))).to.be.bignumber.equal(this.suggesterBondAmount)
+          })    
+
+        it('pays reward to suggester', async function() {
+          const suggesterBalanceAfterBondReturn = this.suggesterBalanceBeforeBondReturn.add(suggesterBondAmount)
+          const balanceOfSuggester =  await this.tokenSystem.balanceOf(suggester)
+          expect(balanceOfSuggester).to.be.bignumber.equal(suggesterBalanceAfterBondReturn.add(this.rewardAmount))
+        })    
+
+        it('transfers bond to owner', async function() {
+          const balanceOfOwner = await this.tokenSystem.balanceOf(owner)
+          await expect(balanceOfOwner).to.be.bignumber.equal(this.ownerBalanceBeforeBondReturn.add(this.ownerBondAmount))	
+        })				
+     
+        it('protects owner tokens', function() {
+          expect(new BN(this.amountProtectedOwner)).to.be.bignumber.equal(new BN(this.ownerBondAmount))
+        })
+
+        it('protects suggester tokens', function() {
+          expect(new BN(this.amountProtectedSuggester)).to.be.bignumber.equal(new BN(suggesterBondAmount.add(this.rewardAmount))); 
+        })
+      })
+		 //deposit on suggest bracket end
+// protect begin bracket
+
+				 context('returnBondsOnTimeOut()', async function() {
+  			 	before('advance time and block', async function() {
+				    this.suggesterBalanceBeforeBondReturn = await this.tokenSystem.balanceOf(suggester)
+            this.blockBeforeIncrease = await web3.eth.getBlockNumber()
+            await time.increase(new BN ("31"));
+            await time.advanceBlock()  
+            this.balanceOfSuggesterAfter = await this.tokenSystem.balanceOf(suggester)
+             
+          })
+
+						it('Aion contract calls returnBondsOnTimeOut()', async function() {
+               setTimeout(async function() {
+                const eventArr = await aionContract.getPastEvents("ExecutedCallEvent", {fromBlock: this.blockBeforeIncrease, toBlock:"pending"})
+                 await expectEvent(eventArr[0] , 'ExecutedCallEvent', {})
+                  }  , 14000) 
+						})
+
+
+				    it('schedules remove suggester token protection', async function() {
+              setTimeout(async function() {
+                const eventArr = await aionContract.getPastEvents("ScheduleCallEvent", {fromBlock: this.blockBeforeIncrease, toBlock:"pending"}).then(eArr =>console.log(eArr)) 
+                 await expectEvent(eventArr[0], 'ScheduleCallEvent', {}) 
+                } , 14000)
+              
+						})
+
+            it('transfers bond refund to suggester', function() {
+              setTimeout( async function() {
+							 expect(this.balanceOfSuggesterAfter).to.be.bignumber.equal(this.suggesterBalanceBeforeBondReturn.add(suggesterBondAmount));
+              }  , 14000) 
+					 })				
+				}) 
+
+			 context('protect tokens', async function() {			 
+         before('advance time and block', async function() {
+           this.suggesterAmountProtectedBefore = await this.tokenSystem.amountProtected(suggester)
+           this.suggesterStructBalanceBeforeBondReturn = await this.proxiedEscrow.suggestedSteps(id)
+           this.suggesterStructBalanceBeforeBondReturn  = this.suggesterStructBalanceBeforeBondReturn.ownerBond
+           this.ownerBondFundsBeforeBondReturn = await this.proxiedEscrow.bondFunds()
+           this.blockBeforeIncrease = await web3.eth.getBlockNumber()
+           this.suggestionDuration = await this.proxiedEscrow.suggestionDuration()
+					 await time.increase((this.suggestionDuration).add(new BN(1)))
+           await time.advanceBlock()
+         })
+
+					it('protects suggester tokens ', function() {
+            setTimeout(function() {
+					  	 expect(this.suggesterAmountProtectedBefore).to.be.bignumber.equal(suggesterBondAmount);
+          }, 10000) 
+				 })
+
+          it('prevents their transfer', async function() {
+           setTimeout(async function() {
+           await expectRevert(this.tokenSystem.transfer(owner, this.suggesterAmountProtectedBefore, {from: suggester}), "your tokens are under protection period, check timeToLiftProtection() for time until you have tokens available, and/or check amountProtected to see how many of your tokens are currently under the protection period")
+           }, 12000) 
+          })
+
+
+					it('owner bond returns to bond funds but remains in contract', async function() {
+            setTimeout(async function() {
+              this.ownerBondFundsAfterBondReturn = await this.proxiedEscrow.bondFunds()
+              await expect(this.ownerBondFundsAfterBondReturn).to.be.bignumber.equal(
+              this.suggesterStructBalanceBeforeBondReturn.add(this.ownerBondFundsBeforeBondReturn))
+              }, 12000)
+          })   
+			})	
+
+}) // dos
      })
-   })
  })
+})
 }
