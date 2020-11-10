@@ -1,6 +1,10 @@
-const { BN, constants, expectEvent, expectRevert } = require('@openzeppelin/test-helpers');
+const { web3, accounts, contract } = require('@openzeppelin/test-environment');
+const { constants, expectEvent, expectRevert, time, BN } = require('@openzeppelin/test-helpers');
+
 const { expect } = require('chai');
 const { ZERO_ADDRESS } = constants;
+const [initialHolder, recipient, anotherAccount] = accounts
+
 
 const {
   shouldBehaveLikeERC20,
@@ -12,10 +16,9 @@ const {
   shouldBehaveLikeERC20Protection
 } = require('./ERC20Protection.behavior')
 
-const ERC20Mock = artifacts.require('ERC20Mock');
+const ERC20Mock = contract.fromArtifact('ERC20Mock');
 
-contract('ERC20', function ([_, initialHolder, recipient, anotherAccount]) {
-  //const initialSupply = new BN(100);
+describe('ERC20', function () {
    const initialSupply = web3.utils.toWei("1000");
 
   beforeEach(async function () {
@@ -260,7 +263,7 @@ contract('ERC20', function ([_, initialHolder, recipient, anotherAccount]) {
       };
 
       describeBurn('for entire balance', initialSupply);
-      console.log("dinitialSupply",initialSupply) 
+      //console.log("dinitialSupply",initialSupply) 
       describeBurn('for less amount than balance',( new BN(initialSupply).sub(new BN(1))));
     });
   });

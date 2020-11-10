@@ -1,8 +1,10 @@
-const { BN, constants, expectEvent, expectRevert } = require('@openzeppelin/test-helpers');
-const { expect } = require('chai');
-const BondingCurveMock = artifacts.require('BondingCurveMock.sol');
+const { web3, accounts, contract} = require('@openzeppelin/test-environment');
+const { constants, expectEvent, expectRevert, time, BN } = require('@openzeppelin/test-helpers');
 
-contract('BondingCurve', function(accounts) {
+const { expect } = require('chai');
+const BondingCurveMock = contract.fromArtifact('BondingCurveMock');
+
+describe('BondingCurve', function() {
   const decimals = new BN(18);
   const startSupply = new BN(web3.utils.toWei("128")); // 10 using a value lower then 10 makes results less accurate
   const startPoolBalance = new BN(web3.utils.toWei(".03359789")) 

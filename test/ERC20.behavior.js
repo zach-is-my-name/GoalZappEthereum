@@ -1,4 +1,5 @@
-const { BN, constants, expectEvent, expectRevert } = require('@openzeppelin/test-helpers');
+const { web3, accounts, contract   } = require('@openzeppelin/test-environment');
+const { constants, expectEvent, expectRevert, time, BN } = require('@openzeppelin/test-helpers');
 const { expect } = require('chai');
 const { ZERO_ADDRESS } = constants;
 
@@ -27,7 +28,7 @@ function shouldBehaveLikeERC20 (errorPrefix, initialSupply, initialHolder, recip
 	//call 
     shouldBehaveLikeERC20Transfer(errorPrefix, initialHolder, recipient, initialSupply,
       function (from, to, value) {
-        return this.token.transfer(to, value, { from });
+        return this.token.transferInternal(to, value, { from });
       }
     );
   });
