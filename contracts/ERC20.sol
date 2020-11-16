@@ -120,7 +120,7 @@ contract ERC20 is Protected, Restricted, IERC20   {
      *
      * - `spender` cannot be the zero address.
      */
-    function increaseAllowance(address spender, uint256 addedValue) checkProtectedTokens (amount) checkRestrictedTokens(amount, recipient) public returns (bool) {
+    function increaseAllowance(address spender, uint256 addedValue) checkProtectedTokens (addedValue) checkRestrictedTokens(addedValue, spender ) public returns (bool) {
         _approve(msg.sender, spender, _allowances[msg.sender][spender].add(addedValue));
         return true;
     }
@@ -139,7 +139,7 @@ contract ERC20 is Protected, Restricted, IERC20   {
      * - `spender` must have allowance for the caller of at least
      * `subtractedValue`.
      */
-    function decreaseAllowance(address spender, uint256 subtractedValue) checkProtectedTokens (amount) checkRestrictedTokens(amount, recipient) public returns (bool) {
+    function decreaseAllowance(address spender, uint256 subtractedValue) checkProtectedTokens (subtractedValue) checkRestrictedTokens(subtractedValue, spender) public returns (bool) {
         _approve(msg.sender, spender, _allowances[msg.sender][spender].sub(subtractedValue));
         return true;
     }
@@ -158,7 +158,7 @@ contract ERC20 is Protected, Restricted, IERC20   {
      * - `recipient` cannot be the zero address.
      * - `sender` must have a balance of at least `amount`.
      */
-    function _transfer(address sender, address recipient, uint256 amount) checkProtectedTokens(amount) checkRestrictedTokens(amount, recipient) internal {
+    function _transfer(address sender, address recipient, uint256 amount)  internal {
         require(sender != address(0), "ERC20: transfer from the zero address");
         require(recipient != address(0), "ERC20: transfer to the zero address");
         _balances[sender] = _balances[sender].sub(amount);
