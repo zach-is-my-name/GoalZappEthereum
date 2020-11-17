@@ -1,16 +1,9 @@
-const { web3 } = require('@openzeppelin/test-environment');
+const { web3, accounts, contract   } = require('@openzeppelin/test-environment');
 const { constants, expectEvent, expectRevert, time, BN } = require('@openzeppelin/test-helpers');
 const { expect } = require('chai');
 const { ZERO_ADDRESS } = constants;
-const ERC20Mock = artifacts.require('ERC20Mock');
 
 function shouldBehaveLikeERC20 (errorPrefix, initialSupply, initialHolder, recipient, anotherAccount) {
-  describe('should behave like ERC20', function() {
-    beforeEach(async function() {
-      this.token = await ERC20Mock.new({from: initialHolder});
-      await this.token.mintNoRestrict(initialHolder, initialSupply)
-    }) 
-
   describe('total supply', function () {
     it('returns the total amount of tokens', async function () {
       expect(await this.token.totalSupply()).to.be.bignumber.equal(new BN(initialSupply));
@@ -32,9 +25,10 @@ function shouldBehaveLikeERC20 (errorPrefix, initialSupply, initialHolder, recip
   });
 
   describe('transfer', function () {
+	//call 
     shouldBehaveLikeERC20Transfer(errorPrefix, initialHolder, recipient, initialSupply,
       function (from, to, value) {
-        return this.token.transferInternal(to, value, { from });
+        return this.token.transferInternal(from, to, value, { from });
       }
     );
   });
@@ -49,16 +43,14 @@ function shouldBehaveLikeERC20 (errorPrefix, initialSupply, initialHolder, recip
         const to = anotherAccount;
 
         describe('when the spender has enough approved balance', function () {
-          /*beforeEach(async function () {
-            await this.token.approveInternal(initialHolder, spender, initialSupply, { from: initialHolder });
-          }); */
+          beforeEach(async function () {
+            await this.token.approve(spender, initialSupply, { from: initialHolder });
+          });
 
           describe('when the token owner has enough balance', function () {
             const amount = initialSupply;
 
             it('transfers the requested amount', async function () {
-              await this.token.approveInternal(initialHolder, spender, initialSupply, { from: initialHolder });
-
               await this.token.transferFrom(tokenOwner, to, amount, { from: spender });
 
               expect(await this.token.balanceOf(tokenOwner)).to.be.bignumber.equal('0');
@@ -67,21 +59,15 @@ function shouldBehaveLikeERC20 (errorPrefix, initialSupply, initialHolder, recip
             });
 
             it('decreases the spender allowance', async function () {
-              await this.token.approveInternal(initialHolder, spender, initialSupply, { from: initialHolder });
-
-              await this.token.transferFromInternal(tokenOwner, to, amount, { from: spender });
+              await this.token.transferFrom(tokenOwner, to, amount, { from: spender });
 
               expect(await this.token.allowance(tokenOwner, spender)).to.be.bignumber.equal('0');
             });
 
             it('emits a transfer event', async function () {
-              await this.token.approveInternal(initialHolder, spender, initialSupply, { from: initialHolder });
+              const { logs } = await this.token.transferFrom(tokenOwner, to, amount, { from: spender });
 
-              const receipt = await this.token.transferFromInternal(tokenOwner, to, amount, { from: spender });
-              //const {txHash} = await this.token.transferFromInternal(tokenOwner, to, amount, { from: spender });
-
-              expectEvent(receipt, 'Transfer', {
-              //expectEvent.inTransaction(txHash, 'Transfer', {
+              expectEvent.inLogs(logs, 'Transfer', {
                 from: tokenOwner,
                 to: to,
                 value: new BN(amount),
@@ -89,13 +75,9 @@ function shouldBehaveLikeERC20 (errorPrefix, initialSupply, initialHolder, recip
             });
 
             it('emits an approval event', async function () {
-              await this.token.approveInternal(initialHolder, spender, initialSupply, { from: initialHolder });
+              const { logs } = await this.token.transferFrom(tokenOwner, to, amount, { from: spender });
 
-              const receipt = await this.token.transferFromInternal(tokenOwner, to, amount, { from: spender });
-              //const {txHash} = await this.token.transferFromInternal(tokenOwner, to, amount, { from: spender });
-
-              expectEvent(receipt, 'Approval', {
-              //expectEvent.inTransaction(txHash, 'Approval', {
+              expectEvent.inLogs(logs, 'Approval', {
                 owner: tokenOwner,
                 spender: spender,
                 value: new BN((await this.token.allowance(tokenOwner, spender))),
@@ -104,10 +86,14 @@ function shouldBehaveLikeERC20 (errorPrefix, initialSupply, initialHolder, recip
           });
 
           describe('when the token owner does not have enough balance', function () {
+            //console.log('initialSupply ' , initialSupply)
+			//console.log('typeof initialSupply ', typeof initialSupply)
             const amount = initialSupply + 1;
+            //console.log('amount ' , amount)
+			//console.log('typeof amount ', typeof amount)
 		
             it('reverts', async function () {
-              await expectRevert(this.token.transferFromInternal(
+              await expectRevert(this.token.transferFrom(
                 tokenOwner, to, amount, { from: spender }), 'SafeMath: subtraction overflow'
               );
             });
@@ -123,7 +109,7 @@ function shouldBehaveLikeERC20 (errorPrefix, initialSupply, initialHolder, recip
             const amount = initialSupply;
 
             it('reverts', async function () {
-              await expectRevert(this.token.transferFromInternal(
+              await expectRevert(this.token.transferFrom(
                 tokenOwner, to, amount, { from: spender }), 'SafeMath: subtraction overflow'
               );
             });
@@ -133,7 +119,7 @@ function shouldBehaveLikeERC20 (errorPrefix, initialSupply, initialHolder, recip
             const amount = initialSupply + 1;
 
             it('reverts', async function () {
-              await expectRevert(this.token.transferFromInternal(
+              await expectRevert(this.token.transferFrom(
                 tokenOwner, to, amount, { from: spender }), 'SafeMath: subtraction overflow'
               );
             });
@@ -146,11 +132,11 @@ function shouldBehaveLikeERC20 (errorPrefix, initialSupply, initialHolder, recip
         const to = ZERO_ADDRESS;
 
         beforeEach(async function () {
-          await this.token.approveInternal(tokenOwner, spender, amount, { from: tokenOwner });
+          await this.token.approve(spender, amount, { from: tokenOwner });
         });
 
         it('reverts', async function () {
-          await expectRevert(this.token.transferFromInternal(
+          await expectRevert(this.token.transferFrom(
             tokenOwner, to, amount, { from: spender }), `${errorPrefix}: transfer to the zero address`
           );
         });
@@ -169,28 +155,23 @@ function shouldBehaveLikeERC20 (errorPrefix, initialSupply, initialHolder, recip
       });
     });
   });
+
   describe('approve', function () {
     shouldBehaveLikeERC20Approve(errorPrefix, initialHolder, recipient, initialSupply,
       function (owner, spender, amount) {
-        return this.token.approveInternal(owner, spender, amount, { from: owner });
+        return this.token.approve(spender, amount, { from: owner });
       }
     );
   });
-})
 }
-function shouldBehaveLikeERC20Transfer (errorPrefix, from, to, balance, transfer ) {
-  describe('should behave like ERC20Transfer', function() {
-    beforeEach(async function() {
-      this.token = await ERC20Mock.new();
-      await this.token.mintNoRestrict(from, balance)
-    }) 
 
+function shouldBehaveLikeERC20Transfer (errorPrefix, from, to, balance, transfer) {
   describe('when the recipient is not the zero address', function () {
     describe('when the sender does not have enough balance', function () {
       let amount = balance + 1 
       amount = new BN(amount);
       it('reverts', async function () {
-         await expectRevert(this.token.transferInternal(from, to, amount), "SafeMath: subtraction overflow"
+         await expectRevert(transfer.call(this, from, to, amount), "SafeMath: subtraction overflow"
         );
       });
     });
@@ -199,7 +180,7 @@ function shouldBehaveLikeERC20Transfer (errorPrefix, from, to, balance, transfer
       let amount = balance;
 
       it('transfers the requested amount', async function () {
-        await this.token.transferInternal(from, to, amount);
+        await transfer.call(this, from, to, amount);
 
         expect(await this.token.balanceOf(from)).to.be.bignumber.equal('0');
 
@@ -207,10 +188,12 @@ function shouldBehaveLikeERC20Transfer (errorPrefix, from, to, balance, transfer
       });
 
       it('emits a transfer event', async function () {
+         const { logs } = await transfer.call(this, from, to, amount);
+        //const { logs } = await this.token.transferInternal(from, to, amount);
         //const receipt = await this.token.transferInternal(from, to, amount);
-        const {txHash} = await this.token.transferInternal(from, to, amount);
-        //expectEvent(receipt, 'Transfer', {
-        expectEvent.inTransaction(txHash, 'Transfer', {
+        //const {txHash} = await this.token.transfer(from, to, amount);
+
+        expectEvent.inLogs(logs , 'Transfer', {
           from,
           to,
           value: new BN(amount),
@@ -222,7 +205,7 @@ function shouldBehaveLikeERC20Transfer (errorPrefix, from, to, balance, transfer
       const amount = new BN('0');
 
       it('transfers the requested amount', async function () {
-        await this.token.transferInternal(from, to, amount);
+        await transfer.call(this, from, to, amount);
 
         expect(await this.token.balanceOf(from)).to.be.bignumber.equal(new BN(balance));
 
@@ -230,11 +213,9 @@ function shouldBehaveLikeERC20Transfer (errorPrefix, from, to, balance, transfer
       });
 
       it('emits a transfer event', async function () {
-        const receipt = await this.token.transferInternal(from, to, amount);
-        //const {txHash} = await this.token.transferInternal(from, to, amount);
+        const { logs } = await transfer.call(this, from, to, amount);
 
-        expectEvent(receipt, 'Transfer', {
-        //expectEvent.inTransaction(txHash, 'Transfer', {
+        expectEvent.inLogs(logs, 'Transfer', {
           from,
           to,
           value: new BN(amount),
@@ -245,29 +226,22 @@ function shouldBehaveLikeERC20Transfer (errorPrefix, from, to, balance, transfer
 
   describe('when the recipient is the zero address', function () {
     it('reverts', async function () {
-      await expectRevert(this.token.transferInternal(from, ZERO_ADDRESS, balance),
+      await expectRevert(transfer.call(this, from, ZERO_ADDRESS, balance),
         `${errorPrefix}: transfer to the zero address`
       );
     });
   });
-})
 }
 
 function shouldBehaveLikeERC20Approve (errorPrefix, owner, spender, supply, approve) {
-  describe('should behave like ERC20Approve', function() {
-    beforeEach(async function() {
-      this.token = await ERC20Mock.new({from: owner});
-      await this.token.mintNoRestrict(owner, supply)
-    }) 
-
   describe('when the spender is not the zero address', function () {
     describe('when the sender has enough balance', function () {
       const amount = supply;
 
       it('emits an approval event', async function () {
-        const {txHash} = await this.token.approveInternal(owner, spender, amount, {from:owner});
+        const { logs } = await approve.call(this, owner, spender, amount);
 
-        expectEvent.inTransaction(txHash, 'Approval', {
+        expectEvent.inLogs(logs, 'Approval', {
           owner: owner,
           spender: spender,
           value: new BN(amount),
@@ -276,7 +250,7 @@ function shouldBehaveLikeERC20Approve (errorPrefix, owner, spender, supply, appr
 
       describe('when there was no approved amount before', function () {
         it('approves the requested amount', async function () {
-          await this.token.approveInternal(owner, spender, amount);
+          await approve.call(this, owner, spender, amount);
 
           expect(await this.token.allowance(owner, spender)).to.be.bignumber.equal(new BN(amount));
         });
@@ -284,11 +258,11 @@ function shouldBehaveLikeERC20Approve (errorPrefix, owner, spender, supply, appr
 
       describe('when the spender had an approved amount', function () {
         beforeEach(async function () {
-          await this.token.approveInternal(owner, spender, new BN(1));
+          await approve.call(this, owner, spender, new BN(1));
         });
 
         it('approves the requested amount and replaces the previous one', async function () {
-          await this.token.approveInternal(owner, spender, amount);
+          await approve.call(this, owner, spender, amount);
 
           expect(await this.token.allowance(owner, spender)).to.be.bignumber.equal(new BN(amount));
         });
@@ -299,9 +273,9 @@ function shouldBehaveLikeERC20Approve (errorPrefix, owner, spender, supply, appr
       const amount = supply + 1;
 
       it('emits an approval event', async function () {
-        const {txHash} = await this.token.approveInternal(owner, spender, amount);
+        const { logs } = await approve.call(this, owner, spender, amount);
 
-        expectEvent.inTransaction(txHash, 'Approval', {
+        expectEvent.inLogs(logs, 'Approval', {
           owner: owner,
           spender: spender,
           value: new BN(amount),
@@ -310,7 +284,7 @@ function shouldBehaveLikeERC20Approve (errorPrefix, owner, spender, supply, appr
 
       describe('when there was no approved amount before', function () {
         it('approves the requested amount', async function () {
-          await this.token.approveInternal(owner, spender, amount);
+          await approve.call(this, owner, spender, amount);
 
           expect(await this.token.allowance(owner, spender)).to.be.bignumber.equal(new BN(amount));
         });
@@ -318,11 +292,11 @@ function shouldBehaveLikeERC20Approve (errorPrefix, owner, spender, supply, appr
 
       describe('when the spender had an approved amount', function () {
         beforeEach(async function () {
-          await this.token.approveInternal(owner, spender, new BN(1));
+          await approve.call(this, owner, spender, new BN(1));
         });
 
         it('approves the requested amount and replaces the previous one', async function () {
-          await this.token.approveInternal(owner, spender, amount);
+          await approve.call(this, owner, spender, amount);
 
           expect(await this.token.allowance(owner, spender)).to.be.bignumber.equal(new BN(amount));
         });
@@ -332,17 +306,16 @@ function shouldBehaveLikeERC20Approve (errorPrefix, owner, spender, supply, appr
 
   describe('when the spender is the zero address', function () {
     it('reverts', async function () {
-      await expectRevert(this.token.approveInternal(owner, ZERO_ADDRESS, supply),
+      await expectRevert(approve.call(this, owner, ZERO_ADDRESS, supply),
         `${errorPrefix}: approve to the zero address`
       );
     });
   });
-})
 }
-
 
 module.exports = {
   shouldBehaveLikeERC20,
   shouldBehaveLikeERC20Transfer,
   shouldBehaveLikeERC20Approve,
 };
+

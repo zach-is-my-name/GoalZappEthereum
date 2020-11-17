@@ -1,4 +1,4 @@
-//const { web3, accounts, contract } = require('@openzeppelin/test-environment');
+const { web3, accounts, contract } = require('@openzeppelin/test-environment');
 const { constants, expectEvent, expectRevert, time, BN } = require('@openzeppelin/test-helpers');
 const { expect } = require('chai');
 
@@ -12,19 +12,23 @@ const {
   shouldBehaveLikeERC20Protection
 } = require('./ERC20Protection.behavior')
 
-//const ERC20Mock = contract.fromArtifact('ERC20Mock');
-const ERC20Mock = artifacts.require('ERC20Mock');
+const ERC20Mock = contract.fromArtifact('ERC20Mock');
+//const ERC20Mock = artifacts.require('ERC20Mock');
 const { ZERO_ADDRESS } = constants;
 
-contract('ERC20', function (accounts) {
+describe('ERC20', function () {
   const [initialHolder, recipient, anotherAccount] = accounts
   const initialSupply = new BN(web3.utils.toWei("1000"));
+  beforeEach(async function () {
+    this.token = await ERC20Mock.new();
+    await this.token.mintNoRestrict(initialHolder, initialSupply)
+  });
 
-  shouldBehaveLikeERC20('ERC20', initialSupply, initialHolder, recipient, anotherAccount);
+//  shouldBehaveLikeERC20('ERC20', initialSupply, initialHolder, recipient, anotherAccount);
 
-//  shouldBehaveLikeERC20Protection('Protection_Period', initialSupply, initialHolder, recipient, anotherAccount);
-
-  /*describe('ERC20 functions', function() {
+  shouldBehaveLikeERC20Protection('Protection_Period', initialSupply, initialHolder, recipient, anotherAccount);
+/*
+  describe('ERC20 functions', function() {
     beforeEach(async function () {
       this.token = await ERC20Mock.new({from: initialHolder});
       await this.token.mintNoRestrict(initialHolder, initialSupply)
@@ -47,13 +51,13 @@ contract('ERC20', function (accounts) {
           describe('when the spender had an approved amount', function () {
             const approvedAmount = new BN(web3.utils.toWei("2"));
             beforeEach(async function () {
-              const receipt = await this.token.approveInternal(initialHolder, spender, approvedAmount, { from: initialHolder });
+              ( {logs: this.logs} = await this.token.approveInternal(initialHolder, spender, approvedAmount, { from: initialHolder }));
             });
 
             it('emits an approval event', async function () {
-              const receipt = await this.token.decreaseAllowanceInternal(spender, approvedAmount, { from: initialHolder });
+              const {logs} = await this.token.decreaseAllowanceInternal(spender, approvedAmount, { from: initialHolder });
 
-              expectEvent(receipt, 'Approval', {
+              expectEvent.inLogs(logs, 'Approval', {
                 owner: initialHolder,
                 spender: spender,
                 value: new BN(0),
@@ -198,8 +202,8 @@ contract('ERC20', function (accounts) {
 
       describe('for a non zero account', function () {
         beforeEach('minting', async function () {
-          const receipt = await this.token.mint(recipient, amount);
-          
+          const {logs} = await this.token.mint(recipient, amount);
+          this.logs = logs 
         });
 
         it('increments totalSupply', async function () {
@@ -212,7 +216,7 @@ contract('ERC20', function (accounts) {
         });
 
         it('emits Transfer event', async function () {
-          const event = expectEvent(receipt, 'Transfer', {
+          const event = expectEvent.inLogs(this.logs, 'Transfer', {
             from: ZERO_ADDRESS,
             to: recipient,
           });
@@ -238,7 +242,8 @@ contract('ERC20', function (accounts) {
         const describeBurn = function (description, amount) {
           describe(description, function () {
             beforeEach('burning', async function () {
-              const receipt = await this.token.burn(initialHolder, amount);
+              const {logs} = await this.token.burn(initialHolder, amount);
+              this.logs = logs
             });
 
             it('decrements totalSupply', async function () {
@@ -252,7 +257,7 @@ contract('ERC20', function (accounts) {
             });
 
             it('emits Transfer event', async function () {
-              const event = expectEvent(receipt, 'Transfer', {
+              const event = expectEvent.inLogs(this.logs, 'Transfer', {
                 from: initialHolder,
                 to: ZERO_ADDRESS,
               });
@@ -298,7 +303,8 @@ contract('ERC20', function (accounts) {
         const describeBurnFrom = function (description, amount) {
           describe(description, function () {
             beforeEach('burning', async function () {
-              const receipt = await this.token.burnFrom(initialHolder, amount, { from: spender });
+               const {logs} = await this.token.burnFrom(initialHolder, amount, { from: spender });
+               this.logs = logs
             });
 
             it('decrements totalSupply', async function () {
@@ -317,7 +323,7 @@ contract('ERC20', function (accounts) {
             });
 
             it('emits a Transfer event', async function () {
-              const event = expectEvent(receipt, 'Transfer', {
+              const event = expectEvent.inLogs(this.logs, 'Transfer', {
                 from: initialHolder,
                 to: ZERO_ADDRESS,
               });
@@ -326,7 +332,7 @@ contract('ERC20', function (accounts) {
             });
 
             it('emits an Approval event', async function () {
-              expectEvent(receipt, 'Approval', {
+              expectEvent.inLogs(this.logs, 'Approval', {
                 owner: initialHolder,
                 spender: spender,
                 value: await this.token.allowance(initialHolder, spender),
@@ -342,7 +348,6 @@ contract('ERC20', function (accounts) {
         
     describe('_transfer', function () {
       shouldBehaveLikeERC20Transfer('ERC20', initialHolder, recipient, initialSupply, function (from, to, amount) {
-        console.log("for_call", amount);
           return this.token.transferInternal(from, to, amount);
       });
 
@@ -357,7 +362,7 @@ contract('ERC20', function (accounts) {
 
     describe('_approve', function () {
       shouldBehaveLikeERC20Approve('ERC20', initialHolder, recipient, initialSupply, function (owner, spender, amount) {
-       return this.token.approve(spender, amount, {from: owner});
+       return this.token.approveInternal(owner, spender, amount, {from: owner});
       });
 
       describe('when the owner is the zero address', function () {
@@ -368,7 +373,8 @@ contract('ERC20', function (accounts) {
         });
       }); 
     });
-  }) */
+  })  
+*/
 });
 
 

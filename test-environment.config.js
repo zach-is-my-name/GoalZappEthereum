@@ -1,4 +1,4 @@
-/*
+
 module.exports = {
   accounts: {
     amount: 10, // Number of unlocked accounts
@@ -22,4 +22,4 @@ module.exports = {
     allowUnlimitedContractSize: true,
   },
 };
-*/
+

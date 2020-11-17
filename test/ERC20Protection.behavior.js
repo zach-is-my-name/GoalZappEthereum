@@ -1,9 +1,9 @@
-//const { web3, contract} = require('@openzeppelin/test-environment');
+const { web3, contract} = require('@openzeppelin/test-environment');
 const { constants, expectEvent, expectRevert, time, BN } = require('@openzeppelin/test-helpers');
 const { expect } = require('chai');
 const { ZERO_ADDRESS } = constants;
-const GoalEscrowTestVersion = artifacts.require('GoalEscrowTestVersion');
-const ERC20Mock = artifacts.require('ERC20Mock');
+const GoalEscrowTestVersion = contract.fromArtifact('GoalEscrowTestVersion');
+const ERC20Mock = contract.fromArtifact('ERC20Mock');
 
 function shouldBehaveLikeERC20Protection(errorPrefix, initialSupply, initialHolder, recipient, anotherAccount) {
 
@@ -70,31 +70,30 @@ describe('ERC20 Protection', function() {
     })
 
     it("places specified amount of owner's tokens under protection", async function() {
-      let amountProtected = await this.token.amountProtected(initialHolder, {from:initialHolder})
-      let ownerBondAmount =await this.escrow.ownerBondAmount({from: initialHolder}) 
-      expect(amountProtected).to.be.bignumber.equal(ownerBondAmount); 
+			let amountProtected = await this.token.amountProtected(initialHolder, {from:initialHolder})
+			let ownerBondAmount =await this.escrow.ownerBondAmount({from: initialHolder}) 
+			expect(amountProtected).to.be.bignumber.equal(ownerBondAmount); 
     })
 
     it("places specified amount of suggester's tokens under protection", async function() {
-      const id = web3.utils.utf8ToHex('cjorlslvv0fcz01119bgpvvmt')
-      let amountProtected = (await this.token.amountProtected(anotherAccount)).toString()
-      expect(await this.token.amountProtected(anotherAccount)).to.be.bignumber.equal(this.suggesterBond.add(await this.escrow.rewardAmount())); 
+			const id = web3.utils.utf8ToHex('cjorlslvv0fcz01119bgpvvmt')
+			let amountProtected = (await this.token.amountProtected(anotherAccount)).toString()
+			expect(await this.token.amountProtected(anotherAccount)).to.be.bignumber.equal(this.suggesterBond.add(await this.escrow.rewardAmount())); 
     })
 
   describe('while account has tokens under protection', function() {
     describe('amount protected', function () {
       it('returns the total number of tokens under protection', async function () {
-
-        const amountProtectedInitialHolder = await this.token.amountProtected(initialHolder) 
-        const ownerBondAmount = await this.escrow.ownerBondAmount()
-        expect(amountProtectedInitialHolder).to.be.bignumber.equal(ownerBondAmount)
+				const amountProtectedInitialHolder = await this.token.amountProtected(initialHolder) 
+				const ownerBondAmount = await this.escrow.ownerBondAmount()
+				expect(amountProtectedInitialHolder).to.be.bignumber.equal(ownerBondAmount)
       })
     })
 
     describe('owner tries to send protected tokens', function () {
       it('reverts', async function() {
-          const amountProtected =	await this.token.amountProtected(initialHolder);
-          await expectRevert(this.token.transfer( recipient, amountProtected, {from: initialHolder}),"your tokens are under protection period, check timeToLiftProtection() for time until you have tokens available, and/or check amountProtected to see how many of your tokens are currently under the protection period" );
+				const amountProtected =	await this.token.amountProtected(initialHolder);
+				return await expectRevert(this.token.transfer( recipient, amountProtected, {from: initialHolder}),"your tokens are under protection period, check timeToLiftProtection() for time until you have tokens available, and/or check amountProtected to see how many of your tokens are currently under the protection period" );
       });
     });
 
@@ -106,10 +105,11 @@ describe('ERC20 Protection', function() {
       })
 
       it('removes protection from specified number of tokens, on specified account', async function() {
+       this.timeout(10000)
        setTimeout(async function() {
          const amountProtectedInitialHolder = await this.token.amountProtected(initialHolder)
-         expect(amountProtectedInitialHolder).to.be.bignumber.equal("0");
-       }, 10000)
+      return await expect(amountProtectedInitialHolder).to.be.bignumber.equal("0");
+       }, 95000)
       });
 
       it('owner can send tokens that were protected', async function() {
@@ -119,14 +119,12 @@ describe('ERC20 Protection', function() {
           await this.token.transfer(recipient, this.amountProtected, {from: initialHolder}); 
           expect(await this.token.balanceOf(recipient)).to.be.bignumber.equal(recipientAmountBeforeTransfer.add(this.amountProtected)); 
           expect(await this.token.balanceOf(initialHolder)).to.be.bignumber.equal(initialHolderAmountBeforeTransfer.sub(this.amountProtected)); 
-        }, 10000) 
+        }, 95000) 
       }) 
 
     }) 
     })
   })  
-
-
   })
   }
 

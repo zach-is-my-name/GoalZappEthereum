@@ -20,8 +20,9 @@ contract ERC20Mock is GoalZappTokenSystem {
         _burnFrom(account, amount);
     }
 
-    function transferInternal(address from, address to, uint256 value) public {
+    function transferInternal(address from, address to, uint256 value) public returns (bool) {
         _transfer(from, to, value);
+        return true;
     }
 
     function approveInternal(address owner, address spender, uint256 value) public {
@@ -51,4 +52,10 @@ contract ERC20Mock is GoalZappTokenSystem {
         //setRestrictedTokens(account, amount);	
         emit Transfer(address(0), account, amount);
      } 
+
+    function transferTestVersion(address recipient, uint256 amount) public returns (bool) {
+        _transfer(msg.sender, recipient, amount);
+        return true;
+    }
+
 }
