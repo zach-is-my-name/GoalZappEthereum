@@ -1,9 +1,10 @@
-const { web3, contract} = require('@openzeppelin/test-environment');
 const { constants, expectEvent, expectRevert, time, BN } = require('@openzeppelin/test-helpers');
 const { expect } = require('chai');
 const { ZERO_ADDRESS } = constants;
-const GoalEscrowTestVersion = contract.fromArtifact('GoalEscrowTestVersion');
-const ERC20Mock = contract.fromArtifact('ERC20Mock');
+const GoalEscrowTestVersion = artifacts.require('GoalEscrowTestVersion');
+//const GoalEscrowTestVersion = contract.fromArtifact('GoalEscrowTestVersion');
+//const ERC20Mock = contract.fromArtifact('ERC20Mock');
+const ERC20Mock = artifacts.require('ERC20Mock');
 
 function shouldBehaveLikeERC20Protection(errorPrefix, initialSupply, initialHolder, recipient, anotherAccount) {
 
@@ -106,9 +107,10 @@ describe('ERC20 Protection', function() {
 
       it('removes protection from specified number of tokens, on specified account', async function() {
        this.timeout(10000)
+       
        setTimeout(async function() {
          const amountProtectedInitialHolder = await this.token.amountProtected(initialHolder)
-      return await expect(amountProtectedInitialHolder).to.be.bignumber.equal("0");
+         expect(amountProtectedInitialHolder).to.be.bignumber.equal("0");
        }, 95000)
       });
 
