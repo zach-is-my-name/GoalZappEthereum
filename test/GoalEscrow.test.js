@@ -31,6 +31,8 @@ const Aion = require('aiongoalzapptestversion')
 contract('Escrow', async function(accounts) {
   const [master, owner, suggester] = accounts
   beforeEach(async function() {
+    //let snapshot = await timeMachine.takeSnapshot();
+    //snapshotId = snapshot['result']; 
     this.tokenSystem = await GoalZappTokenSystem.new();
     await this.tokenSystem.initialize({value: startPoolBalance, from: master});
     await this.tokenSystem.init();  
@@ -39,7 +41,12 @@ contract('Escrow', async function(accounts) {
     this.implementation = await GoalEscrowTestVersion.new();
     this.factory = await ProxyFactory.new(this.implementation.address, this.tokenSystem.address)    
    })
-
+ 
+/*
+  afterEach(async function() {
+    await timeMachine.revertToSnapshot(snapshotId);
+   })   
+*/ 
     shouldBehaveLikeGoalEscrow('GoalEscrowTestVersion', master, owner, suggester);
 
   });

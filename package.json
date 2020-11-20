@@ -7,7 +7,8 @@
     "test": "test"
   },
   "scripts": {
-    "test": "npx mocha --exit --recursive"
+    "test": "truffle test",
+    "docker test": "docker-compose up"
   },
   "repository": {
     "type": "git",

@@ -1,7 +1,6 @@
 pragma solidity ^0.5.0; 
 
-/* Local Version --Aion Address hard coded -- */
-
+/*DockerAionTestVersion */
 import "./SafeMath.sol";
 import "./ERC20.sol";
 import "./GoalOwnerRole.sol";
@@ -10,8 +9,6 @@ import "./AionRole.sol";
 
 // interface Aion
 contract Aion {
-//using SafeERC20 for ERC20;
- 
   uint256 public serviceFee;
   function ScheduleCall(uint256 blocknumber, address to, uint256 value, 
     uint256 gaslimit, uint256 gasprice, bytes memory data, bool schedType) public
@@ -55,9 +52,7 @@ contract GoalEscrowTestVersion is GoalOwnerRole, AionRole {
   bool private _initializedMaster;
   bool private _initializedNewGoal;
 
-  function () external payable {
-  
-  }
+  function () external payable { }
 
   // serves as constructor; params are in flux for short term testing conveinience / long term features (reward/bond amounts, finalizized suggestion duration)
   function initMaster(ERC20 _token, uint256 _suggestionDuration) public {
@@ -106,7 +101,9 @@ contract GoalEscrowTestVersion is GoalOwnerRole, AionRole {
  
 	         //** SUGGEST **//
                 /*only suggester*/
-  function depositOnSuggest(bytes32 _id, uint _amount) public payable notGoalOwner {
+  function depositOnSuggest(bytes32 _id, uint _amount) public notGoalOwner {
+    require(bondFunds >= 1, "appologies! contract bond funds are less than 1, a notice has been sent to goal owner to increase the funding... sit tight!");   
+    require(rewardFunds >= 1, "appologies! contract bond funds are less than 1, a notice has been sent to goal owner to increase the funding... sit tight!");
     //set suggester address
     suggestedSteps[_id].suggester = msg.sender;
     //set suggester bond
@@ -184,18 +181,12 @@ contract GoalEscrowTestVersion is GoalOwnerRole, AionRole {
 
   function schedule_removeTokenTimeProtection (address _address, uint256 _amount)
    private {
-   aion = Aion(0xAB046F7cc64DCDfDAE5aF718Ff412B023C852E9E);
+   aion = Aion(0x51F5d84603dafa279Ae35596EBAFcC6CEd2B5628);
    uint256 callTime = token.protectionPeriod().add(block.timestamp);
    bytes memory data = abi.encodeWithSelector(bytes4(keccak256('removeTokenTimeProtection(address,uint256)')),_address, _amount);
    uint256 callCost = 200000*1e9 + aion.serviceFee();
    aion.ScheduleCall.value(callCost)(callTime, address(token), 0, 200000, 1e9, data, true);
   }
-  
-  /*function testVersionRemoveTokenProtectionWrapper(address user, uint256 amount) public {
-    emit debugWrapperIsAionAddress(token.isAionAddress(msg.sender));
-    token.removeTokenProtection(user, amount);
-  }
-*/
 
   function disburseOnAccept(bytes32 _id) public onlyGoalOwner returns (bool) {
     uint256 suggesterBondRefundAmount = suggestedSteps[_id].suggesterBond;

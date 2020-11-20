@@ -8,7 +8,7 @@ const {
 } = require('./ERC20.behavior');
 
 const {
-  shouldBehaveLikeERC20Protection
+  shouldBehaveLikeERC20Protection, 
 } = require('./ERC20Protection.behavior')
 
 const ERC20Mock = artifacts.require('ERC20Mock');
@@ -17,19 +17,20 @@ const { ZERO_ADDRESS } = constants;
 contract('ERC20', function (accounts) {
   const [initialHolder, recipient, anotherAccount] = accounts
   const initialSupply = new BN(web3.utils.toWei("1000"));
+
   beforeEach(async function () {
     this.token = await ERC20Mock.new();
     await this.token.mintNoRestrict(initialHolder, initialSupply)
   });
 
- // shouldBehaveLikeERC20('ERC20', initialSupply, initialHolder, recipient, anotherAccount);
+  shouldBehaveLikeERC20('ERC20', initialSupply, initialHolder, recipient, anotherAccount);
 
   shouldBehaveLikeERC20Protection('Protection_Period', initialSupply, initialHolder, recipient, anotherAccount);
-/*
+
   describe('ERC20 functions', function() {
     beforeEach(async function () {
       this.token = await ERC20Mock.new({from: initialHolder});
-      await this.token.mintNoRestrict(initialHolder, initialSupply)
+      await this.token.mintNoRestrict(initialHolder, initialSupply, {from: initialHolder})
     }) 
 
     describe('decrease allowance', function () {
@@ -372,7 +373,6 @@ contract('ERC20', function (accounts) {
       }); 
     });
   })  
-*/
 });
 
 

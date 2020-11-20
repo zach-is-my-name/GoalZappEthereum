@@ -93,8 +93,14 @@ describe('ERC20 Protection', function() {
 
     describe('owner tries to send protected tokens', function () {
       it('reverts', async function() {
+<<<<<<< HEAD
 				const amountProtected =	await this.token.amountProtected(initialHolder);
 				return await expectRevert(this.token.transfer( recipient, amountProtected, {from: initialHolder}),"your tokens are under protection period, check timeToLiftProtection() for time until you have tokens available, and/or check amountProtected to see how many of your tokens are currently under the protection period" );
+=======
+ 	let protected =	await this.token.amountProtected(initialHolder);
+	//console.log("INITIAL_HOLDER_AMOUNT_PROTECTED", protected.toNumber());
+      await expectRevert.unspecified(this.token.transferInternal(initialHolder, recipient, initialSupply));
+>>>>>>> DebugDockerAionTestVersion
       });
     });
 
