@@ -1,8 +1,7 @@
-const { BN, constants, expectEvent, expectRevert } = require('openzeppelin-test-helpers');
+const { constants, expectEvent, expectRevert, time, BN } = require('@openzeppelin/test-helpers');
 const { expect } = require('chai');
 const { ZERO_ADDRESS } = constants;
 const GoalEscrowTestVersion = artifacts.require('GoalEscrowTestVersion');
-const { advanceTimeAndBlock } = require("../utils/helpers/advance_time_and_block.js");
 const goalEscrow = artifacts.require("GoalEscrowTestVersion") 
 const proxyFactory = artifacts.require("ProxyFactory") 
 
@@ -22,8 +21,9 @@ function shouldBehaveLikeERC20Restricted(errorPrefix, initialSupply, initialHold
 
     describe('send tokens', function() {
       it('fails on send to party outside of escrow', async function() {
-      await expectRevert.unspecified(this.token.transfer(recipient, this.balanceInitialHolder, {from: _initialHolder}));
+      await expectRevert(this.token.transfer(recipient, this.balanceInitialHolder, {from: _initialHolder}), "Transfer failed: restricted tokens exceeds transfer amount. Try again, using less than Amount Restricted");
       })   
+
       it('succeeds on send to to escrow', async function() {
       const Implementation = await goalEscrow.new() 
       const ProxyFactory = await proxyFactory.new(Implementation.address, this.token.address)
@@ -54,7 +54,7 @@ function shouldBehaveLikeERC20Restricted(errorPrefix, initialSupply, initialHold
       await this.token.approve(this.ProxiedGoalEscrow.address, web3.utils.toWei("50"), {from: anotherAccount});
       await this.ProxiedGoalEscrow.newGoalInitAndFund(this.token.address, 30, web3.utils.toWei("25"), web3.utils.toWei("25"), {from: _initialHolder});
       this.suggesterBondAmount = web3.utils.toWei("1")
-      await this.ProxiedGoalEscrow.depositOnSuggest(this.id, this.suggesterBondAmount, {from:anotherAccount});
+      await this.ProxiedGoalEscrow.depositOnSuggest(this.id, this.suggesterBondAmount, {from:anotherAccount, value: web3.utils.toWei("1")});
       this.ownerBondAmount = await this.ProxiedGoalEscrow.ownerBondAmount()
     }) 
     
@@ -66,8 +66,8 @@ function shouldBehaveLikeERC20Restricted(errorPrefix, initialSupply, initialHold
 
 	expect(balanceOfRecipient).to.be.bignumber.equal(prevBalanceOfRecipient.add(this.ownerBondAmount))
       }) 
-      it("does not allow owner to send amount > non-restricted tokens to a non-escrow account", async function() {
-        await expectRevert.unspecified(this.token.transfer(recipient, this.balanceInitialHolder, {from: _initialHolder}))
+      it("does not allow owner to send amount >= non-restricted tokens to a non-escrow account", async function() {
+        await expectRevert(this.token.transfer(recipient, this.balanceInitialHolder, {from: _initialHolder}), "Transfer failed: restricted tokens exceeds transfer amount. Try again, using less than Amount Restricted")
       })
     })
     
@@ -77,13 +77,13 @@ function shouldBehaveLikeERC20Restricted(errorPrefix, initialSupply, initialHold
 	const balanceOfRecipient = await this.token.balanceOf(recipient) 
         expect(balanceOfRecipient).to.be.bignumber.equal(this.suggesterBondAmount)
      })
-     it("does not allow suggester to send amount > than restricted tokens (new token purchase amount)", async function() {
+     it("does not allow suggester to send amount >= non-restricted tokens (new token purchase amount) to a non-escrow account", async function() {
        
        const newTokenPurchase = await this.token.buy({from: anotherAccount, value: web3.utils.toWei("1")})
-       const amountRestricted = await this.token.amountRestricted(anotherAccount)
+       const amountRestricted = await this.token.amountRestricted(anotherAccount, {from: anotherAccount})
        console.log("amountRestricted", web3.utils.fromWei(amountRestricted))
         
-       await expectRevert.unspecified(this.token.transfer(recipient, amountRestricted.addn(1), {from: anotherAccount}))
+       await expectRevert(this.token.transfer(recipient, amountRestricted, {from: anotherAccount}), "Transfer failed: restricted tokens exceeds transfer amount. Try again, using less than Amount Restricted")
      })
    })
   })

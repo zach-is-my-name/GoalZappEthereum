@@ -20,13 +20,15 @@ contract('ERC20', function (accounts) {
 
   beforeEach(async function () {
     this.token = await ERC20Mock.new();
-    await this.token.mintNoRestrict(initialHolder, initialSupply)
+    //await this.token.mintNoRestrict(initialHolder, initialSupply)
+    await this.token.mint(initialHolder, initialSupply)
+    await this.token.init()
   });
 
-  shouldBehaveLikeERC20('ERC20', initialSupply, initialHolder, recipient, anotherAccount);
+  //shouldBehaveLikeERC20('ERC20', initialSupply, initialHolder, recipient, anotherAccount);
 
   shouldBehaveLikeERC20Protection('Protection_Period', initialSupply, initialHolder, recipient, anotherAccount);
-
+/*
   describe('ERC20 functions', function() {
     beforeEach(async function () {
       this.token = await ERC20Mock.new({from: initialHolder});
@@ -373,6 +375,7 @@ contract('ERC20', function (accounts) {
       }); 
     });
   })  
+*/
 });
 
 
