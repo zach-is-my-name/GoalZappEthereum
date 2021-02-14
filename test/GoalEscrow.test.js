@@ -48,7 +48,7 @@ function shouldBehaveLikeGoalEscrow (errorPrefix, master, owner, suggester) {
   it('reverts when deployed with a null token address', async function() {
     this.timeout(25000)
     this.GoalEscrow = await GoalEscrowTestVersion.new() 
-    await expectRevert(this.GoalEscrow.initMaster(ZERO_ADDRESS{from:master}, {from:master}),"token address cannot be zero");
+    await expectRevert(this.GoalEscrow.initMaster(ZERO_ADDRESS, {from:master}),"token address cannot be zero");
   })
 
   describe('with token, with proxy', function () {
@@ -97,7 +97,7 @@ function shouldBehaveLikeGoalEscrow (errorPrefix, master, owner, suggester) {
 					beforeEach(async function () {
 						await this.tokenSystem.approve(this.proxyAddress, MAX_UINT256, {from: suggester});
             this.blockBeforeDepositOnSuggest = await web3.eth.getBlockNumber() 
-						this.receipt = await this.proxiedEscrow.depositOnSuggest(id, suggesterBondAmount, {from: suggester, value: web3.utils.toWei("1")}); 
+						this.receipt = await this.proxiedEscrow.depositOnSuggest(id, suggesterBondAmount, {from: suggester, value: web3.utils.toWei("2")}); 
             this._suggestionExpires = (await this.proxiedEscrow.suggestedSteps(id)).suggestionExpires
             this._timeSuggested = (await this.proxiedEscrow.suggestedSteps(id)).timeSuggested
             this._suggestionDuration = await this.proxiedEscrow.suggestionDuration() 

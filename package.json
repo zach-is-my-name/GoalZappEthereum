@@ -30,6 +30,5 @@
     "openzeppelin-solidity": "^2.5.1",
     "prettier": "2.0.5",
     "solidity-coverage": "^0.7.11"
-  },
-  "dependencies": {}
+  }
 }

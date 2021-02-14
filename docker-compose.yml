@@ -32,7 +32,7 @@ services:
   
   ganache: 
     image: trufflesuite/ganache-cli:latest 
-    command: ganache-cli  -f "https://sandbox.truffleteams.com/de77b065-c9a7-4c8b-9fe9-0e507a623f9a"
+    command: ganache-cli  -e 1000 -f "https://sandbox.truffleteams.com/de77b065-c9a7-4c8b-9fe9-0e507a623f9a"
     ports:
       - 8545:8545
     labels: 
