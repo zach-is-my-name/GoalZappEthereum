@@ -1,5 +1,8 @@
 pragma solidity ^0.5.0; 
+
+import "./GoalEscrowTestVersion.sol"; /*debug*/
 import "./SafeMath.sol";
+
 /* ----------------------------------------------------------------------------
  Client contract.
  This contract is generated for each user (user account). All the transactions of a user are executed from this contract.
@@ -16,15 +19,15 @@ contract AionClient {
 
     
     function execfunct(address to, uint256 value, uint256 gaslimit, bytes calldata data) external returns(bool, bytes memory) {
-        require(msg.sender == AionAddress);
-        return (to.call.value(value).gas(gaslimit)(data));
-
+        require(msg.sender == AionAddress, "msg.send !== AionAddress");
+        return (address(to).call.value(value).gas(gaslimit)(data));
     }
     
 
     function () payable external {}
 
 }
+
 
 
 /* ----------------------------------------------------------------------------
@@ -65,7 +68,7 @@ contract Aion {
 
     // This function allows to change the address of the owner (admin of the contract)
     function transferOwnership(address payable newOwner) public {
-        require(msg.sender == owner);
+        require(msg.sender == owner, "msg.sender !== owner");
         withdraw();
         owner = newOwner;
     }
@@ -93,11 +96,11 @@ contract Aion {
     @return address address of the client account created
     */
     function ScheduleCall(uint256 blocknumber, address to, uint256 value, uint256 gaslimit, uint256 gasprice, bytes memory data, bool schedType) public payable returns (uint,address){
-        require(msg.value == value.add(gaslimit.mul(gasprice)).add(serviceFee));
+        require(msg.value == value.add(gaslimit.mul(gasprice)).add(serviceFee), "msg.value must == value.add(gaslimit.mul(gasprice)).add(serviceFee)");
         AionID = AionID + 1;
         scheduledCalls[AionID] = keccak256(abi.encodePacked(blocknumber, msg.sender, to, value, gaslimit, gasprice, serviceFee, data, schedType));
         createAccount();
-        address(clientAccount[msg.sender]).transfer(msg.value);
+        clientAccount[msg.sender].transfer(msg.value);
         emit ScheduleCallEvent(blocknumber, msg.sender, to, value, gaslimit, gasprice, serviceFee, data, AionID, schedType);
         return (AionID,clientAccount[msg.sender]);
     }
@@ -109,21 +112,21 @@ contract Aion {
     If the information does not match, the transaction is reverted.
     */
     function executeCall(uint256 blocknumber, address from, address to, uint256 value, uint256 gaslimit, uint256 gasprice,
-                         uint256 fee, bytes memory data, uint256 aionId, bool schedType) public {
+                         uint256 fee, bytes calldata data, uint256 aionId, bool schedType) external {
         /* removed for truffle teams sandbox test version */ //require(msg.sender==owner);
         if(schedType) require(blocknumber <= block.timestamp );
         if(!schedType) require(blocknumber <= block.number );
         
         require(scheduledCalls[aionId]==keccak256(abi.encodePacked(blocknumber, from, to, value, gaslimit, gasprice, fee, data, schedType)));
-        AionClient instance = AionClient(clientAccount[from]);
+        AionClient instance = AionClient(address(clientAccount[from]));
+        
         (bool success, ) = instance.execfunct(address(this), gasprice*gaslimit+fee, 2100, hex"00");
         require(success);
         (bool TxStatus, ) = instance.execfunct(to, value, gasleft().sub(50000), data);
         
         // If the user tx fails return the ether to user
         bool TxStatus_cancel;
-        if(!TxStatus && value>0) { (bool TxStatus_cancel, ) = instance.execfunct(from, value, 2100, hex"00");} 
-        //else {(bool TxStatus_cancel,) = false;}
+        if(!TxStatus && value > 0){(TxStatus_cancel, ) = instance.execfunct(from, value, 2100, hex"00");} else { TxStatus_cancel = false;}
         
         delete scheduledCalls[aionId];
         (bool reimbStatus, ) = from.call.value((gasleft()).mul(gasprice)).gas(2100)("");
@@ -158,7 +161,7 @@ contract Aion {
     // This function allows the owner of the contract to retrieve the fees and the gas price
     function withdraw() public {
         require(msg.sender==owner);
-        address(owner).transfer(address(this).balance);
+        owner.transfer(address(this).balance);
     }
     
     

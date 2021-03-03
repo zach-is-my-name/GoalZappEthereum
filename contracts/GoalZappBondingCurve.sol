@@ -11,7 +11,7 @@ uint32 public constant RESERVE_RATIO = 333333;
 uint256 public constant GAS_PRICE = 50 * (10 ** 10);
 bool private initializedBondingCurve;
 
-  function initialize () public payable {
+  function initializeBondingCurve () public payable {
     require(!initializedBondingCurve, "Bonding Curve is already initialized");
     poolBalance = msg.value;
     reserveRatio = RESERVE_RATIO;

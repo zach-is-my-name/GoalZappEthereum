@@ -10,6 +10,11 @@ contract Protected is EscrowRole, AionRole {
    mapping (address => uint256) public protectedTokens;
    event TransferChecked(string message);
    event Caller(address sender);
+   event debugTimeProtectTokens(uint _amount, address _address);
+   event debugRewardTimeProtectTokens(uint _amount, address _address);
+
+   event debugRemoveTokenProtectionEvent(uint _amount, address _address);
+   event debugRemoveRewardTokenProtectionEvent(uint _amount, address _address);
    uint256 public protectionPeriod;
    bool private initializedProtectionPeriod;
  
@@ -18,7 +23,6 @@ contract Protected is EscrowRole, AionRole {
      protectionPeriod = 259200;    
      initializedProtectionPeriod = true; 
    }
-     
 
     modifier checkProtectedTokens(uint256 amount) {
       if (protectedTokens[msg.sender] > 0) {
@@ -28,12 +32,27 @@ contract Protected is EscrowRole, AionRole {
     }
     
     function timeProtectTokens(address _address, uint256 _amount) public onlyEscrowRole returns (bool) {
+      emit debugTimeProtectTokens(_amount, _address); 
       protectedTokens[_address] = protectedTokens[_address].add(_amount);
      // return true;
     }
 
-    function removeTokenProtection(address _address, uint256 _amount) public onlyAionRole returns (bool) {
+    function debugTimeProtectRewardTokens(address _address, uint256 _amount) public onlyEscrowRole returns (bool) {
+      emit debugRewardTimeProtectTokens(_amount, _address); 
+      protectedTokens[_address] = protectedTokens[_address].add(_amount);
+     // return true;
+    }
+
+    function removeTokenProtection(address _address, uint256 _amount) external onlyAionRole returns (bool) {
       emit Caller(msg.sender);
+      emit debugRemoveTokenProtectionEvent(_amount, _address);
+      protectedTokens[_address] = protectedTokens[_address].sub(_amount);
+      //return true;
+    }
+
+    function debugRemoveRewardTokenProtection(address _address, uint256 _amount) external onlyAionRole returns (bool) {
+      emit Caller(msg.sender);
+      emit debugRemoveRewardTokenProtectionEvent(_amount, _address);
       protectedTokens[_address] = protectedTokens[_address].sub(_amount);
       //return true;
     }

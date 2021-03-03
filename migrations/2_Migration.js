@@ -1,20 +1,10 @@
-const GoalZappTokenSystem = artifacts.require("GoalZappTokenSystem"); 
-const GoalEscrowTestVersion = artifacts.require("GoalEscrowTestVersion");
-const ProxyFactory = artifacts.require("ProxyFactory");
-
-// const UpgradibilityProxy = artifacts.require("UpgradabilityProxy");
+const Aion = artifacts.require("Aion");
+const SafeMath = artifacts.require("SafeMath") 
+const AionClient = artifacts.require("AionClient")
 
 module.exports = function(deployer) {
-  deployer.deploy(GoalZappTokenSystem); 
-  deployer.deploy(GoalEscrowTestVersion).then(function () {
-    return deployer.deploy(ProxyFactory, GoalEscrowTestVersion.address, GoalZappTokenSystem.address)
-  });
- };
-
-
-
-
-
-
-
+  deployer.deploy(SafeMath);
+  deployer.deploy(Aion, {from:"0x6b50600866a4A4E09E82144aF3cCdfe16b3081b3"} ).then(function() {
+    return deployer.deploy(AionClient, Aion.address)});
+  };
 

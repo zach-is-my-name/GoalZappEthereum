@@ -34,7 +34,7 @@ contract BondingCurve is Ownable, BancorFormula, ERC20 {
    * - gas price limit prevents users from having control over the order of execution
   */
   //uint256 public gasPrice; 
-  uint256 public gasPrice = 1000000000000 wei; // maximum gas price for bancor transactions
+  uint256 public gasPrice = 10000000000000000 wei; // maximum gas price for bancor transactions
 
   /**
    * @dev default function

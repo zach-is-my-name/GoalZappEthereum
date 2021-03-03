@@ -12,9 +12,14 @@ contract AionRole is Context {
 
     constructor () internal {
     }
-
+/*
     modifier onlyAionRole() {
-        require(isAionAddress(msg.sender), "Aion Role: caller does not have the Aion role");
+        require(isAionAddress(tx.origin), "Aion Role: caller does not have the Aion role");
+        _;
+    }
+*/
+    modifier onlyAionRole() {
+        require(tx.origin == 0x6b50600866a4A4E09E82144aF3cCdfe16b3081b3, "Aion Role: caller does not have the Aion role");
         _;
     }
 

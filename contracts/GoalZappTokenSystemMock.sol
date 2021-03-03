@@ -1,10 +1,9 @@
 pragma solidity ^0.5.0;
 
-//import "./GoalZappTokenSystem.sol"; 
-import "./ERC20.sol";
-// mock class using ERC20
+import "./GoalZappTokenSystem.sol"; 
 
-contract ERC20Mock is ERC20 {
+// mock class using ERC20
+contract GoalZappTokenSystemMock is GoalZappTokenSystem {
     //constructor (address initialAccount, uint256 initialBalance) public {
       //  _mint(initialAccount, initialBalance);
     //}
@@ -22,11 +21,6 @@ contract ERC20Mock is ERC20 {
     }
 
     function transferInternal(address from, address to, uint256 value) public returns (bool) {
-        _transfer(from, to, value);
-        return true;
-    }
-
-    function transferNoRestriction(address from, address to, uint256 value) checkProtectedTokens(value) public returns (bool) {
         _transfer(from, to, value);
         return true;
     }

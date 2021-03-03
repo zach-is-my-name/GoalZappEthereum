@@ -1,7 +1,7 @@
 const { constants, expectEvent, expectRevert, time, BN } = require('@openzeppelin/test-helpers');
 const { expect } = require('chai');
 const { shouldBehaveLikeERC20Restricted} = require('./ERC20Restricted.behavior')
-const ERC20Mock = artifacts.require('ERC20Mock');
+const  ERC20Mock  = artifacts.require('ERC20Mock');
 const { ZERO_ADDRESS } = constants;
 
 contract('ERC20 Restricted', function (accounts) {
@@ -11,6 +11,8 @@ contract('ERC20 Restricted', function (accounts) {
   beforeEach(async function () {
     this.token = await ERC20Mock.new();
     await this.token.mint(initialHolder, initialSupply) 
+    await this.token.mint(_initialHolder, initialSupply)
+    await this.token.mint(anotherAccount, initialSupply)
   });
 
   shouldBehaveLikeERC20Restricted('Restriction_Period', initialSupply, initialHolder, recipient, anotherAccount, _initialHolder)

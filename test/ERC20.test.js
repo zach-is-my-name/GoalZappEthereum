@@ -7,9 +7,7 @@ const {
   shouldBehaveLikeERC20Approve,
 } = require('./ERC20.behavior');
 
-const {
-  shouldBehaveLikeERC20Protection, 
-} = require('./ERC20Protection.behavior')
+//const { shouldBehaveLikeERC20Protection, } = require('./ERC20Protection.behavior')
 
 const ERC20Mock = artifacts.require('ERC20Mock');
 const { ZERO_ADDRESS } = constants;
@@ -20,8 +18,8 @@ contract('ERC20', function (accounts) {
 
   beforeEach(async function () {
     this.token = await ERC20Mock.new();
-    //await this.token.mintNoRestrict(initialHolder, initialSupply)
-    await this.token.mint(initialHolder, initialSupply)
+    await this.token.mintNoRestrict(initialHolder, initialSupply)
+    //await this.token.mint(initialHolder, initialSupply)
     await this.token.init()
   });
 
