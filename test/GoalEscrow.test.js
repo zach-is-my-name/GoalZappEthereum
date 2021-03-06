@@ -35,7 +35,6 @@ contract('Test GoalEscrowTestVersion.sol', async function(accounts) {
 
 function shouldBehaveLikeGoalEscrow (errorPrefix, master, owner, suggester) {
   describe("", function() {
-//  aionContract = new web3.eth.Contract(aionInterface.abi,"0x61e9F089BDE5B51882895192F852FA4AbBd29608")
 
   beforeEach(async function() {
     this.aionContract = aionContract;
@@ -44,8 +43,8 @@ function shouldBehaveLikeGoalEscrow (errorPrefix, master, owner, suggester) {
     await this.tokenSystem.init();  
     await this.tokenSystem.buy({value: web3.utils.toWei("1"), from: owner})
     await this.tokenSystem.buy({value: web3.utils.toWei("1"), from: suggester})
-    //this.implementation = await GoalEscrowTestVersion.new();
-    //this.factory = await ProxyFactory.new(this.implementation.address, this.tokenSystem.address)    
+    this.implementation = await GoalEscrowTestVersion.new();
+    this.factory = await ProxyFactory.new(this.implementation.address, this.tokenSystem.address)    
    })
 
   it('reverts when deployed with a null token address', async function() {
@@ -57,11 +56,10 @@ function shouldBehaveLikeGoalEscrow (errorPrefix, master, owner, suggester) {
   describe('with token, with proxy', function () {
     describe('Create and Fund Escrow', function() {
       beforeEach(async function () {
-		  	//await this.factory.build("Goal1", {from: owner});
-				this.proxiedEscrow = await GoalEscrowTestVersion.new();
-        this.proxyAddress = this.proxiedEscrow.address
-        this.web3ContractProxiedEscrow = new web3.eth.Contract(escrowInterface.abi, this.proxyAddress);  
-				await this.proxiedEscrow.initMaster(this.tokenSystem.address, {from: master}); 
+		  	await this.factory.build("Goal1", {from: owner});
+        this.proxyAddress = await this.factory.getProxyAddress("Goal1", owner, {from:owner}); 				
+				this.proxiedEscrow = await GoalEscrowTestVersion.at(this.proxyAddress); 
+        await this.proxiedEscrow.initMaster(this.tokenSystem.address, {from: master}); 
 			})
 
       context('when not approved by payer', function () { 
