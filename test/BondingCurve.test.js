@@ -220,7 +220,6 @@ contract('BondingCurve', function(accounts) {
       );
 
       let sell = await this.bondingCurve.sell(amount);
-      //console.log('sellTokens gas ', sell.receipt.gasUsed);
 
       let endContractBalance = await web3.eth.getBalance(this.bondingCurve.address);
       let diff = console.log("SALE RETURN DIFF", (new BN (saleReturn).sub((new BN(contractBalance).sub(new BN(endContractBalance))))).toString());

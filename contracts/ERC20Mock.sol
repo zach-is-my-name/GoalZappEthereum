@@ -59,9 +59,4 @@ contract ERC20Mock is ERC20 {
         emit Transfer(address(0), account, amount);
      } 
 
-    function transferTestVersion(address recipient, uint256 amount) public returns (bool) {
-        _transfer(msg.sender, recipient, amount);
-        return true;
-    }
-
 }

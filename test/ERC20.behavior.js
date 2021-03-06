@@ -86,11 +86,7 @@ function shouldBehaveLikeERC20 (errorPrefix, initialSupply, initialHolder, recip
           });
 
           describe('when the token owner does not have enough balance', function () {
-            //console.log('initialSupply ' , initialSupply)
-			//console.log('typeof initialSupply ', typeof initialSupply)
             const amount = initialSupply + 1;
-            //console.log('amount ' , amount)
-			//console.log('typeof amount ', typeof amount)
 		
             it('reverts', async function () {
               await expectRevert(this.token.transferFrom(

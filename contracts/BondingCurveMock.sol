@@ -2,7 +2,6 @@ pragma solidity ^0.5.00;
 
 import "./GoalZappTokenSystem.sol";
 
-
 contract BondingCurveMock is GoalZappTokenSystem {
   constructor(
     uint256 totalSupplyArg,

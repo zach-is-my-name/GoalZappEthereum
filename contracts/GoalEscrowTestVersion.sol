@@ -25,7 +25,8 @@ contract GoalEscrowTestVersion is GoalOwnerRole, AionRole {
   event debugScheduleReturnBondsCallTime(uint callTime);
  event AionExecuteddebugBalanceOfContract(uint256 balanceOfContract);
  event AionExecuteddebugSuggesterBondRefundAmount(uint suggesterBondRefundAmount); 
-  mapping ( bytes32 => Suggester) public suggestedSteps;
+
+ mapping ( bytes32 => Suggester) public suggestedSteps;
 
   struct Suggester {
    address suggester;
@@ -145,10 +146,10 @@ contract GoalEscrowTestVersion is GoalOwnerRole, AionRole {
   function schedule_removeTokenTimeProtection(address _address, uint256 _amount) internal {
     aion = Aion(0x91839cBF2D9436F1963f9eEeca7d35d427867a7a);
 		uint256 callTime = suggestionDuration.add(block.timestamp);
-		bytes memory data = abi.encodeWithSelector(bytes4(keccak256('removeTokenProtection(address,uint256)')),_address,_amount);
+		bytes memory data = abi.encodeWithSelector(bytes4(keccak256('token.removeTokenProtection(address,uint256)')),_address,_amount);
 		uint256 callCost = 1 ether;
 		address to = address(this);
-		aion.ScheduleCall.value(callCost)(callTime, address(token), 0, 1000000000, 1e9, data, true);
+		aion.ScheduleCall.value(callCost)(callTime, to, 0, 1000000000, 1e9, data, true);
   }
 
   function schedule_removeRewardTokenProtection(address _address, uint256 _amount, uint256 _timeSuggested) internal {
