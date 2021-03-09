@@ -6,8 +6,7 @@ services:
        - 27017:27017
 
   executor:  
-    build: 
-      context: https://github.com/zach-is-my-name/Aion.git#dockerDebug
+    build: ./AionGoalZapp  
     depends_on: 
       - mongo
       - ganache
@@ -23,6 +22,9 @@ services:
     build: .
     depends_on:
       - ganache
+    environment:
+      LANG: en_US.UTF-8
+      FORCE_COLOR: 'true'
     labels: 
       purpose: "run the GoalZapp test suite"
       platform: "node.js"
@@ -32,9 +34,11 @@ services:
   
   ganache: 
     image: trufflesuite/ganache-cli:latest 
-    command: ganache-cli  -e 1000 -f "https://sandbox.truffleteams.com/de77b065-c9a7-4c8b-9fe9-0e507a623f9a"
+    command: ganache-cli  -e 1000 --allowUnlimitedContractSize -l 9007199254740991 -m "onion source advice ahead august giggle chaos friend photo all flame gallery"
     ports:
       - 8545:8545
+    tty: true
+    stdin_open: true
     labels: 
       purpose: "run the virtual ethereum network for testing, hosting Aion contract"
       platform: "node.js"
