@@ -98,7 +98,11 @@ function shouldBehaveLikeERC20Restricted(errorPrefix, initialSupply, initialHold
 
         it("allows owner to send amount <= non-restricted tokens (ownerBond) to non-escrow account", async function() {
           const amountProtectedAnotherAccount = await this.token.amountProtected(anotherAccount)
+          const amountProtectedInitialHolder = await this.token.amountProtected(_initialHolder)
+          console.log("amountProtectedAnotherAccount", amountProtectedAnotherAccount.toString()) 
+          console.log("amountProtectedInitialHolder", amountProtectedInitialHolder.toString()) 
           const prevBalanceOfRecipient = await this.token.balanceOf(recipient) 
+          console.log("ownerBondAmount", this.ownerBondAmount.toString())
           await this.token.transfer(recipient, this.ownerBondAmount, {from: _initialHolder}) 
           const balanceOfRecipient = await this.token.balanceOf(recipient) 
           expect(balanceOfRecipient).to.be.bignumber.equal(prevBalanceOfRecipient.add(this.ownerBondAmount))
