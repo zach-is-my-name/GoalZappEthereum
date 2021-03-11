@@ -20,7 +20,7 @@ const {saveRequestedTxs} = require('./modules/saveRequestedTx');
 const {saveExecutedTxs} = require('./modules/saveExecutedTx');
 const {executeRequestedTxs} = require('./modules/executeRequestedTxs');
 
-const dbHost = 'mongodb://localhost:27017/aion' 
+const dbHost = 'mongodb://mongo:27017/aion' 
 const aionContractAddress = '0x91839cBF2D9436F1963f9eEeca7d35d427867a7a'
 const privateKey = '0x61fa5d860372d5673644b41380642b9bd44d01e52c79852d2f90552cace94b8b' 
 const reqConfirmations = 0
