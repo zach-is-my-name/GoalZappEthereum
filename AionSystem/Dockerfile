@@ -1,8 +1,7 @@
 #executer: node run index.js
 FROM node:alpine 
-RUN apk add --no-cache bash
-WORKDIR ./executor
-RUN /bin/bash -c "pwd"
-COPY ./package.json .
-RUN /bin/bash -c "npm install " #silent 
-ENTRYPOINT ["node", "index.js"] 
+COPY . . 
+#CMD pwd && ls -a
+RUN apk add --no-cache bash #python3 gcc make g++ zlib-dev
+RUN /bin/bash -c "npm install --silent" 
+ENTRYPOINT ["node", "--no-warnings", "index.js"] 
