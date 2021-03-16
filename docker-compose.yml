@@ -6,7 +6,7 @@ services:
        - 27017:27017
 
   executor:  
-    build: ./AionGoalZapp  
+    build: ./AionSystem
     depends_on: 
       - mongo
       - ganache

@@ -31,7 +31,7 @@ mongoose.connect(dbHost, {useNewUrlParser: true, useUnifiedTopology: true})
 
 // Inject Web3
 
-const provider = new Web3HttpProvider('http://localhost:8545', options);
+const provider = new Web3HttpProvider("http://ganache:8545", options);
 var web3 = new Web3(provider);
 
 // Contract definition and account setting
