@@ -12,7 +12,7 @@ async function executeRequestedTxs(blockNumber, txType, web3, account, aionContr
     if (r.length > 0) {console.log("Found pending tx's")}
 
     for(var i = 0; i < r.length; i++){
-        console.log(`initiating Pending Transaction # ${i +1} of ${r.length}, scheduledTransactionTime: ${web3.utils.hexToNumber(r[i].blocknumber)}, timeNow: ${ web3.utils.hexToNumber(blocknumber)}`) 
+        //console.log(`initiating Pending Transaction # ${i +1} of ${r.length}, scheduledTransactionTime: ${web3.utils.hexToNumber(r[i].blocknumber)}, timeNow: ${ web3.utils.hexToNumber(blocknumber)}`) 
 
 // as soon as a scheduled transaction is found it's lookup up in database. 
 // it's checked to ensure the current blocktime is before tx is to be scheduled 
@@ -22,7 +22,7 @@ async function executeRequestedTxs(blockNumber, txType, web3, account, aionContr
      // if     scheduledBlock <=  blockNow { proceed } ?? 
      // r[i].blocknumber === pending tx blockNumber or timeStamp
      // blocknumber variable  === true blockNumber or timeStamp
-      console.log(`r[${i}].blocknumber ${web3.utils.hexToNumber(r[i].blocknumber)}, blocknumber ${blocknumber}`) 
+      //console.log(`r[${i}].blocknumber ${web3.utils.hexToNumber(r[i].blocknumber)}, blocknumber ${blocknumber}`) 
       // fail: rTime + 30 > blocktime
         if (web3.utils.toBN(r[i].blocknumber).lte(blocknumber)) {            
             
@@ -37,7 +37,7 @@ async function executeRequestedTxs(blockNumber, txType, web3, account, aionContr
             var AionID = r[i].AionID;
             var schedType = r[i].schedType;
 
-            console.log(`Pre-check: estimating gas for AionID ${web3.utils.hexToNumber(AionID)}`)
+            //console.log(`Pre-check: estimating gas for AionID ${web3.utils.hexToNumber(AionID)}`)
 
             await aionContract.methods.executeCall(block, from, to, value, gaslimit, gasprice, fee, data, AionID, schedType).estimateGas({
                 from: account.address,

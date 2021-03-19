@@ -121,8 +121,9 @@ function shouldBehaveLikeERC20Protection(errorPrefix, initialSupply, initialHold
         })
 
           context('delay test execution for Aion processing', function() {
-            beforeEach(done => setTimeout(done, 17000));
+            beforeEach(done => setTimeout(done, 30000));
              it('removes protection from specified number of tokens, on specified account', async function() {
+                 console.log("protection Period ", this.protectionPeriod.toString())
                  const eventArr = await aionContract.getPastEvents("ExecutedCallEvent", {fromBlock: this.blockBeforeIncrease, toBlock:"pending"}) 
                  let amountProtectedInitialHolder = await this.token.amountProtected(initialHolder)
                  //await this.token.debugRemoveRewardTokenProtection(initialHolder, web3.utils.toWei("1"))

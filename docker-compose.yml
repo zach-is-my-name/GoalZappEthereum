@@ -15,7 +15,9 @@ services:
     labels: 
       purpose: "run the Aion system executor"
       platform: "node.js"
-
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    
   truffle: 
     build: .
     depends_on:

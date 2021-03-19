@@ -94,7 +94,7 @@ function shouldBehaveLikeERC20Restricted(errorPrefix, initialSupply, initialHold
     }) 
 
       context('delay test execution for Aion processing', function() {
-        beforeEach(done => setTimeout(done, 20000));
+        beforeEach(done => setTimeout(done, 25000));
 
         it("allows owner to send amount <= non-restricted tokens (ownerBond) to non-escrow account", async function() {
           const amountProtectedAnotherAccount = await this.token.amountProtected(anotherAccount)

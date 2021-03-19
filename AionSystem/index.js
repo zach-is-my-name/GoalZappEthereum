@@ -65,7 +65,7 @@ setInterval(function(){
             console.log(`Looking for Scheduled Transaction events from Aion block ${currentBlock} to chain block ${block.number}`)
             var events = await aionContract.getPastEvents('ScheduleCallEvent', {fromBlock: currentBlock-reqConfirmations, toBlock: block.number-reqConfirmations}) 
             for(var i = 0; i < events.length; i++){
-                console.log(`Found new Scheduled Transaction from chain block ${web3.utils.hexToNumber(events[i].blockNumber)}, to be executed at ${web3.utils.hexToNumber(events[i].returnValues.blocknumber)}`);
+                //console.log(`Found new Scheduled Transaction from chain block ${web3.utils.hexToNumber(events[i].blockNumber)}, to be executed at ${web3.utils.hexToNumber(events[i].returnValues.blocknumber)}`);
                 await saveRequestedTxs(events[i], web3);
                 //console.log(`Registered scheduled tx to database`)
             }                                     
