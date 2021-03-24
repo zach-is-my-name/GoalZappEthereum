@@ -1,3 +1,4 @@
+/*
 /**
  * Use this file to configure your truffle project. It's seeded with some
  * common settings for different networks and features like migrations,
@@ -100,3 +101,4 @@ module.exports = {
   },
   plugins: ["solidity-coverage"]
 }
+*/
