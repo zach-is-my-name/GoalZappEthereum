@@ -7,7 +7,7 @@ import "./GoalOwnerRole.sol";
 import "./AionRole.sol";
 import "./Aion.sol";
 
-contract GoalEscrowTestVersion is GoalOwnerRole, AionRole {
+contract GoalEscrow GoalOwnerRole, AionRole {
   using SafeMath for uint256;
 
   event Deposited(address indexed suggester, uint256 tokenAmount);
