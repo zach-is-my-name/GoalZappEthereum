@@ -29,10 +29,6 @@ contract GoalEscrow GoalOwnerRole, AionRole {
   event SuggestedStepsSuggesterBond(uint Suggester_suggesterBond);
   event AoinExecutedSuggestedStepsSuggesterBond(uint Suggester_suggesterBond);
   event AionExecutedReturnedToBondFunds(uint suggestedStepOwnerBond);
-  event debugScheduleRewardProtectionCallTime(uint callTime);
-  event debugScheduleReturnBondsCallTime(uint callTime);
- event AionExecuteddebugBalanceOfContract(uint256 balanceOfContract);
- event AionExecuteddebugSuggesterBondRefundAmount(uint suggesterBondRefundAmount); 
 
  mapping ( bytes32 => Suggester) public suggestedSteps;
 
@@ -145,7 +141,6 @@ contract GoalEscrow GoalOwnerRole, AionRole {
   function schedule_returnBondsOnTimeOut(bytes32 _id) internal {
     aion = Aion(0x91839cBF2D9436F1963f9eEeca7d35d427867a7a);
 		uint callTime = suggestionDuration.add(block.timestamp);
-		emit debugScheduleReturnBondsCallTime(callTime);
 		bytes memory data = abi.encodeWithSelector(bytes4(keccak256('returnBondsOnTimeOut(bytes32)')),_id);
 		uint callCost = 1 ether;
 		aion.ScheduleCall.value(callCost)(callTime, address(this), /*value*/ 0, /*gaslimit*/1000000000,/*gasprice*/ 1e9, /*data*/ data, /*time or block*/ true);  
@@ -166,8 +161,7 @@ contract GoalEscrow GoalOwnerRole, AionRole {
 		uint256 timeElapsed = timeNow.sub(_timeSuggested);
 		uint256 timeRemaining =  token.protectionPeriod().sub(timeElapsed);
 		uint256 callTime = timeNow.add(timeRemaining); 
-		emit debugScheduleRewardProtectionCallTime(callTime);
-		bytes memory data = abi.encodeWithSelector(bytes4(keccak256('debugRemoveRewardTokenProtection(address,uint256)')),_address,_amount);
+		bytes memory data = abi.encodeWithSelector(bytes4(keccak256('removeRewardTokenProtection(address,uint256)')),_address,_amount);
 		uint256 callCost = 1 ether;
 		aion.ScheduleCall.value(callCost)(callTime, address(token), 0, 1000000000, 1e9, data, true);
   }
@@ -179,8 +173,6 @@ contract GoalEscrow GoalOwnerRole, AionRole {
     emit AionExecutedSuggestionExpires(suggestedSteps[_id].suggestionExpires);
     require(block.timestamp >= suggestedSteps[_id].suggestionExpires, "Escrow: current time is before release time");
     uint256 suggesterBondRefundAmount = suggestedSteps[_id].suggesterBond;
-    emit AionExecuteddebugBalanceOfContract(token.balanceOf(address(this)));
-    emit AionExecuteddebugSuggesterBondRefundAmount(suggesterBondRefundAmount);
     require(token.balanceOf(address(this)) >= suggesterBondRefundAmount,"Requested Suggester Bond Refund is MORE than token balance of the contract");
       //suggester
     address suggester = suggestedSteps[_id].suggester;
@@ -241,7 +233,7 @@ contract GoalEscrow GoalOwnerRole, AionRole {
     token.unsetRestrictedTokens(goalOwner, ownerBondRefundAmount.add(rewardAmount)); 
 
       // protect reward tokens
-    token.debugTimeProtectRewardTokens(suggester, rewardAmount);
+    token.timeProtectRewardTokens(suggester, rewardAmount);
 
      // schedule lift reward protection 
     schedule_removeRewardTokenProtection(goalOwner, rewardAmount, suggestedSteps[_id].timeSuggested);

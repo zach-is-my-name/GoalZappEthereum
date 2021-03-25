@@ -10,11 +10,11 @@ contract Protected is EscrowRole, AionRole {
    mapping (address => uint256) public protectedTokens;
    event TransferChecked(string message);
    event Caller(address sender);
-   event debugTimeProtectTokens(uint _amount, address _address);
-   event debugRewardTimeProtectTokens(uint _amount, address _address);
+   event timeProtectTokens(uint _amount, address _address);
+   event rewardTimeProtectTokens(uint _amount, address _address);
 
-   event debugRemoveTokenProtectionEvent(uint _amount, address _address);
-   event debugRemoveRewardTokenProtectionEvent(uint _amount, address _address);
+   event removeTokenProtectionEvent(uint _amount, address _address);
+   event removeRewardTokenProtectionEvent(uint _amount, address _address);
    uint256 public protectionPeriod;
    bool private initializedProtectionPeriod;
  
@@ -32,27 +32,24 @@ contract Protected is EscrowRole, AionRole {
     }
     
     function timeProtectTokens(address _address, uint256 _amount) public onlyEscrowRole returns (bool) {
-      emit debugTimeProtectTokens(_amount, _address); 
+      emit timeProtectTokens(_amount, _address); 
       protectedTokens[_address] = protectedTokens[_address].add(_amount);
-     // return true;
     }
 
-    function debugTimeProtectRewardTokens(address _address, uint256 _amount) public onlyEscrowRole returns (bool) {
-      emit debugRewardTimeProtectTokens(_amount, _address); 
+    function timeProtectRewardTokens(address _address, uint256 _amount) public onlyEscrowRole returns (bool) {
+      emit rewardTimeProtectTokens(_amount, _address); 
       protectedTokens[_address] = protectedTokens[_address].add(_amount);
-     // return true;
     }
 
     function removeTokenProtection(address _address, uint256 _amount) external onlyAionRole returns (bool) {
       emit Caller(msg.sender);
-      emit debugRemoveTokenProtectionEvent(_amount, _address);
+      emit removeTokenProtectionEvent(_amount, _address);
       protectedTokens[_address] = protectedTokens[_address].sub(_amount);
-      //return true;
     }
 
-    function debugRemoveRewardTokenProtection(address _address, uint256 _amount) external onlyAionRole returns (bool) {
+    function removeRewardTokenProtection(address _address, uint256 _amount) external onlyAionRole returns (bool) {
       emit Caller(msg.sender);
-      emit debugRemoveRewardTokenProtectionEvent(_amount, _address);
+      emit removeRewardTokenProtectionEvent(_amount, _address);
       protectedTokens[_address] = protectedTokens[_address].sub(_amount);
       //return true;
     }

@@ -14,11 +14,9 @@ contract Restricted is EscrowRole {
   event RestrictedTokens(uint256 restrictedTokenAmount);
   event ExceedsRestricted(uint256 exceedsRestrictedAmount);
   event initializedEscrow(address escrowAddress);
-  event debugCheck(address addressToCheck);
 
   modifier checkRestrictedTokens (uint amount, address recipient) {
     if (restrictedTokens[msg.sender] >= amount && recipient != initializedEscrows[recipient]) {
-      emit debugCheck(initializedEscrows[recipient]);
       emit Amount(amount);
       emit RestrictedTokens(restrictedTokens[msg.sender]);
 // bad: event SafeMath reverts: overflow, if 'amount <  restricted tokens      emit ExceedsRestricted(amount.sub(restrictedTokens[msg.sender]));
