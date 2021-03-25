@@ -1,0 +1,1 @@
+To test GoalZapp select branch 'localAionTestVersion' (requires some guided setup), or more simply select branch 'dockerTestVersion' and run all tests with the given command

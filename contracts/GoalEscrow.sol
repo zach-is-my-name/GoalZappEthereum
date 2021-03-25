@@ -7,6 +7,14 @@ import "./GoalOwnerRole.sol";
 import "./AionRole.sol";
 import "./Aion.sol";
 
+// interface Aion
+contract Aion {
+  uint256 public serviceFee;
+  function ScheduleCall(uint256 blocknumber, address to, uint256 value, 
+    uint256 gaslimit, uint256 gasprice, bytes memory data, bool schedType) public
+      payable returns (uint, address);
+}
+
 contract GoalEscrow GoalOwnerRole, AionRole {
   using SafeMath for uint256;
 
