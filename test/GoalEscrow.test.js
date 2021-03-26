@@ -187,7 +187,7 @@ function shouldBehaveLikeGoalEscrow (errorPrefix, master, owner, suggester) {
              it('returns the suggester bond amount', async function() {		
                expect(this.suggesterBondBeforeIncrease).to.be.bignumber.equal(suggesterBondAmount);
              })
-           }) 
+           })  
 
            context('delay test execution to test returnBondsOnTimeOut', function() {
              beforeEach(done => setTimeout(done, 20000));

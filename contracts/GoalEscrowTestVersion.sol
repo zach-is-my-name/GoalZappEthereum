@@ -139,17 +139,21 @@ contract GoalEscrowTestVersion is GoalOwnerRole, AionRole {
 		uint callTime = suggestionDuration.add(block.timestamp);
 		emit debugScheduleReturnBondsCallTime(callTime);
 		bytes memory data = abi.encodeWithSelector(bytes4(keccak256('returnBondsOnTimeOut(bytes32)')),_id);
-		uint callCost = 1 ether;
-		aion.ScheduleCall.value(callCost)(callTime, address(this), /*value*/ 0, /*gaslimit*/1000000000,/*gasprice*/ 1e9, /*data*/ data, /*time or block*/ true);  
+    uint256 gasLimit = 1 ether; 
+    uint256 gasPrice = 1;    
+		uint256 callCost = 1 ether;
+		aion.ScheduleCall.value(callCost)(callTime, address(this), /*value*/ 0, /*gaslimit*/gasLimit,/*gasprice*/ gasPrice, /*data*/ data, /*time or block*/ true);  
   }
 
   function schedule_removeTokenTimeProtection(address _address, uint256 _amount) internal {
     aion = Aion(0x91839cBF2D9436F1963f9eEeca7d35d427867a7a);
 		uint256 callTime = suggestionDuration.add(block.timestamp);
 		bytes memory data = abi.encodeWithSelector(bytes4(keccak256('token.removeTokenProtection(address,uint256)')),_address,_amount);
+    uint256 gasLimit = 1 ether; 
+    uint256 gasPrice = 1;    
 		uint256 callCost = 1 ether;
 		address to = address(this);
-		aion.ScheduleCall.value(callCost)(callTime, to, 0, 1000000000, 1e9, data, true);
+		aion.ScheduleCall.value(callCost)(callTime, to, 0, gasLimit, gasPrice, data, true);
   }
 
   function schedule_removeRewardTokenProtection(address _address, uint256 _amount, uint256 _timeSuggested) internal {
@@ -160,8 +164,10 @@ contract GoalEscrowTestVersion is GoalOwnerRole, AionRole {
 		uint256 callTime = timeNow.add(timeRemaining); 
 		emit debugScheduleRewardProtectionCallTime(callTime);
 		bytes memory data = abi.encodeWithSelector(bytes4(keccak256('debugRemoveRewardTokenProtection(address,uint256)')),_address,_amount);
+    uint256 gasLimit = 1 ether; 
+    uint256 gasPrice = 1;    
 		uint256 callCost = 1 ether;
-		aion.ScheduleCall.value(callCost)(callTime, address(token), 0, 1000000000, 1e9, data, true);
+		aion.ScheduleCall.value(callCost)(callTime, address(token), 0, gasLimit, gasPrice, data, true);
   }
 
 	//** CALLED BY AION -- Contract disburses reward and bonds **//
