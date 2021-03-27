@@ -21,10 +21,6 @@ contract GoalEscrowTestVersion is GoalOwnerRole, AionRole {
   event SuggestedStepsSuggesterBond(uint Suggester_suggesterBond);
   event AoinExecutedSuggestedStepsSuggesterBond(uint Suggester_suggesterBond);
   event AionExecutedReturnedToBondFunds(uint suggestedStepOwnerBond);
-  event debugScheduleRewardProtectionCallTime(uint callTime);
-  event debugScheduleReturnBondsCallTime(uint callTime);
- event AionExecuteddebugBalanceOfContract(uint256 balanceOfContract);
- event AionExecuteddebugSuggesterBondRefundAmount(uint suggesterBondRefundAmount); 
 
  mapping ( bytes32 => Suggester) public suggestedSteps;
 
@@ -137,7 +133,6 @@ contract GoalEscrowTestVersion is GoalOwnerRole, AionRole {
   function schedule_returnBondsOnTimeOut(bytes32 _id) internal {
     aion = Aion(0x91839cBF2D9436F1963f9eEeca7d35d427867a7a);
 		uint callTime = suggestionDuration.add(block.timestamp);
-		emit debugScheduleReturnBondsCallTime(callTime);
 		bytes memory data = abi.encodeWithSelector(bytes4(keccak256('returnBondsOnTimeOut(bytes32)')),_id);
     uint256 gasLimit = 1 ether; 
     uint256 gasPrice = 1;    
@@ -177,8 +172,6 @@ contract GoalEscrowTestVersion is GoalOwnerRole, AionRole {
     emit AionExecutedSuggestionExpires(suggestedSteps[_id].suggestionExpires);
     require(block.timestamp >= suggestedSteps[_id].suggestionExpires, "Escrow: current time is before release time");
     uint256 suggesterBondRefundAmount = suggestedSteps[_id].suggesterBond;
-    emit AionExecuteddebugBalanceOfContract(token.balanceOf(address(this)));
-    emit AionExecuteddebugSuggesterBondRefundAmount(suggesterBondRefundAmount);
     require(token.balanceOf(address(this)) >= suggesterBondRefundAmount,"Requested Suggester Bond Refund is MORE than token balance of the contract");
       //suggester
     address suggester = suggestedSteps[_id].suggester;
@@ -239,7 +232,7 @@ contract GoalEscrowTestVersion is GoalOwnerRole, AionRole {
     token.unsetRestrictedTokens(goalOwner, ownerBondRefundAmount.add(rewardAmount)); 
 
       // protect reward tokens
-    token.debugTimeProtectRewardTokens(suggester, rewardAmount);
+    token.timeProtectRewardTokens(suggester, rewardAmount);
 
      // schedule lift reward protection 
     schedule_removeRewardTokenProtection(goalOwner, rewardAmount, suggestedSteps[_id].timeSuggested);
