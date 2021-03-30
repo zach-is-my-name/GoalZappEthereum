@@ -4,7 +4,7 @@ import {graphql, compose} from 'react-apollo';
 import gql from 'graphql-tag';
 import {withRouter, Redirect} from 'react-router-dom'
 import SuggestStep from './SuggestStep.js'
-import goalescrow from '../../abi/GoalEscrowTestVersion.json'
+import goalescrow from '../../abi/GoalEscrow.json'
 import tokensystem from '../../abi/GoalZappTokenSystem.json'
 import * as DeployedAddress from '../../ContractAddress.js'
 var Web3 = require('web3');
@@ -156,7 +156,7 @@ class SuggestStepSmart extends Component {
     if (approveReceipt === 'Error' || false) {
       return
     }
-    let depositOnSuggestReceipt =  await ProxiedGoalEscrow.methods.depositOnSuggest(web3.utils.toHex(this.props.goalDocId), web3.utils.toWei(suggesterBond)).send({from:this.props.currentEthereumAccount})
+    let depositOnSuggestReceipt =  await ProxiedGoalEscrow.methods.depositOnSuggest(web3.utils.toHex(this.props.goalDocId), web3.utils.toWei(suggesterBond)).send({from:this.props.currentEthereumAccount, value: web3.utils.toWei("400000")})
       .on("receipt", receipt => console.log(receipt))
       .on("error", (error, receipt) => console.log(error))
       if (depositOnSuggestReceipt === "Error" || false) {

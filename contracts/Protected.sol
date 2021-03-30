@@ -10,8 +10,8 @@ contract Protected is EscrowRole, AionRole {
    mapping (address => uint256) public protectedTokens;
    event TransferChecked(string message);
    event Caller(address sender);
-   event timeProtectTokens(uint _amount, address _address);
-   event rewardTimeProtectTokens(uint _amount, address _address);
+   event timeProtectTokensEvent(uint _amount, address _address);
+   event rewardTimeProtectTokensEvent(uint _amount, address _address);
 
    event removeTokenProtectionEvent(uint _amount, address _address);
    event removeRewardTokenProtectionEvent(uint _amount, address _address);
@@ -32,12 +32,12 @@ contract Protected is EscrowRole, AionRole {
     }
     
     function timeProtectTokens(address _address, uint256 _amount) public onlyEscrowRole returns (bool) {
-      emit timeProtectTokens(_amount, _address); 
+      emit timeProtectTokensEvent(_amount, _address); 
       protectedTokens[_address] = protectedTokens[_address].add(_amount);
     }
 
     function timeProtectRewardTokens(address _address, uint256 _amount) public onlyEscrowRole returns (bool) {
-      emit rewardTimeProtectTokens(_amount, _address); 
+      emit rewardTimeProtectTokensEvent(_amount, _address); 
       protectedTokens[_address] = protectedTokens[_address].add(_amount);
     }
 

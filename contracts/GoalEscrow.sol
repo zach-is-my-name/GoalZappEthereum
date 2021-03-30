@@ -5,7 +5,6 @@ import "./SafeMath.sol";
 import "./ERC20.sol";
 import "./GoalOwnerRole.sol";
 import "./AionRole.sol";
-import "./Aion.sol";
 
 // interface Aion
 contract Aion {
@@ -15,7 +14,7 @@ contract Aion {
       payable returns (uint, address);
 }
 
-contract GoalEscrow GoalOwnerRole, AionRole {
+contract GoalEscrow is GoalOwnerRole, AionRole {
   using SafeMath for uint256;
 
   event Deposited(address indexed suggester, uint256 tokenAmount);

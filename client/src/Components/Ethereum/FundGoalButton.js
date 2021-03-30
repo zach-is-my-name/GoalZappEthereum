@@ -2,7 +2,7 @@ import React from 'react'
 import { Wrapper, Button, Menu, MenuItem } from 'react-aria-menubutton';
 import '../../style/FundGoalButton.css'
 import goalzapptokensystem from '../../abi/GoalZappTokenSystem.json'
-import goalescrow from '../../abi/GoalEscrowTestVersion.json'
+import goalescrow from '../../abi/GoalEscrow.json'
 import * as DeployedAddress from '../../ContractAddress.js'
 var Web3 = require('web3');
 var web3 = new Web3(Web3.givenProvider || "ws://localhost:8546");

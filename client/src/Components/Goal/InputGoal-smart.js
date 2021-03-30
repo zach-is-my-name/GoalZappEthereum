@@ -4,7 +4,7 @@ import gql from 'graphql-tag';
 import { withRouter, Redirect } from 'react-router-dom'
 import '../../style/InputGoal.css'
 import goalzapptokensystem from '../../abi/GoalZappTokenSystem.json'
-import goalescrow from '../../abi/GoalEscrowTestVersion.json'
+import goalescrow from '../../abi/GoalEscrow.json'
 import proxyfactory from '../../abi/ProxyFactory.json'
 import * as DeployedAddress from '../../ContractAddress.js'
 import {daysToSeconds} from '../../Utils/Utils.js'

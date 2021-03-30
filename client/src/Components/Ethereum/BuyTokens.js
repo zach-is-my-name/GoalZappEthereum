@@ -1,6 +1,6 @@
 import React from 'react'
 import "../../style/BuyTokens.css"
-import goalescrow from '../../abi/GoalEscrowTestVersion.json'
+import goalescrow from '../../abi/GoalEscrow.json'
 import goalzapptokensystem from '../../abi/GoalZappTokenSystem.json'
 import * as DeployedAddress from '../../ContractAddress.js'
 var Web3 = require('web3');
