@@ -1,10 +1,10 @@
 pragma solidity ^0.5.0;
-
+import "./Ownable.sol";
 import "./SafeMath.sol";
 import "./EscrowRole.sol";
 import "./AionRole.sol";
 
-contract Protected is EscrowRole, AionRole {
+contract Protected is EscrowRole, AionRole, Ownable {
   using SafeMath for uint256;
    
    mapping (address => uint256) public protectedTokens;
@@ -15,18 +15,15 @@ contract Protected is EscrowRole, AionRole {
 
    event removeTokenProtectionEvent(uint _amount, address _address);
    event removeRewardTokenProtectionEvent(uint _amount, address _address);
-   uint256 public protectionPeriod;
-   bool private initializedProtectionPeriod;
+   uint256 public protectionPeriod; //if <= unitialized
  
-   function init(uint256 _protectionPeriod, bool _threeDays) public {
+   function init(uint256 _protectionPeriod, bool _threeDays) public onlyOwner {
      require(_protectionPeriod > 0, "protection period must be greater than 0");
-     require(!initializedProtectionPeriod, "Protection period already initialized");
      if (_threeDays == true) {
       protectionPeriod = 259200;    
      } else {
      protectionPeriod = _protectionPeriod;
      }
-     initializedProtectionPeriod = true; 
    }
 
     modifier checkProtectedTokens(uint256 amount) {
