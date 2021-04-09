@@ -18,9 +18,14 @@ contract Protected is EscrowRole, AionRole {
    uint256 public protectionPeriod;
    bool private initializedProtectionPeriod;
  
-   function init() public {
+   function init(uint256 _protectionPeriod, bool _threeDays) public {
+     require(_protectionPeriod > 0, "protection period must be greater than 0");
      require(!initializedProtectionPeriod, "Protection period already initialized");
-     protectionPeriod = 259200;    
+     if (_threeDays == true) {
+      protectionPeriod = 259200;    
+     } else {
+     protectionPeriod = _protectionPeriod;
+     }
      initializedProtectionPeriod = true; 
    }
 

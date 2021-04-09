@@ -19,7 +19,7 @@ contract AionRole is Context {
     }
 */
     modifier onlyAionRole() {
-        require(tx.origin == 0x6b50600866a4A4E09E82144aF3cCdfe16b3081b3, "Aion Role: caller does not have the Aion role");
+        require(tx.origin == 0x7Cb76d52A52F77B8487C64F24BBa29bd78d65c5a, "Aion Role: caller does not have the Aion role");
         _;
     }
 

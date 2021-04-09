@@ -138,7 +138,7 @@ contract GoalEscrow is GoalOwnerRole, AionRole {
   }
 
   function schedule_returnBondsOnTimeOut(bytes32 _id) internal {
-    aion = Aion(0x91839cBF2D9436F1963f9eEeca7d35d427867a7a);
+    aion = Aion(0x7eb36f88a8e643b3580cDF63902e8F0152316D66);
 		uint callTime = suggestionDuration.add(block.timestamp);
 		bytes memory data = abi.encodeWithSelector(bytes4(keccak256('returnBondsOnTimeOut(bytes32)')),_id);
 		uint callCost = 1 ether;
@@ -146,7 +146,7 @@ contract GoalEscrow is GoalOwnerRole, AionRole {
   }
 
   function schedule_removeTokenTimeProtection(address _address, uint256 _amount) internal {
-    aion = Aion(0x91839cBF2D9436F1963f9eEeca7d35d427867a7a);
+    aion = Aion(0x7eb36f88a8e643b3580cDF63902e8F0152316D66);
 		uint256 callTime = suggestionDuration.add(block.timestamp);
 		bytes memory data = abi.encodeWithSelector(bytes4(keccak256('token.removeTokenProtection(address,uint256)')),_address,_amount);
 		uint256 callCost = 1 ether;
@@ -155,7 +155,7 @@ contract GoalEscrow is GoalOwnerRole, AionRole {
   }
 
   function schedule_removeRewardTokenProtection(address _address, uint256 _amount, uint256 _timeSuggested) internal {
-		aion = Aion(0x91839cBF2D9436F1963f9eEeca7d35d427867a7a);
+		aion = Aion(0x7eb36f88a8e643b3580cDF63902e8F0152316D66);
 		uint256 timeNow = block.timestamp;
 		uint256 timeElapsed = timeNow.sub(_timeSuggested);
 		uint256 timeRemaining =  token.protectionPeriod().sub(timeElapsed);
