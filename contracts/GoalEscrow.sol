@@ -67,7 +67,6 @@ contract GoalEscrow is GoalOwnerRole, AionRole {
     ownerBondAmount = 1 ether;
     suggestionDuration = _token.protectionPeriod();
     _token._addEscrowRole(address(this));
-    _addAionAddress(address(0x6b50600866a4A4E09E82144aF3cCdfe16b3081b3));
     self = address(this);
     initializedMaster = true;
   }
