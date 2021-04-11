@@ -30,5 +30,9 @@
     "openzeppelin-solidity": "^2.5.1",
     "prettier": "2.0.5",
     "solidity-coverage": "^0.7.11"
+  },
+  "dependencies": {
+    "@truffle/hdwallet-provider": "^1.2.6",
+    "dotenv": "^8.2.0"
   }
 }
