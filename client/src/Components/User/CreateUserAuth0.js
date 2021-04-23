@@ -64,7 +64,7 @@ const createUser1 = gql `
 const createUser = gql `
 mutation createUserMutation {
   userSignUpWithToken(
-    authProfileId: "8BASE_AUTHENTICATION_PROFILE_ID"
+    authProfileId: "process.env.REACT_APP_AUTH_PROFILE_ID"
     user: {
       email: "my@email.co"
     }

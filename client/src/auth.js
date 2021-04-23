@@ -1,7 +1,7 @@
 import { Auth, AUTH_STRATEGIES } from '@8base/auth';
 
 const domain = process.env.REACT_APP_AUTH_DOMAIN;
-const clientId = process.env.REACT_APP_AUTH_CLIENT_ID;
+const clientId = process.env.REACT_APP_CLIENT_ID;
 /**
  * The redirect and logout URIs are all configured in the
  * authentication profile that gets set up in the 8base
