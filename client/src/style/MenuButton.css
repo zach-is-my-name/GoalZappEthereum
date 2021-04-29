@@ -1,7 +1,7 @@
 .menu-button.user {
-  position: absolute;
-  right: 50px;
-  top: 75px;
+  position: relative;
+  right: -876px;
+  top: -42px;
 }
 
 .menu-button-user-button {
