@@ -154,7 +154,7 @@ export class App extends React.PureComponent {
 
       <div className = "App" >
       <Link to = "/" > <h1 className = "logo" > GoalZapp </h1> </Link>
-
+      <div className = "right-sidebar-container">
       { this.state.loggedInUserId ?
       <MenuButton
       loggedInUserName={this.state.loggedInUserName ? this.state.loggedInUserName : 'anonymous'}
@@ -201,7 +201,7 @@ export class App extends React.PureComponent {
         currentEthereumAccount={this.state.currentEthereumAccount}
        />
        : null}
-
+      </div>
       <Switch>
       <Route exact path="/auth/" component={AuthContainer} />
       <Route path="/auth/callback" component={CallbackContainer} />

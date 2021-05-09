@@ -123,7 +123,6 @@ h1 {
 .userTokenFunds {
   position: relative;
   right: -876px;
-  top: 140px;
 }
 
 .menu-button-menu .token {
@@ -132,8 +131,14 @@ h1 {
   top: 247px;
 }
 
+.menu-button-menu {
+  position: relative;
+  right: -840px;
+  top: 127px;
+}
+
 .menu-button.token .menu-button-menu {
-  /* position: absolute; */
+  position: relative;
   right: 40px;
   top: 440px;
 }
