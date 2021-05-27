@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {graphql, compose, withApollo} from 'react-apollo';

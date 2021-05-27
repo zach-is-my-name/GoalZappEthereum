@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React from 'react'
 import { Wrapper, Button, Menu, MenuItem } from 'react-aria-menubutton';
 import '../../style/FundGoalButton.css'

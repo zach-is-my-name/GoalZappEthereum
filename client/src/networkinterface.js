@@ -1,3 +1,4 @@
+/* eslint-disable */
 // import {createNetworkInterface} from 'apollo-client'
 import {createHttpLink} from 'apollo-link-http'
 import {setContext} from 'apollo-link-context'
@@ -29,7 +30,7 @@ const userDoesntExistCallback = () => console.log("user Doesn't Exist")
 // export const link = httpLink
 
 
-const httpLink  = createHttpLink({
+export const httpLink  = createHttpLink({
   uri: 'https://api.8base.com/ckbx087zh000207ms3ink870q'
 })
 
@@ -41,9 +42,6 @@ const httpLink  = createHttpLink({
 // }))
 
 
-
-
-export const  link = httpLink
 
 // const link = middlewareLink.concat(httpLink)
 // console.log(link)
@@ -62,3 +60,4 @@ export const  link = httpLink
 //     next()
 //   },
 // }])
+//

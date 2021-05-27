@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React from 'react';
 import { withAuth } from '@8base/react-sdk';
 import { Client } from '@8base/api-client';

@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React from 'react'
 import BondRewardsFund from './BondRewardsFund.js'
 import goalescrow from '../../abi/GoalEscrow.json'
@@ -6,9 +7,9 @@ var Web3 = require('web3');
 var web3 = new Web3(Web3.givenProvider || "ws://localhost:8546");
 let  ProxiedGoalEscrow
 
-if (typeof window.ethereum !== 'undefined'|| (typeof window.web3 !== 'undefined')) {
+if (typeof window.ethereum !== 'undefined'|| (typeof window.ethereum !== 'undefined')) {
   // Web3 browser user detected. You can now use the provider.
-  const provider = window['ethereum'] || window.web3.currentProvider
+  const provider = window['ethereum'] || window.ethereum.currentProvider
 }
 
 class BondRewardsFundsSmart extends React.Component {

@@ -25,8 +25,6 @@ import {ProtectedRoute} from '../Routes/ProtectedRoute'
 import ContractRewardsFunds from './Ethereum/ContractRewardsFund-Smart'
 import BondRewardsFunds from './Ethereum/BondRewardsFund-Smart'
 import UserTokenFunds from './Ethereum/UserTokenFunds'
-var Web3 = require('web3');
-var web3 = new Web3(Web3.givenProvider || "ws://localhost:8546");
 import goalzapptokensystem from '../abi/GoalZappTokenSystem.json'
 import * as DeployedAddress from '../ContractAddress.js'
 import detectEthereumProvider from '@metamask/detect-provider'
@@ -36,6 +34,21 @@ const domain = 'userzach.auth0.com'
 let auth0IdToken
 let graphcoolToken
 const GoalZappTokenSystem = new web3.eth.Contract(goalzapptokensystem.abi, DeployedAddress.GOALZAPPTOKENSYSTEM )
+
+import Web3Modal from 'web3modal';
+
+var Web3 = require('web3');
+const providerOptions = {
+  /* See Provider Options Section */
+};
+const web3Modal = new Web3Modal({
+  network: "ropsten", // optional
+  cacheProvider: true, // optional
+  providerOptions // required
+});
+const provider = await web3Modal.connect();
+
+var web3 = new Web3( provider || Web3.givenProvider);
 
 export const userQuery = gql `
           query userQuery {
@@ -56,7 +69,7 @@ export class App extends React.PureComponent {
     this.handleAccountsChanged = this.handleAccountsChanged.bind(this)
     this.setBondsAmount = this.setBondsAmount.bind(this)
     this.setUserTokenBalance = this.setUserTokenBalance.bind(this)
-    //this._renderApp = this._renderApp.bind(this)
+
     this.state = {
       proxyAddress: "",
       urlHasGoalDoc: false,
@@ -71,28 +84,25 @@ export class App extends React.PureComponent {
     }
   }
     async handleAccountsChanged  (accounts) {
-      if (accounts.length === 0) {
-        console.log('Please connect to MetaMask.');
-      } else if (accounts[0] !== this.state.currentEthereumAccount) {
+       if (accounts[0] !== this.state.currentEthereumAccount) {
           this.setState({currentEthereumAccount: accounts[0]})
         }
       }
 
   async componentDidMount() {
-    // try {
-    const userQueryResult = await this.props.client.query({query: userQuery , fetchPolicy: 'network-only', errorPolicy: 'all'})
-  // } catch (error) {console.log(error)}
-    if (userQueryResult.data.user && !this.state.loggedInUserId) {
-    this.setState({loggedInUserId: userQueryResult.data.user.id, loggedInUserName: userQueryResult.data.user.userName || ''})
+    let userQueryResult
+    try {
+    userQueryResult = await this.props.client.query({query: userQuery , fetchPolicy: 'network-only', errorPolicy: 'all'})
+  } catch (error) {console.log(error)}
+    if (userQueryResult.data && userQueryResult.data.user && !this.state.loggedInUserId) {
+      this.setState({loggedInUserId: userQueryResult.data.user.id, loggedInUserName: userQueryResult.data.user.userName || ''})
   }
     const provider = await detectEthereumProvider();
 
       window.ethereum
         .request({ method: 'eth_accounts' })
-        .then(this.handleAccountsChanged)
+        // .then(this.handleAccountsChanged)
         .catch(err =>  console.error(err))
-
-
 
     if (this.state.currentEthereumAccount) {
       const tokenBalance = web3.utils.fromWei((await GoalZappTokenSystem.methods.balanceOf(this.state.currentEthereumAccount).call()))
@@ -107,6 +117,7 @@ export class App extends React.PureComponent {
   async componentDidUpdate(prevProps, prevState) {
     if (this.props !== prevProps) {
       const provider = await detectEthereumProvider();
+
       async function handleAccountsChanged  (accounts) {
         console.log('state',this.state)
         if (accounts.length === 0) {
@@ -114,40 +125,32 @@ export class App extends React.PureComponent {
         } else if (accounts[0] !== this.state.currentEthereumAccount) {
             this.setState({currentEthereumAccount: accounts[0]})
         }
+
+        if (provider) {
+          window.ethereum.request({ method: 'eth_accounts' })
+          this.setState({hasProvider: true})
+        } else if (!provider) {
+            this.setState({hasProvider: false})
+            alert('Please install MetaMask!');
+            }
       }
 
-      if (provider) {
-        window.ethereum
-          .request({ method: 'eth_accounts' })
-          .then(this.handleAccountsChanged)
-          .catch((err) => {
-            console.error(err);
-          })
-          this.setState({hasProvider: true})
-        } else {
-          this.setState({hasProvider: false})
-          alert('Please install MetaMask!');
-       }
-    }
     if (this.state.currentEthereumAccount !== prevState.currentEthereumAccount) {
       const tokenBalance = web3.utils.fromWei((await GoalZappTokenSystem.methods.balanceOf(this.state.currentEthereumAccount).call()))
       this.setState(({userTokenBalance: tokenBalance}))
     }
   }
+}
 
   render() {
     if (!this.state.loggedInUserId) {
     this.getUser()
   }
     window.ethereum.on('accountsChanged', this.handleAccountsChanged);
-  //   if (!this.state.loggedInUserId) {
-  //    return <div> Loading... < /div>
-  // }
-  // else if (this.state.loggedInUserId) {
-      return this._renderApp()
-   // }
-   // return null
- }
+
+    return this._renderApp()
+    }
+
 
   _renderApp = () => {
     return (
@@ -281,10 +284,7 @@ export class App extends React.PureComponent {
           </Switch>
 </div>
     )
-
 }
-
-
 
   setProxyAddress(address) {
     this.setState({proxyAddress: address})
@@ -311,6 +311,7 @@ export class App extends React.PureComponent {
 
    getUser = async () => {
     const userQueryResult = await this.props.client.query({query: userQuery , fetchPolicy: 'network-only', errorPolicy: 'all'})
+
     if (userQueryResult.data.user) {
       this.setState({loggedInUserId: userQueryResult.data.user.id, loggedInUserName: userQueryResult.data.user.userName})
     }

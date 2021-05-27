@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React from 'react'
 import "../../style/BuyTokens.css"
 import goalescrow from '../../abi/GoalEscrow.json'

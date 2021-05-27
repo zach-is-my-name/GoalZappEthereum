@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React from 'react';
 import { withAuth } from '@8base/react-sdk';
 import { Query, graphql, compose, withApollo } from 'react-apollo';

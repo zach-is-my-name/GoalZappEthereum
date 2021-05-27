@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React from 'react'
 import {compose, withApollo, graphql} from 'react-apollo'
 import {withRouter, Redirect} from 'react-router-dom'

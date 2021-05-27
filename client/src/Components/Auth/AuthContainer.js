@@ -6,7 +6,7 @@ class AuthContainer extends React.Component {
     console.log("AuthContainer rendered")
     const { auth } = this.props;
 
-    await auth.authClient.authorize();
+     await auth.authClient.authorize() 
   }
 
   render() {
