@@ -16,15 +16,16 @@ import {InMemoryCache} from 'apollo-cache-inmemory'
 
 const cache = new InMemoryCache()
 
-const client = new ApolloClient({
-  link: logoutLink.concat(httpLink),
-  cache: this.cache.restore(window.__APOLLO_CLIENT__),
-  connectToDevTools: true
-});
-
 const logoutLink = onError(({ networkError }) => {
  if (networkError.statusCode === 401 || networkError.statusCode === 401) logout();
 })
+
+const client = new ApolloClient({
+  link: logoutLink.concat(httpLink),
+  cache: cache.restore(window.__APOLLO_CLIENT__),
+  connectToDevTools: true
+});
+
 
 const logout = () => window.location.href = "http://getgoalzapp.com"
 

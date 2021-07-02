@@ -2,6 +2,7 @@
 import React, {Component} from 'react';
 import {graphql, compose} from 'react-apollo'
 import gql from 'graphql-tag';
+import jwt_decode from "jwt-decode";
 
 import GlobalFeed from '../Components/Feed/GlobalFeed'
 
@@ -16,20 +17,7 @@ const userQuery =  gql`
   }
 `;
 
-/*const AllGoalDocs1 = gql `
-  query allGoalDocs {
-    allGoalDocs(orderBy: createdAt_DESC)
-    {
-      goal
-      id
-      owners {
-        userName
-        id
-      }
-    }
-  }
-  `
-  */
+
 const AllGoalDocs = gql`
  query suggesterQuery {
   goalDocsList(orderBy: createdAt_DESC) {
@@ -45,6 +33,24 @@ const AllGoalDocs = gql`
 }
 `
 class GlobalFeedPage extends Component {
+
+async componentDidMount() {
+    //console.log("AuthContainer rendered")
+    const { auth } = this.props;
+
+    const token = window.localStorage.getItem("auth")
+    //console.log(token)
+    if (token) {
+      const decoded = jwt_decode(token)
+      const current_time = Date.now().valueOf() / 1000;
+      if ( decoded.exp < current_time) {
+        window.location.href = "http://getgoalzapp.com"
+      }
+    } else {
+     await auth.authClient.authorize()
+    }
+  }
+
   render() {
 if (this.props.allGoalDocs && !this.props.allGoalDocs.loading) {
    /*

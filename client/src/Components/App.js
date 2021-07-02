@@ -33,10 +33,8 @@ const clientId = 'x8qIN6200apx5f502AMPCnjNqtCZk4CA'
 const domain = 'userzach.auth0.com'
 let auth0IdToken
 let graphcoolToken
-const GoalZappTokenSystem = new web3.eth.Contract(goalzapptokensystem.abi, DeployedAddress.GOALZAPPTOKENSYSTEM )
 
 import Web3Modal from 'web3modal';
-
 var Web3 = require('web3');
 const providerOptions = {
   /* See Provider Options Section */
@@ -46,10 +44,10 @@ const web3Modal = new Web3Modal({
   cacheProvider: true, // optional
   providerOptions // required
 });
-const provider = await web3Modal.connect();
 
-var web3 = new Web3( provider || Web3.givenProvider);
 
+let web3
+let GoalZappTokenSystem
 export const userQuery = gql `
           query userQuery {
             user {
@@ -80,7 +78,8 @@ export class App extends React.PureComponent {
       hasProvider: false,
       currentEthereumAccount: "",
       loggedInUserId: "",
-      loggedInUserName:""
+      loggedInUserName:"",
+      web3Connected: false
     }
   }
     async handleAccountsChanged  (accounts) {
@@ -90,19 +89,24 @@ export class App extends React.PureComponent {
       }
 
   async componentDidMount() {
+
     let userQueryResult
     try {
-    userQueryResult = await this.props.client.query({query: userQuery , fetchPolicy: 'network-only', errorPolicy: 'all'})
-  } catch (error) {console.log(error)}
+      userQueryResult = await this.props.client.query({query: userQuery , fetchPolicy: 'network-only', errorPolicy: 'all'})
+    } catch (error) {console.log(error) }
+
     if (userQueryResult.data && userQueryResult.data.user && !this.state.loggedInUserId) {
       this.setState({loggedInUserId: userQueryResult.data.user.id, loggedInUserName: userQueryResult.data.user.userName || ''})
   }
-    const provider = await detectEthereumProvider();
 
-      window.ethereum
-        .request({ method: 'eth_accounts' })
-        // .then(this.handleAccountsChanged)
-        .catch(err =>  console.error(err))
+    let provider = await detectEthereumProvider();
+    if (!provider) {
+      provider = await web3Modal.connect();
+    }
+    //console.log(provider)
+
+    web3 = new Web3( provider || Web3.givenProvider);
+    GoalZappTokenSystem = new web3.eth.Contract(goalzapptokensystem.abi, DeployedAddress.GOALZAPPTOKENSYSTEM )
 
     if (this.state.currentEthereumAccount) {
       const tokenBalance = web3.utils.fromWei((await GoalZappTokenSystem.methods.balanceOf(this.state.currentEthereumAccount).call()))
@@ -116,7 +120,14 @@ export class App extends React.PureComponent {
 
   async componentDidUpdate(prevProps, prevState) {
     if (this.props !== prevProps) {
-      const provider = await detectEthereumProvider();
+
+     let provider = await detectEthereumProvider();
+     if (!provider) {
+       provider = await web3Modal.connect();
+     }
+    web3 = new Web3( provider || Web3.givenProvider)
+
+    GoalZappTokenSystem = new web3.eth.Contract(goalzapptokensystem.abi, DeployedAddress.GOALZAPPTOKENSYSTEM )
 
       async function handleAccountsChanged  (accounts) {
         console.log('state',this.state)
@@ -125,14 +136,6 @@ export class App extends React.PureComponent {
         } else if (accounts[0] !== this.state.currentEthereumAccount) {
             this.setState({currentEthereumAccount: accounts[0]})
         }
-
-        if (provider) {
-          window.ethereum.request({ method: 'eth_accounts' })
-          this.setState({hasProvider: true})
-        } else if (!provider) {
-            this.setState({hasProvider: false})
-            alert('Please install MetaMask!');
-            }
       }
 
     if (this.state.currentEthereumAccount !== prevState.currentEthereumAccount) {

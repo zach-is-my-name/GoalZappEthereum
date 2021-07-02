@@ -7,6 +7,7 @@ import AuthButton from '../Components/Auth/AuthButton'
 import '../style/WelcomePage.css'
 import { Client } from '@8base/api-client';
 import gql from 'graphql-tag';
+import jwt_decode from "jwt-decode";
 
 const client = new Client("https://api.8base.com/ckbx087zh000207ms3ink870q");
 let response
@@ -24,6 +25,21 @@ const userQuery =  gql`
 class WelcomePage extends React.Component  {
 
   async checkAuthentication() {
+    console.log("AuthContainer rendered")
+    const { auth } = this.props;
+
+    const token = window.localStorage.getItem("auth")
+    console.log(token)
+    if (token) {
+      const decoded = jwt_decode(token)
+      const current_time = Date.now().valueOf() / 1000;
+      if ( decoded.exp < current_time) {
+        window.location.href = "http://getgoalzapp.com"
+      }
+    } else {
+     await auth.authClient.authorize()
+    }
+
     /**
      * set auth headers for communicating with the 8base API.
      */
@@ -32,8 +48,9 @@ class WelcomePage extends React.Component  {
      * check if user exists in 8base.
      */
     try {
-      // response = await this.props.client.query({query: userQuery});
-      //console.log("WelcomePage response", response.data.user.id)
+
+       response = await this.props.client.query({query: userQuery});
+       console.log("WelcomePage response", response.data.user.id)
 
     } catch(response) {
       console.log(response)
