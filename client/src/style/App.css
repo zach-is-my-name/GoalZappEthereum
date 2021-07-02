@@ -114,7 +114,7 @@ h1 {
 
 .menu-button .token {
   position: relative;
-  top: 295px;
+  top: 80px;
   right: -876px;
 
 }
@@ -123,31 +123,31 @@ h1 {
 .userTokenFunds {
   position: relative;
   right: -876px;
-  top: 100px;
+  top: 4px;
 }
 
 .menu-button-menu .token {
-  position: absolute;
+  position: relative;
   right: 50px;
-  top: 247px;
+  top: 90px;
 }
 
 .menu-button-menu {
   position: relative;
   right: -840px;
-  top: 127px;
+  top: 90px;
 }
 
 .menu-button.token .menu-button-menu {
   position: relative;
   right: 40px;
-  top: 440px;
+  top: 90px;
 }
 
 .menu-button-user-button.fund {
-  position: absolute;
-  right: 50px;
-  top: 219px;
+  position: relative;
+  right: 59px;
+  top: 23px;
 }
 
 .bond-rewards {
@@ -169,4 +169,8 @@ button.button-yes {
 button.button-no {
   margin-left: 10px;
   margin-right: 500px;
+}
+#root > div > div > div.right-sidebar-container > div.menu-button.token > div {
+  top: 98px;
+  right: -819px;
 }

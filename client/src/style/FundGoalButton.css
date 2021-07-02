@@ -19,16 +19,23 @@
 }
 
 .menu-button-menu {
-  position: absolute;
+  position: relative;
 }
 
 .menuitem-userfeed {
-  color: black ;
-  text-decoration: underline;
   cursor: pointer;
 }
 
 .menuitem-logout {
   cursor: pointer;
+/*  text-decoration: underline; */
+}
+
+#root > div > div > div.right-sidebar-container > div.menu-button.token > div > ul > div:nth-child(1) > li {
   text-decoration: underline;
+}
+
+#root > div > div > div.right-sidebar-container > div.menu-button.token > div > ul > div:nth-child(2) > li {
+  text-decoration: underline;
+
 }
