@@ -28,6 +28,7 @@ import UserTokenFunds from './Ethereum/UserTokenFunds'
 import goalzapptokensystem from '../abi/GoalZappTokenSystem.json'
 import * as DeployedAddress from '../ContractAddress.js'
 import detectEthereumProvider from '@metamask/detect-provider'
+import MetaMaskOnboarding from '@metamask/onboarding';
 const workspaceEndpoint = process.env.REACT_APP_WORKSPACE_ENDPOINT;
 const clientId = 'x8qIN6200apx5f502AMPCnjNqtCZk4CA'
 const domain = 'userzach.auth0.com'
@@ -105,13 +106,28 @@ export class App extends React.PureComponent {
     }
     //console.log(provider)
 
+   if (ethereum.isConnected() && !ethereum.selectedAddress) {
+     await ethereum.request({ method: 'eth_requestAccounts' });
+   }
+
+   if (ethereum.selectedAddress) {
+     this.setState({currentEthereumAccount: ethereum.selectedAddress})
+   }
+
+   if(!ethereum.isConnected) {
+    const onboarding = new MetaMaskOnboarding();
+   }
+
     web3 = new Web3( provider || Web3.givenProvider);
     GoalZappTokenSystem = new web3.eth.Contract(goalzapptokensystem.abi, DeployedAddress.GOALZAPPTOKENSYSTEM )
+
+
 
     if (this.state.currentEthereumAccount) {
       const tokenBalance = web3.utils.fromWei((await GoalZappTokenSystem.methods.balanceOf(this.state.currentEthereumAccount).call()))
       this.setState(({userTokenBalance: tokenBalance}))
     }
+
 
       window.ethereum.on('accountsChanged', this.handleAccountsChanged);
       this.setState({hasProvider: true})
@@ -125,9 +141,22 @@ export class App extends React.PureComponent {
      if (!provider) {
        provider = await web3Modal.connect();
      }
+
     web3 = new Web3( provider || Web3.givenProvider)
 
     GoalZappTokenSystem = new web3.eth.Contract(goalzapptokensystem.abi, DeployedAddress.GOALZAPPTOKENSYSTEM )
+    
+   if (ethereum.isConnected() && !ethereum.selectedAddress) {
+     await ethereum.request({ method: 'eth_requestAccounts' });
+   }
+
+   if (ethereum.selectedAddress) {
+     this.setState({currentEthereumAccount: ethereum.selectedAddress})
+   }
+
+   if(!ethereum.isConnected) {
+    const onboarding = new MetaMaskOnboarding();
+   }
 
       async function handleAccountsChanged  (accounts) {
         console.log('state',this.state)
