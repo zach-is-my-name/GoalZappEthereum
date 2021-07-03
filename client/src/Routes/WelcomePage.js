@@ -37,7 +37,7 @@ class WelcomePage extends React.Component  {
           await client.clearStore();
           auth.authClient.logout();
       }
-    } else { await auth.authClient.authorize() }
+    } 
 
     /**
      * set auth headers for communicating with the 8base API.
