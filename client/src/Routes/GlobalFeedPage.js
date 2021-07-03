@@ -2,6 +2,7 @@
 import React, {Component} from 'react';
 import {graphql, compose} from 'react-apollo'
 import gql from 'graphql-tag';
+import { withAuth } from '@8base/react-sdk';
 import jwt_decode from "jwt-decode";
 
 import GlobalFeed from '../Components/Feed/GlobalFeed'
@@ -36,7 +37,7 @@ class GlobalFeedPage extends Component {
 
 async componentDidMount() {
     //console.log("AuthContainer rendered")
-    const { auth } = this.props;
+    const { auth, client } = this.props;
 
     const token = window.localStorage.getItem("auth")
     //console.log(token)
@@ -44,11 +45,11 @@ async componentDidMount() {
       const decoded = jwt_decode(token)
       const current_time = Date.now().valueOf() / 1000;
       if ( decoded.exp < current_time) {
-        window.location.href = "http://getgoalzapp.com"
-      }
-    } else {
-     await auth.authClient.authorize()
-    }
+        console.log("token expired")
+        await client.clearStore();
+        auth.authClient.logout();
+      } 
+    } else { await auth.authClient.authorize() }
   }
 
   render() {
@@ -90,4 +91,4 @@ graphql(AllGoalDocs, {
 })
 )(GlobalFeedPage)
 
-export default withData
+export default withAuth(withData)

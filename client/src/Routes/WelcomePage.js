@@ -26,19 +26,18 @@ class WelcomePage extends React.Component  {
 
   async checkAuthentication() {
     console.log("AuthContainer rendered")
-    const { auth } = this.props;
+    const { auth, client } = this.props;
 
     const token = window.localStorage.getItem("auth")
-    console.log(token)
+    // console.log(token)
     if (token) {
       const decoded = jwt_decode(token)
       const current_time = Date.now().valueOf() / 1000;
       if ( decoded.exp < current_time) {
-        window.location.href = "http://getgoalzapp.com"
+          await client.clearStore();
+          auth.authClient.logout();
       }
-    } else {
-     await auth.authClient.authorize()
-    }
+    } else { await auth.authClient.authorize() }
 
     /**
      * set auth headers for communicating with the 8base API.
@@ -47,18 +46,18 @@ class WelcomePage extends React.Component  {
     /**
      * check if user exists in 8base.
      */
-    try {
-
-       response = await this.props.client.query({query: userQuery});
-       console.log("WelcomePage response", response.data.user.id)
-
-    } catch(response) {
-      console.log(response)
-      /**
-       * If user doesn't exist, an error will be
-       * thrown
-       */
-    }
+    // try {
+    //
+    //    response = await this.props.client.query({query: userQuery});
+    //    console.log("WelcomePage response", response.data.user.id)
+    //
+    // } catch(response) {
+    //   console.log(response)
+    //   /**
+    //    * If user doesn't exist, an error will be
+    //    * thrown
+    //    */
+    // }
   }
 
   async componentDidMount() {
@@ -103,4 +102,4 @@ class WelcomePage extends React.Component  {
 WelcomePage = compose(withAuth, withRouter, withApollo, graphql(userQuery, {
     options: { fetchPolicy: 'network-only' } }))(WelcomePage)
 
-export default WelcomePage
+export default withAuth(WelcomePage)

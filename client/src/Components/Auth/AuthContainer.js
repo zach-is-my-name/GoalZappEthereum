@@ -5,19 +5,19 @@ import jwt_decode from "jwt-decode";
 class AuthContainer extends React.Component {
   async componentDidMount() {
     console.log("AuthContainer rendered")
-    const { auth } = this.props;
+    const { auth, client } = this.props;
 
     const token = window.localStorage.getItem("auth")
     console.log(token)
+
     if (token) {
       const decoded = jwt_decode(token)
       const current_time = Date.now().valueOf() / 1000;
       if ( decoded.exp < current_time) {
-        window.location.href = "http://getgoalzapp.com"
+          await client.clearStore();
+          auth.authClient.logout();
       }
-    } else {
-     await auth.authClient.authorize()
-    }
+    } else { await auth.authClient.authorize() }
   }
   render() {
     return <h2>Loading...</h2>;
