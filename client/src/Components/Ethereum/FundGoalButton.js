@@ -3,7 +3,7 @@ import React from 'react'
 import { Wrapper, Button, Menu, MenuItem } from 'react-aria-menubutton';
 import '../../style/FundGoalButton.css'
 import goalzapptokensystem from '../../abi/GoalZappTokenSystem.json'
-import goalescrow from '../../abi/GoalEscrow.json'
+import GOALESCROW from '../../abi/GoalEscrow.json'
 import * as DeployedAddress from '../../ContractAddress.js'
 var Web3 = require('web3');
 var web3 = new Web3(Web3.givenProvider || "ws://localhost:8546");
@@ -22,7 +22,7 @@ export default class MenuButton extends React.Component {
 
 async componentDidMount() {
 
-  ProxiedGoalEscrow = new web3.eth.Contract(goalescrow.abi, this.props.proxyAddress)
+  ProxiedGoalEscrow = new web3.eth.Contract(GOALESCROW.abi, this.props.proxyAddress)
     //console.log('this.props.proxyAddress')
 
   // let userTokenBalance = await GoalZappTokenSystem.methods.balanceOf(this.props.currentEthereumAccount).call()
@@ -38,7 +38,7 @@ async componentDidUpdate(prevProps) {
   // }
 
   // if(this.props.proxyAddress && prevProps.proxyAddress !== this.props.proxyAddress)
-  //     ProxiedGoalEscrow = new web3.eth.Contract(goalescrow.abi, this.props.proxyAddress)
+  //     ProxiedGoalEscrow = new web3.eth.Contract(GOALESCROW.abi, this.props.proxyAddress)
   //     let userTokenBalance = await GoalZappTokenSystem.methods.balanceOf(this.props.currentEthereumAccount).call()
   //     this.props.setUserTokenBalance(userTokenBalance)
   }

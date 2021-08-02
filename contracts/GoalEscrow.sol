@@ -88,13 +88,14 @@ contract GoalEscrow is GoalOwnerRole, AionRole {
     }
     _addGoalOwner(msg.sender);
     goalOwner = msg.sender;
-    if (_amountBond > 0 && _amountReward > 0) {
+    if (_amountBond >= 1 ether && _amountReward > 1 ether) {
       fundEscrow(_amountBond, _amountReward); 
     }
    initializedNewGoal = true;
   }
  
   function fundEscrow (uint _amountBond, uint _amountReward) public onlyGoalOwner {
+    require(_amountBond >= 1 ether && _amountReward >= 1 ether);
     bondFunds = bondFunds.add(_amountBond); 
     token.transferFrom(msg.sender, self, _amountBond);
     rewardFunds = rewardFunds.add(_amountReward);
@@ -105,8 +106,9 @@ contract GoalEscrow is GoalOwnerRole, AionRole {
 	         //** SUGGEST **//
                 /*only suggester*/
   function depositOnSuggest(bytes32 _id, uint _amount) public payable notGoalOwner {
-    require(bondFunds >= 1, "appologies! contract bond funds are less than 1, a notice has been sent to goal owner to increase the funding... sit tight!");   
-    require(rewardFunds >= 1, "appologies! contract bond funds are less than 1, a notice has been sent to goal owner to increase the funding... sit tight!");
+    require(bondFunds >= 1 ether, "appologies! contract bond funds are less than 1, a notice has been sent to goal owner to increase the funding... sit tight!");   
+    require(rewardFunds >= 1 ether, "appologies! contract bond funds are less than 1, a notice has been sent to goal owner to increase the funding... sit tight!");
+    require(_amount >= 1 ether);
     //set resolution to false 
     suggestedSteps[_id].resolved = false;
     //set suggester address

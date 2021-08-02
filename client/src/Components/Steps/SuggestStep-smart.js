@@ -4,7 +4,7 @@ import {graphql, compose} from 'react-apollo';
 import gql from 'graphql-tag';
 import {withRouter, Redirect} from 'react-router-dom'
 import SuggestStep from './SuggestStep.js'
-import goalescrow from '../../abi/GoalEscrow.json'
+import GOALESCROW from '../../abi/GoalEscrow.json'
 import tokensystem from '../../abi/GoalZappTokenSystem.json'
 import * as DeployedAddress from '../../ContractAddress.js'
 var Web3 = require('web3');
@@ -95,7 +95,7 @@ class SuggestStepSmart extends Component {
   }
 
   async componentDidMount() {
-    ProxiedGoalEscrow = new web3.eth.Contract(goalescrow.abi, this.props.proxyAddress)
+    ProxiedGoalEscrow = new web3.eth.Contract(GOALESCROW.abi, this.props.proxyAddress)
 
     const bondFunds = web3.utils.fromWei((await ProxiedGoalEscrow.methods.bondFunds().call()))
     let userTokenBalance = await GoalZappTokenSystem.methods.balanceOf(this.props.currentEthereumAccount).call()
@@ -109,7 +109,7 @@ class SuggestStepSmart extends Component {
       console.log('userTokenBalance ', userTokenBalance  )
       this.setState({userTokenBalance})
     if(this.props.proxyAddress && prevProps.proxyAddress !== this.props.proxyAddress)
-      ProxiedGoalEscrow = new web3.eth.Contract(goalescrow.abi, this.props.proxyAddress)
+      ProxiedGoalEscrow = new web3.eth.Contract(GOALESCROW.abi, this.props.proxyAddress)
     }
   }
 

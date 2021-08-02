@@ -1,12 +1,12 @@
 pragma solidity >=0.5.0 <0.6.0;
 import "./Proxy.sol";
 import "./GoalEscrow.sol";
-
+import "./Ownable.sol";
 /**
  * @title UpgradeabilityProxy
  * @dev This contract represents a proxy where the implementation address to which it will delegate can be upgraded
  */
-contract UpgradeabilityProxy is Proxy {
+contract UpgradeabilityProxy is Proxy, Ownable {
   /**
    * @dev This event will be emitted every time the implementation gets upgraded
    * @param implementation representing the address of the upgraded implementation
@@ -49,7 +49,7 @@ contract UpgradeabilityProxy is Proxy {
    * @dev Upgrades the implementation address
    * @param newImplementation representing the address of the new implementation to be set
    */
-  function _upgradeTo(address newImplementation) internal {
+  function _upgradeTo(address newImplementation) external onlyOwner  {
     address currentImplementation = implementation();
     require(currentImplementation != newImplementation);
     setImplementation(newImplementation);

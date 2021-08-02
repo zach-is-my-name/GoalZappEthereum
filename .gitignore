@@ -26,6 +26,7 @@ Refactor.txt
 Dev_Notes.txt
 css_for_menu_button.txt
 tmp
+.temp
 # ganache
 client/ganache
 .localchain

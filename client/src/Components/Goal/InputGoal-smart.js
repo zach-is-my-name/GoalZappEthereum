@@ -5,7 +5,7 @@ import gql from 'graphql-tag';
 import { withRouter, Redirect } from 'react-router-dom'
 import '../../style/InputGoal.css'
 import goalzapptokensystem from '../../abi/GoalZappTokenSystem.json'
-import goalescrow from '../../abi/GoalEscrow.json'
+import GOALESCROW from '../../abi/GoalEscrow.json'
 import proxyfactory from '../../abi/ProxyFactory.json'
 import * as DeployedAddress from '../../ContractAddress.js'
 import {daysToSeconds} from '../../Utils/Utils.js'
@@ -61,7 +61,7 @@ const GoalDocQuery = gql `query goalDocsListQuery ($targetUserId: ID) {
   async initGoal() {
     if (this.state.proxyAddress && this.props.userTokenBalance) {
       try {
-        ProxiedGoalEscrow = new web3.eth.Contract(goalescrow.abi, this.state.proxyAddress)
+        ProxiedGoalEscrow = new web3.eth.Contract(GOALESCROW.abi, this.state.proxyAddress)
         if (window.confirm("You've created a goal... would you like to fund it now?")) {
           await this.initAndFundGoal()
           //const initReciept = await ProxiedGoalEscrow.methods.newGoalInit(DeployedAddress.GOALZAPPTOKENSYSTEM, minutesToSeconds(3)).send({from:this.props.currentAccount})
@@ -161,7 +161,7 @@ handleChange(e) {
 
 async componentDidUpdate(prevProps) {
   if(this.props.proxyAddress && prevProps.proxyAddress !== this.props.proxyAddress) {
-    ProxiedGoalEscrow = new web3.eth.Contract(goalescrow.abi, this.props.proxyAddress)
+    ProxiedGoalEscrow = new web3.eth.Contract(GOALESCROW.abi, this.props.proxyAddress)
   }
 }
 

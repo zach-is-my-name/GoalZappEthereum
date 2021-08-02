@@ -2,7 +2,7 @@
 import React, {Component} from 'react'
 import {graphql, compose, withApollo} from 'react-apollo';
 import gql from 'graphql-tag';
-import goalescrow from '../../abi/GoalEscrow.json'
+import GOALESCROW from '../../abi/GoalEscrow.json'
 import * as DeployedAddress from '../../ContractAddress.js'
 var Web3 = require('web3');
 var web3 = new Web3(Web3.givenProvider || "ws://localhost:8546");
@@ -118,12 +118,12 @@ class RejectStep extends Component {
   }
 
   componentDidMount() {
-    ProxiedGoalEscrow = new web3.eth.Contract(goalescrow.abi, this.props.proxyAddress)
+    ProxiedGoalEscrow = new web3.eth.Contract(GOALESCROW.abi, this.props.proxyAddress)
     this.props.unrenderRejectStepFunction()
   }
 
   render() {
-    ProxiedGoalEscrow = new web3.eth.Contract(goalescrow.abi, this.props.proxyAddress)
+    ProxiedGoalEscrow = new web3.eth.Contract(GOALESCROW.abi, this.props.proxyAddress)
     console.log('Component Rendered')
     console.log(this.props)
     if (this.props.renderRejectStepState === true) {
