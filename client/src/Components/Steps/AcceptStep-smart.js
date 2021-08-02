@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 import {graphql, compose, withApollo} from 'react-apollo';
 import gql from 'graphql-tag';
 import * as actions from '../../Actions/actions'
-import GOALESCROW from '../../abi/GoalEscrow.json'
+goalescrow from '../../abi/GoalEscrow.json'
 import * as DeployedAddress from '../../ContractAddress.js'
 var Web3 = require('web3');
 var web3 = new Web3(Web3.givenProvider || "ws://localhost:8546");
@@ -127,7 +127,7 @@ const goalDocByIdQuery = gql `query GoalDocByIdQuery ($goalDocId: ID) {
   }
 
 async _submitAcceptStep(clonedStepIdQuery) {
-  ProxiedGoalEscrow = new web3.eth.Contract(GOALESCROW.abi, this.props.proxyAddress)
+  ProxiedGoalEscrow = new web3.eth.Contract(goalescrow.abi, this.props.proxyAddress)
   let acceptStepReceipt = await ProxiedGoalEscrow.methods.disburseOnAccept(web3.utils.toHex(this.props.goalDocId)).send({from: this.props.currentEthereumAccount})
   .on('error', error => console.log(error))
   if (acceptStepReceipt === 'Error' || false) {
