@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 import {graphql, compose, withApollo} from 'react-apollo';
 import gql from 'graphql-tag';
 import * as actions from '../../Actions/actions'
-goalescrow from '../../abi/GoalEscrow.json'
+import goalescrow from '../../abi/GoalEscrow.json'
 import * as DeployedAddress from '../../ContractAddress.js'
 var Web3 = require('web3');
 var web3 = new Web3(Web3.givenProvider || "ws://localhost:8546");

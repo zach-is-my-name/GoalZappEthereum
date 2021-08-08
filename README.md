@@ -22,8 +22,21 @@
 <h3><a href="http://www.getgoalzapp.com">http://www.getgoalzapp.com</a></h3> 
 </div>
 
-<br />
- GoalZapp is an Ethereum enabled web application allowing you to post personal goals and receive suggested steps from others toward achieving those goals.
+
+<div align="center">
+    <p>
+        <em><b>"Given enough eyeballs, all bugs are shallow"</b></em>
+    </p>
+<div align="right">
+    <p>
+        <em>~Linus Tovalds, creator of Linux, the world's largest open source software project, on the nature of collaboration</em>
+    </p>
+    </div>	
+</div>
+
+
+
+GoalZapp is an Ethereum enabled web application allowing you to post personal goals and receive suggested steps from others toward achieving those goals.
 <br />
 <br />
 Suggesters are rewarded with the ZAPP token for their contribution if you deem their suggested step valuable enough to be included in list of steps you're able to generate on your own.
@@ -35,8 +48,6 @@ achieving your dreams...
 </p>
 
 
-
-
 <!-- TABLE OF CONTENTS -->
 <details open="open">
   <summary><h2 style="display: inline-block">Table of Contents</h2></summary>
@@ -44,49 +55,79 @@ achieving your dreams...
     <li>
       <a href="#about-the-project">About The Project</a>
       <ul>
-        <li><a href="#built-with">Built With</a></li>
-      </ul>
-    </li>
-    <li>
-      <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
+       <li><a href="#key-features">Key Features</a></li>
+       <li><a href="#built-with">Built With</a></li>
       </ul>
     </li>
     <li><a href="#usage">Usage</a></li>
+    <li><a href="#getting started">Getting Started</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#testing">Testing</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgements">Acknowledgements</a></li>
   </ol>
 </details>
-
 
 
 <!-- ABOUT THE PROJECT -->
 
 ## About The Project
 
-<!-- ABOUT THE PROJECT --[![Product Name Screen Shot][product-screenshot]](https://example.com) -->
+<!-- ABOUT THE PROJECT -->
+<a href="https://ibb.co/G37mzGc"><img src="https://i.ibb.co/sJj78cy/Goal-Zapp-Screen-Shot.png" alt="Goal-Zapp-Screen-Shot" border="0"></a>
 
-***GoalZapp*** was designed with the intent to help people.  Unlike other places on the internet where people turn to for advice (ie. Reddit, Quora, StackExchange), ***GoalZapp*** features a crypto-financial mechanism to simultaneously incentivize *quality contributions*, and to disinsentivize both low-quality advice and financial speculators who errode value of utility tokens.   
+***GoalZapp*** was designed with the intent to help people.  Unlike other places on the internet where people turn to for advice (ie. Reddit, Quora, StackExchange), ***GoalZapp*** features a crypto-financial mechanism to simultaneously incentivize *quality contributions*, and to disinsentivize both low-quality advice and financial speculators who errode the utility of utility tokens.   
 
 ### Key Features
 
 ##### 	Automated Market Maker with Bonding Curve
 
-​	The buy / sell price is a function of amount tokens in circulation
+* The buy / sell price is a function of the amount of tokens in circulation (a.k.a. total tokens owned)
 
-​		More tokens held by users = higher token price
+* Buying a token:
 
-​		<!-- Insert graphic showing the curve and parameters -->	
+  * Money (ETH) is sent to the Bonding Curve Contract
+    * ETH remains in contract as collatoral
+  * Token is created (minted) 
+  * Sent to buyer
+  * Added to the circulation
+
+* More tokens in circulation = higher token price
+
+  * (*Interestingly Side-Note:* price is calculated dynamically. e.g.  A single transaction to purchase 10 tokens costs a higher $ amount / per token, than a single transaction to purchase 5 tokens, because the purchase its self is augmenting supply and affecting the price paid) 
+
+* Selling a token: 
+
+  * Token(s) are sent to the Bonding Curve Contract
+    * ETH from collateral pool is paid to the seller
+  * Token is destroyed (burned)
+  * Removed from circulation
+
+* Fewer tokens in circulation = lower token price
+
+  
+
+  Click and drag on the graph below to trace the relationship between supply and price
+<iframe src="https://www.desmos.com/calculator/gcbphooup0?embed" width="500" height="500" style="border: 1px solid #ccc" frameborder=0></iframe>
+
+*Parameters*:
+<img src="https://i.ibb.co/FzZVjX3/Bonding-Curve-Formula.png" alt="Bonding-Curve-Formula" border="0">
+
+
+
+* Initial Token Supply (s) = 128
+* Balance of Contract (b) = .03359789 ETH
+* Reserve Ratio (r) = .333333 
+  * For standard point-slope reference  `m = b / (r * s ^ (1 / r))`
+
+
 
 ​    ***Motivation***: *simple, intuitive, fair pricing with a strong mechanism for driving platform growth*
 
+​     *Note:* Parameterizing a bonding curve is very much an act of balancing priorities.  Adjusting for how quickly price rises relative to the total amount of tokens purchased by users of the system hinges on two competing priorities: **financial incentive** and **accessibility**.  A curve that rises more gradually and evenly favors accessibility and platform utility (more tokens can be bought at a relatively lower price; lowering barrier to entry).  A curve that rises more quickly favors financial incentive (it's profitable to "buy now", because the price will escalate quickly).  The chosen parameters as implemented lean towards financial incentive because profit-motive is the strongest driver of network participation.  Combined with the measures outlined below to limit pure speculative behavior, we hope to achieve the highest level of participation.   
 
+*Thought experiment:* How does the incentive to profit from contributions compare to the purely intrinsic nature of contributions on platforms such Stack Exchange and Reddit? Are these motives mutuallyexclusive? 
 
 ##### Trading Restrictions 
 
@@ -104,8 +145,6 @@ achieving your dreams...
 
 
 
-
-
 ### Built With
 
 * [Ethereum](http://ethereum.org)
@@ -117,11 +156,11 @@ achieving your dreams...
 
 
 
-<!-- USAGE EXAMPLES -->
+<!-- Usage -->
 
-## What you can do
+## Usage
 
-Here's how you can build a roadmap of steps toward acheiving your posted goal; 
+Here's how you can build a roadmap of steps toward achieving your posted goal; 
 
 Or contribute your knowledge towards building the steps list of someone else's go:
 
@@ -145,7 +184,9 @@ Or contribute your knowledge towards building the steps list of someone else's g
 
 <!--Rewards and Risks -->
 
-## Rewards and Risks*
+
+
+### Application Flow: Rewards and Risks*
 
 ##### ***\*All funds associated with risks and rewards are denominated in GoalZapp tokens***
 
@@ -156,7 +197,7 @@ Or contribute your knowledge towards building the steps list of someone else's g
 * When you create a goal, you have the option to fund an escrow smart contract associated with that goal (you may fund the goal any time after creation)
 * Attaching funds to your goal enables you to accept suggestions from other users
 * Funds are used to pay:
-  * The reward amount to suggesters (set globally by adminstrator)
+  * The reward amount to suggesters (set globally by administrator)
   * The bond amount
     * Bonds are utilized to incentivize engagment and prevent stale suggestions
       * Bonds are only transfered between the goal escrow contract and the user who posted it
@@ -171,27 +212,33 @@ Or contribute your knowledge towards building the steps list of someone else's g
 
 
 
+#### Someone Else's Goal
+
+* To view goals created by other users, go to the *Globalfeed page* 
+  * Click the goal of the user you're interested in
+* On another user's goal page, you see that user's goal and corresponding steps
+* You can:
+  * Suggest a step
+  * Suggest edit a step
+  * Suggest remove a step
+  * Suggest move a step
+* At this time: **only *suggest step* has an economic consequence**
+  * When you suggest a step, you choose an amount to post as a bond
+    * (arbitrary bond amounts chosen by the suggester; > 1 token ) 
+  * your Ethereum wallet will prompt you to accept a series of transactions
+    * These transactions include:
+      * Approval to move tokens from your wallet 
+      * Subsequent transfer of tokens as bond to escrow contract
 
 
 
+### Risks and Rewards Summary
 
-
-
-
-
-
-
-
+* *Suggestions goal owner accepts pay out 1 token to the suggester* 
 
 
 
 <!-- GETTING STARTED -->
-
-
-
-
-
-
 
 ## Getting Started
 
@@ -201,23 +248,13 @@ Or contribute your knowledge towards building the steps list of someone else's g
 * Head to http://www.getgoalzapp.com
 * Create and account and login
 
-### Example Flow
-
-
-
-
-
-
-
-
-
 
 
 <!-- ROADMAP -->
 
 ## Roadmap
 
-* Deploy smart contracts to L2 roll-up [Optimism](http://optimism.io) 
+* Integrate smart contracts to L2 roll-up [Optimism](http://optimism.io) 
 
 
 
@@ -248,25 +285,17 @@ Contributions are what make the open source community such an amazing place to b
 <!-- LICENSE -->
 ## License
 
-Distributed under the MIT License. See `LICENSE` for more information.
-
-
+Distributed under the MIT License
 
 <!-- CONTACT -->
+
 ## Contact
 
-Your Name - [@_zach_michaels](https://twitter.com/_zach_michaels) - contact@zachmichaels.dev
+Twitter: [@_zach_michaels](https://twitter.com/_zach_michaels) - 
+
+Email: contact@zachmichaels.dev
 
 Project Link: [https://github.com/zach-is-my-name/GoalZappEthereum](https://github.com/zach-is-my-name/GoalZappEthereum)
-
-
-
-<!-- ACKNOWLEDGEMENTS -->
-## Acknowledgements
-
-* []()
-* []()
-* []()
 
 
 
@@ -274,6 +303,7 @@ Project Link: [https://github.com/zach-is-my-name/GoalZappEthereum](https://gith
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+
 [contributors-shield]: https://img.shields.io/github/contributors/zach-is-my-name/GoalZappEthereum.svg?style=for-the-badge
 [contributors-url]: https://github.com/zach-is-my-name/GoalZappEthereum/graphs/contributors
 [forks-shield]: https://img.shields.io/github/forks/zach-is-my-name/GoalZappEthereum.svg?style=for-the-badge

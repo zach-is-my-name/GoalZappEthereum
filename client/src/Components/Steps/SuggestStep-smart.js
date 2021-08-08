@@ -4,7 +4,7 @@ import {graphql, compose} from 'react-apollo';
 import gql from 'graphql-tag';
 import {withRouter, Redirect} from 'react-router-dom'
 import SuggestStep from './SuggestStep.js'
-goalescrow from '../../abi/GoalEscrow.json'
+import goalescrow from '../../abi/GoalEscrow.json'
 import tokensystem from '../../abi/GoalZappTokenSystem.json'
 import * as DeployedAddress from '../../ContractAddress.js'
 var Web3 = require('web3');
