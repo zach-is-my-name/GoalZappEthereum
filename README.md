@@ -171,7 +171,7 @@
 
 ## Usage
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Here's how you can build a roadmap of steps toward achieving your posted goal; Or contribute your knowledge towards building the steps list of someone else's go:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Here's how you can build a roadmap of steps toward achieving your posted goal; Or contribute your knowledge towards building the steps list of someone else's goal:
 
 #### Own goal
 
