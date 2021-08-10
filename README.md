@@ -234,7 +234,7 @@
 * At this time: **only *suggest step* has an economic consequence**
   * When you suggest a step, you choose an amount to post as a bond
     * (arbitrary bond amounts chosen by the suggester; > 1 token ) 
-  * your Ethereum wallet will prompt you to accept a series of transactions
+  * Your Ethereum wallet will prompt you to accept a series of transactions
     * These transactions include:
       * Approval to move tokens from your wallet 
       * Subsequent transfer of tokens as bond to escrow contract
