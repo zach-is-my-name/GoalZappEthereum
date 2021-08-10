@@ -9,7 +9,7 @@
 
 <!-- PROJECT LOGO -->
 <br />
-
+<br />
 <p align="center">
   <a href="https://github.com/zach-is-my-name/GoalZappEthereum">
     <img src="https://i.ibb.co/wKhgq52/Goal-Zapp-Logo.png" alt="Logo" width="277" height="91">
@@ -36,7 +36,7 @@
 
 
 
-
+<br />
 
 
 ​     GoalZapp is an Ethereum enabled web application allowing you to post personal goals and receive suggested steps from others toward achieving those goals.
