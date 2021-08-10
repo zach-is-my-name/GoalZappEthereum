@@ -99,7 +99,7 @@
 
 * More tokens in circulation = higher token price
 
-  * (*Interestingly Side-Note:* price is calculated dynamically. e.g.  A single transaction to purchase 10 tokens costs a higher $ amount / per token, than a single transaction to purchase 5 tokens, because the purchase its self is augmenting supply and affecting the price paid) 
+  * (*Interesting Side-Note:* price is calculated dynamically. e.g.  A single transaction to purchase 10 tokens costs a higher $ amount / per token, than a single transaction to purchase 5 tokens, because the purchase its self is augmenting supply and affecting the price paid) 
 
 * Selling a token: 
 
