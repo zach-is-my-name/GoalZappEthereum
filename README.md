@@ -10,6 +10,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <br />
+
 <p align="center">
   <a href="https://github.com/zach-is-my-name/GoalZappEthereum">
     <img src="https://i.ibb.co/wKhgq52/Goal-Zapp-Logo.png" alt="Logo" width="277" height="91">
@@ -38,12 +39,11 @@
 
 <br />
 
-
-​     GoalZapp is an Ethereum enabled web application allowing you to post personal goals and receive suggested steps from others toward achieving those goals.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GoalZapp is an Ethereum enabled web application allowing you to post personal goals and receive suggested steps from others toward achieving those goals.
 <br />
-<br />     Suggesters are rewarded with the ZAPP token for their contribution if you deem their suggested step valuable enough to be included in list of steps you're able to generate on your own.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Suggesters are rewarded with the ZAPP token for their contribution if you deem their suggested step valuable enough to be included in list of steps you're able to generate on your own.
 
-​     Like a crowd sourced, token incentivized, recipe for success for achieving your dreams...
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Like a crowd sourced, token incentivized, recipe for success for achieving your dreams...
 </p>
 
 </p>
@@ -80,7 +80,7 @@
 <!-- ABOUT THE PROJECT -->
 <a href="https://ibb.co/G37mzGc"><img src="https://i.ibb.co/sJj78cy/Goal-Zapp-Screen-Shot.png" alt="Goal-Zapp-Screen-Shot" border="0"></a>
 
-​     ***GoalZapp*** was designed with the intent to help people.  Unlike other places on the internet where people turn to for advice (ie. Reddit, Quora, StackExchange), ***GoalZapp*** features a crypto-financial mechanism to simultaneously incentivize *quality contributions*, and to disinsentivize both low-quality advice and financial speculators who errode the utility of utility tokens.   
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;***GoalZapp*** was designed with the intent to help people.  Unlike other places on the internet where people turn to for advice (ie. Reddit, Quora, StackExchange), ***GoalZapp*** features a crypto-financial mechanism to simultaneously incentivize *quality contributions*, and to disinsentivize both low-quality advice and financial speculators who errode the utility of utility tokens.   
 
 ### Key Features
 
@@ -131,27 +131,28 @@
 
 
 
-​    ***Motivation***: *simple, intuitive, fair pricing with a strong mechanism for driving platform growth*
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;***Motivation***: *simple, intuitive, fair pricing with a strong mechanism for driving platform growth*
 
-​     *Note:* Parameterizing a bonding curve is very much an act of balancing priorities.  Adjusting for how quickly price rises relative to the total amount of tokens purchased by users of the system hinges on two competing priorities: **financial incentive** and **accessibility**.  A curve that rises more gradually and evenly favors accessibility and platform utility (more tokens can be bought at a relatively lower price; lowering barrier to entry).  A curve that rises more quickly favors financial incentive (it's profitable to "buy now", because the price will escalate quickly).  The chosen parameters as implemented lean towards financial incentive because profit-motive is the strongest driver of network participation.  Combined with the measures outlined below to limit pure speculative behavior, we hope to achieve the highest level of participation.   
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*Note:* Parameterizing a bonding curve is very much an act of balancing priorities.  Adjusting for how quickly price rises relative to the total amount of tokens purchased by users of the system hinges on two competing priorities: **financial incentive** and **accessibility**.  A curve that rises more gradually and evenly favors accessibility and platform utility (more tokens can be bought at a relatively lower price; lowering barrier to entry).  A curve that rises more quickly favors financial incentive (it's profitable to "buy now", because the price will escalate quickly).  The chosen parameters as implemented lean towards financial incentive because profit-motive is the strongest driver of network participation.  Combined with the measures outlined below to limit pure speculative behavior, we hope to achieve the highest level of participation.   
 
-​     *Thought experiment:* How does the incentive to profit from contributions compare to the purely intrinsic nature of contributions on platforms such Stack Exchange and Reddit? Are these motives mutually exclusive? 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*Thought experiment:* How does the incentive to profit from contributions compare to the purely intrinsic nature of contributions on platforms such Stack Exchange and Reddit? Are these motives mutually exclusive? 
 
+<br />
 ##### **Trading Restrictions** 
 
-​     You can't sell or transfer the token until you use it first
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;You can't sell or transfer the token until you use it first
 
-​	***Motivation***: *The people who buy tokens on GoalZapp actually use GoalZapp* 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;***Motivation***: *The people who buy tokens on GoalZapp actually use GoalZapp* 
 
-
+<br />
 
 ##### **Protection Period** 
 
-​     Even after using the token for its intended utility (paying people for helpful suggestions on your goal),  you still must wait to a period of 3 days to transfer it.  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Even after using the token for its intended utility (paying people for helpful suggestions on your goal),  you still must wait to a period of 3 days to transfer it.  
 
-​     ***Motivation***: This serves once again to protect the beneficiaries of the platform and add friction to financial speculators.  Honest users are given further assurance that they will not fall victum to pump and dump schemes, strengthing the *utility orientation* of the token.   
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;***Motivation***: This serves once again to protect the beneficiaries of the platform and add friction to financial speculators.  Honest users are given further assurance that they will not fall victum to pump and dump schemes, strengthing the *utility orientation* of the token.   
 
-
+<br />
 
 ### Built With
 
@@ -168,7 +169,7 @@
 
 ## Usage
 
-​     Here's how you can build a roadmap of steps toward achieving your posted goal; Or contribute your knowledge towards building the steps list of someone else's go:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Here's how you can build a roadmap of steps toward achieving your posted goal; Or contribute your knowledge towards building the steps list of someone else's go:
 
 #### Own goal
 
@@ -278,7 +279,7 @@
 
 ## Contributing
 
-​     Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
 1. Fork the Project
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
