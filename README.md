@@ -9,7 +9,7 @@
 
 <!-- PROJECT LOGO -->
 <br />
-
+<br />
 <p align="center">
   <a href="https://github.com/zach-is-my-name/GoalZappEthereum">
     <img src="https://i.ibb.co/wKhgq52/Goal-Zapp-Logo.png" alt="Logo" width="277" height="91">
