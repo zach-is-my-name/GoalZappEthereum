@@ -36,7 +36,7 @@
 
 
 
-
+<br />
 
 ​	GoalZapp is an Ethereum enabled web application allowing you to post personal goals and receive suggested steps from others toward achieving those goals.
 <br />
