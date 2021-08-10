@@ -300,7 +300,7 @@ Distributed under the MIT License
 
 ## Contact
 
-Twitter: [@_zach_michaels](https://twitter.com/_zach_michaels) - 
+Twitter: [@_zach_michaels](https://twitter.com/_zach_michaels) 
 
 Email: contact@zachmichaels.dev
 
