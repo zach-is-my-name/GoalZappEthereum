@@ -140,7 +140,7 @@
 
 <br />
 
-__Trading Restrictions__ 
+<b>Trading Restrictions</b> 
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;You can't sell or transfer the token until you use it first
 
