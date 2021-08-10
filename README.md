@@ -139,7 +139,8 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*Thought experiment:* How does the incentive to profit from contributions compare to the purely intrinsic nature of contributions on platforms such Stack Exchange and Reddit? Are these motives mutually exclusive? 
 
 <br />
-**Trading Restrictions** 
+
+__Trading Restrictions__ 
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;You can't sell or transfer the token until you use it first
 
@@ -147,7 +148,7 @@
 
 <br />
 
-**Protection Period** 
+__Protection Period__
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Even after using the token for its intended utility (paying people for helpful suggestions on your goal),  you still must wait to a period of 3 days to transfer it.  
 
