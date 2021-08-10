@@ -243,7 +243,7 @@
 
 ### Risks and Rewards Summary
 
-* *Suggestions goal owner accepts pay out 1 token to the suggester* 
+* *Suggestions goal owners accept pay out 1 token to the suggester* 
 
 
 
