@@ -140,7 +140,7 @@
 
 <br />
 
-<b>Trading Restrictions</b> 
+#### Trading Restrictions
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;You can't sell or transfer the token until you use it first
 
@@ -148,7 +148,7 @@
 
 <br />
 
-__Protection Period__
+#### Protection Period
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Even after using the token for its intended utility (paying people for helpful suggestions on your goal),  you still must wait to a period of 3 days to transfer it.  
 
