@@ -72,7 +72,7 @@
     <li> <a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
 <br />
-
+<br />
 
 <!-- ABOUT THE PROJECT -->
 
