@@ -39,11 +39,11 @@
 
 <br />
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GoalZapp is an Ethereum enabled web application allowing you to post personal goals and receive suggested steps from others toward achieving those goals.
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Suggesters are rewarded with the ZAPP token for their contribution if you deem their suggested step valuable enough to be included in list of steps you're able to generate on your own.
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Like a crowd sourced, token incentivized, recipe for success for achieving your dreams...
+* GoalZapp is an Ethereum enabled web application allowing you to post personal goals and receive suggested steps from others toward achieving those goals.
+<br />
+* Suggesters are rewarded with the ZAPP token for their contribution if you deem their suggested step valuable enough to be included in list of steps you're able to generate on your own.
+<br />
+* Like a crowd sourced, token incentivized, recipe for success for achieving your dreams...
 </p>
 
 </p>
