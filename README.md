@@ -53,7 +53,7 @@
 <br />
 
 <!-- TABLE OF CONTENTS -->
-  <summary><h2 style="display: inline-block">Table of Contents</h2></summary>
+ <h2 style="display: inline-block">Table of Contents</h2>
   <ol>
     <li>
       <a href="#about-the-project">About The Project</a>
