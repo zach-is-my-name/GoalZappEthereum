@@ -27,12 +27,13 @@
     <p>
         <em><b>"Given enough eyeballs, all bugs are shallow"</b></em>
     </p>
-<div align="right">
+<div align="center">
     <p>
         <em>~Linus Tovalds, creator of Linux, the world's largest open source software project</em>
     </p>
     </div>	
 </div>
+
 
 
 
