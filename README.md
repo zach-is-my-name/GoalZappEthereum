@@ -16,11 +16,11 @@
   </a>
   </p>
 
-
-
 <div align="center"> 
 <h3><a href="http://www.getgoalzapp.com">http://www.getgoalzapp.com</a></h3> 
 </div>
+
+
 
 
 <div align="center">
@@ -29,7 +29,7 @@
     </p>
 <div align="center">
     <p>
-        <em>~Linus Tovalds, creator of Linux, the world's largest open source software project</em>
+        <em>~ Linus Tovalds, creator of Linux, the world's largest open source software project</em>
     </p>
     </div>	
 </div>
