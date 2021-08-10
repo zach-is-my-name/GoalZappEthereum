@@ -82,7 +82,7 @@
 <!-- ABOUT THE PROJECT -->
 <a href="https://ibb.co/G37mzGc"><img src="https://i.ibb.co/sJj78cy/Goal-Zapp-Screen-Shot.png" alt="Goal-Zapp-Screen-Shot" border="0"></a>
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;***GoalZapp*** was designed with the intent to help people.  Unlike other places on the internet where people turn to for advice (ie. Reddit, Quora, StackExchange), ***GoalZapp*** features a crypto-financial mechanism to simultaneously incentivize *quality contributions*, and to disinsentivize both low-quality advice and financial speculators who errode the utility of utility tokens.   
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;***GoalZapp*** was designed with the intent to help people.  Unlike other places on the internet where people turn for advice (ie. Reddit, Quora, StackExchange), ***GoalZapp*** features a crypto-financial mechanism to simultaneously incentivize *quality contributions*, and to disinsentivize both low-quality advice and financial speculators who errode the utility of utility tokens.   
 
 ### Key Features
 
