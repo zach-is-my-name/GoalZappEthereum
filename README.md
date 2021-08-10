@@ -85,7 +85,7 @@
 
 ### Key Features
 
-<strong>Automated Market Maker with Bonding Curve</strong> 
+#### Automated Market Maker with Bonding Curve 
 
 * The buy / sell price is a function of the amount of tokens in circulation (a.k.a. total tokens owned)
 
