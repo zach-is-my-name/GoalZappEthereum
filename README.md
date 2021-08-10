@@ -29,20 +29,19 @@
     </p>
 <div align="right">
     <p>
-        <em>~Linus Tovalds, creator of Linux, the world's largest open source software project, on the nature of collaboration</em>
+        <em>~Linus Tovalds, creator of Linux, the world's largest open source software project</em>
     </p>
     </div>	
 </div>
 
 
 
-GoalZapp is an Ethereum enabled web application allowing you to post personal goals and receive suggested steps from others toward achieving those goals.
-<br />
-<br />
-Suggesters are rewarded with the ZAPP token for their contribution if you deem their suggested step valuable enough to be included in list of steps you're able to generate on your own.
 
-Kinda like a crowd sourced, token incentivized, recipe for success for
-achieving your dreams...
+​	GoalZapp is an Ethereum enabled web application allowing you to post personal goals and receive suggested steps from others toward achieving those goals.
+<br />
+<br />	Suggesters are rewarded with the ZAPP token for their contribution if you deem their suggested step valuable enough to be included in list of steps you're able to generate on your own.
+
+​	Like a crowd sourced, token incentivized, recipe for success for achieving your dreams...
 </p>
 
 </p>
@@ -66,8 +65,10 @@ achieving your dreams...
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
+    <li> <a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
 </details>
+
 
 
 <!-- ABOUT THE PROJECT -->
@@ -77,11 +78,11 @@ achieving your dreams...
 <!-- ABOUT THE PROJECT -->
 <a href="https://ibb.co/G37mzGc"><img src="https://i.ibb.co/sJj78cy/Goal-Zapp-Screen-Shot.png" alt="Goal-Zapp-Screen-Shot" border="0"></a>
 
-***GoalZapp*** was designed with the intent to help people.  Unlike other places on the internet where people turn to for advice (ie. Reddit, Quora, StackExchange), ***GoalZapp*** features a crypto-financial mechanism to simultaneously incentivize *quality contributions*, and to disinsentivize both low-quality advice and financial speculators who errode the utility of utility tokens.   
+​	***GoalZapp*** was designed with the intent to help people.  Unlike other places on the internet where people turn to for advice (ie. Reddit, Quora, StackExchange), ***GoalZapp*** features a crypto-financial mechanism to simultaneously incentivize *quality contributions*, and to disinsentivize both low-quality advice and financial speculators who errode the utility of utility tokens.   
 
 ### Key Features
 
-##### 	Automated Market Maker with Bonding Curve
+##### 	**Automated Market Maker with Bonding Curve** 
 
 * The buy / sell price is a function of the amount of tokens in circulation (a.k.a. total tokens owned)
 
@@ -108,8 +109,13 @@ achieving your dreams...
 
   
 
-  Click and drag on the graph below to trace the relationship between supply and price
-<iframe src="https://www.desmos.com/calculator/gcbphooup0?embed" width="500" height="500" style="border: 1px solid #ccc" frameborder=0></iframe>
+  ​    [View the graph in interactive mode](https://www.desmos.com/calculator/w3f9wqu7jg) to trace the price of the token at a given supply
+  
+  
+  
+  <a href="https://ibb.co/gZX23S3"><img src="https://i.ibb.co/KxQPX2X/Bonding-Curve-Graph.png" alt="Bonding-Curve-Graph" border="0"></a>
+
+
 
 *Parameters*:
 <img src="https://i.ibb.co/FzZVjX3/Bonding-Curve-Formula.png" alt="Bonding-Curve-Formula" border="0">
@@ -127,9 +133,9 @@ achieving your dreams...
 
 ​     *Note:* Parameterizing a bonding curve is very much an act of balancing priorities.  Adjusting for how quickly price rises relative to the total amount of tokens purchased by users of the system hinges on two competing priorities: **financial incentive** and **accessibility**.  A curve that rises more gradually and evenly favors accessibility and platform utility (more tokens can be bought at a relatively lower price; lowering barrier to entry).  A curve that rises more quickly favors financial incentive (it's profitable to "buy now", because the price will escalate quickly).  The chosen parameters as implemented lean towards financial incentive because profit-motive is the strongest driver of network participation.  Combined with the measures outlined below to limit pure speculative behavior, we hope to achieve the highest level of participation.   
 
-*Thought experiment:* How does the incentive to profit from contributions compare to the purely intrinsic nature of contributions on platforms such Stack Exchange and Reddit? Are these motives mutuallyexclusive? 
+*Thought experiment:* How does the incentive to profit from contributions compare to the purely intrinsic nature of contributions on platforms such Stack Exchange and Reddit? Are these motives mutually exclusive? 
 
-##### Trading Restrictions 
+##### **Trading Restrictions** 
 
 ​	You can't sell or transfer the token until you use it first
 
@@ -137,11 +143,11 @@ achieving your dreams...
 
 
 
-##### Protection Period 
+##### **Protection Period** 
 
 ​	Even after using the token for its intended utility (paying people for helpful suggestions on your goal),  you still must wait to a period of 3 days to transfer it.  
 
-***Motivation***: This serves once again to protect the beneficiaries of the platform and add friction to financial speculators.  Honest users are given further assurance that they will not fall victum to pump and dump schemes, strengthing the *utility orientation* of the token.   
+​	***Motivation***: This serves once again to protect the beneficiaries of the platform and add friction to financial speculators.  Honest users are given further assurance that they will not fall victum to pump and dump schemes, strengthing the *utility orientation* of the token.   
 
 
 
@@ -160,9 +166,7 @@ achieving your dreams...
 
 ## Usage
 
-Here's how you can build a roadmap of steps toward achieving your posted goal; 
-
-Or contribute your knowledge towards building the steps list of someone else's go:
+​	Here's how you can build a roadmap of steps toward achieving your posted goal; Or contribute your knowledge towards building the steps list of someone else's go:
 
 #### Own goal
 
@@ -188,7 +192,7 @@ Or contribute your knowledge towards building the steps list of someone else's g
 
 ### Application Flow: Rewards and Risks*
 
-##### ***\*All funds associated with risks and rewards are denominated in GoalZapp tokens***
+##### 	***\*All funds associated with risks and rewards are denominated in GoalZapp tokens***
 
 
 
@@ -272,7 +276,7 @@ Or contribute your knowledge towards building the steps list of someone else's g
 
 ## Contributing
 
-Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+​	Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
 1. Fork the Project
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
@@ -299,7 +303,20 @@ Project Link: [https://github.com/zach-is-my-name/GoalZappEthereum](https://gith
 
 
 
+## Acknowledgments
 
+* [Simon de la Rouviere](https://twitter.com/@simondlr)
+  * For eloquently elaborating on the nature of tokens in 2015 [youtube](https://youtu.be/kE5oGw8oKsY)
+  * For his work on developing bonding curves [medium](https://medium.com/@simondlr/bancors-smart-tokens-vs-token-bonding-curves-a4f0cdfd3388)
+* [Bancor](https://twitter.com/Bancor)
+  * For creating and contributing the essential formula that make bonding curves possible in Solidity [github](https://github.com/bancorprotocol/contracts-solidity/blob/master/solidity/contracts/converter/BancorFormula.sol)
+* [Slava Balasanov](https://twitter.com/team_slava)
+  * For laying out in technical terms how bonding curves work [medium](https://blog.relevant.community/bonding-curves-in-depth-intuition-parametrization-d3905a681e0a)
+  * and personally answering questions 
+* [Billy Rennekamp](https://twitter.com/billyrennekamp)
+  * For conveying bonding curve technical terms and formulas in a simplified way [medium](https://billyrennekamp.medium.com/converting-between-bancor-and-bonding-curve-price-formulas-9c11309062f5)
+* [Karl Floersch](https://twitter.com/karl_dot_tech)
+  * For keeping the flame of altruism through applied technology
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
